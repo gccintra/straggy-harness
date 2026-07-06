@@ -25,11 +25,10 @@ link_path() {
   ln -s "$target" "$path"
 }
 
-link_path ".agents/AGENTS.md" "$PROJECT_DIR/AGENTS.md"
-link_path ".agents/AGENTS.md" "$PROJECT_DIR/CLAUDE.md"
 link_path ".agents/runtime/claude" "$PROJECT_DIR/.claude"
 link_path ".agents/runtime/codex" "$PROJECT_DIR/.codex"
 link_path ".agents/runtime/opencode" "$PROJECT_DIR/.opencode"
 link_path ".agents/runtime/claude/mcp.json" "$PROJECT_DIR/.mcp.json"
 
+echo "Crie seu próprio AGENTS.md/CLAUDE.md no projeto (o harness não fornece mais um padrão)."
 echo "Harness instalado em $PROJECT_DIR"

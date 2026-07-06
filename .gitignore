@@ -2,3 +2,7 @@ __pycache__/
 *.pyc
 node_modules/
 .DS_Store
+
+# Regras de engajamento — cada dev cria/personaliza o próprio, não versionar no harness
+AGENTS.md
+CLAUDE.md
