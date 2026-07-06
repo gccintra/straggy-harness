@@ -1,0 +1,23 @@
+{
+  "skill_name": "backlog-issue-creator",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "Cria uma issue no backlog: os candidatos no portal estão reclamando que não conseguem fazer upload dos documentos de inscrição (RG, CPF, comprovante de residência). Isso está impedindo a conclusão da inscrição. Acho que afeta todos os candidatos novos. Pode ser que seja só no mobile, mas não tenho certeza. Isso é urgente porque a janela de inscrição da turma de julho abre semana que vem.",
+      "expected_output": "Issue documentada no template padrão com: HU (Como candidato, Quero fazer upload de documentos, Para concluir inscrição), Problema descrito (upload falhando no portal), Priorização calculada (deve ser MUST ou SHOULD com ICE alto), Módulo SI - Enrollment System, e apresentada para aprovação antes de criar no GitLab.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "prompt": "Adiciona isso ao backlog: os admins estão pedindo um jeito de exportar a lista de candidatos por turma em Excel. Hoje eles copiam manualmente da tela e colam no Excel. É bem chato e dá erro.",
+      "expected_output": "A skill deve fazer perguntas de discovery (quem são os admins, com que frequência fazem isso, quantas turmas, etc.), documentar a issue com módulo ADM - Candidate Management, calcular priorização (SHOULD/COULD com ICE médio), e apresentar para aprovação.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "prompt": "Bug crítico: o sistema de autenticação do portal caiu. Nenhum candidato consegue logar. O erro é 500 em todo login. Precisa de issue urgente.",
+      "expected_output": "A skill deve identificar isso como BUG CRÍTICO (Via Expressa), parar o fluxo normal de MoSCoW+ICE, e instruir a criação com label IMPEDIMENTO na sprint atual. Deve ainda documentar o problema, mas sem calcular ICE Score.",
+      "files": []
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "mcpServers": {
+    "figma": {
+      "type": "http",
+      "url": "https://mcp.figma.com/mcp"
+    },
+    "firecrawl": {
+      "type": "stdio",
+      "command": "/bin/zsh",
+      "args": [
+        "-lc",
+        "set -a; source \"$(git rev-parse --show-toplevel)/.env\"; set +a; exec npx -y firecrawl-mcp"
+      ]
+    }
+  }
+}

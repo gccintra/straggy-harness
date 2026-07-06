@@ -1,0 +1,12 @@
+[mcp_servers.figma]
+url = "https://mcp.figma.com/mcp"
+enabled = true
+startup_timeout_sec = 20
+tool_timeout_sec = 120
+
+[mcp_servers.firecrawl]
+command = "/bin/zsh"
+args = ["-lc", "set -a; source \"$(git rev-parse --show-toplevel)/.env\"; set +a; exec npx -y firecrawl-mcp"]
+enabled = true
+startup_timeout_sec = 30
+tool_timeout_sec = 120
