@@ -15,7 +15,6 @@ O instalador cria somente links de integração:
 .claude    -> .agents/runtime/claude
 .codex     -> .agents/runtime/codex
 .opencode  -> .agents/runtime/opencode
-.mcp.json  -> .agents/runtime/claude/mcp.json
 ```
 
 As skills vivem fisicamente apenas em `.agents/skills`. Codex e OpenCode descobrem esse caminho
