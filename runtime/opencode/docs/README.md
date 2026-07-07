@@ -275,7 +275,7 @@ FIGMA_GUIDELINES_NODE_ID=...
 
 ```
 .opencode/
-├── agents/              ← 3 agentes primary (sem subagentes)
+├── agents/              ← 3 agentes primary (delegação seletiva c/ aprovação — ENGAGEMENT.md §5)
 │   ├── product-manager.md   ← PO — ponto de entrada universal (issues, discovery, docs, backlog, wiki, changelog)
 │   ├── tech-lead.md         ← Viabilidade, dados reais, HTs, arquitetura
 │   └── product-designer.md  ← Telas, design system, protótipos (HTML → preview local → Figma)

@@ -120,7 +120,7 @@ python3 -m http.server 4321 --directory <dir>
 
 Dê as URLs locais ao usuário e **PARE**. Itere no feedback editando o HTML — o server serve o update no refresh. Nenhuma chamada ao Figma acontece aqui.
 
-> Push pro Figma é escrita externa (write-gate do `AGENTS.md`): só avance para a Etapa 6 depois do usuário pedir explicitamente ("manda pro Figma"). Uma execução padrão termina aqui.
+> Push pro Figma é escrita externa (write-gate do `.agents/ENGAGEMENT.md`): só avance para a Etapa 6 depois do usuário pedir explicitamente ("manda pro Figma"). Uma execução padrão termina aqui.
 
 ## 6. Inserir no Figma (SÓ sob pedido explícito)
 
