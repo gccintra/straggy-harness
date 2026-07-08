@@ -94,7 +94,7 @@ Use a skill `html-to-figma` para construir a página de guidelines como HTML est
 1. **Ícones = Lucide, inline** — lib fixa do projeto ([lucide.dev](https://lucide.dev)). Nunca `<use>`/`<symbol>` (ícone sai vazio no Figma); copie o SVG oficial e repita o markup em cada uso.
 2. **Largura desktop = `1280px`** nos exemplos de layout/padrões de tela.
 3. **Se a página de guidelines tiver múltiplos frames de topo**, dê `id="frame-N"` a cada um e capture um por um com `figmaselector=%23frame-N` — nunca capture `body` inteiro.
-4. **HTML raso e semântico** — o `capture.js` espelha o DOM 1:1 e não achata. Sem wrapper `<div>` redundante (máx 1 por bloco), blocos em tag semântica, e `data-h2d-suppress-before/after` nos pseudo-elementos decorativos. `<div>` vira "Container" no Figma; nome custom de node não é suportado.
+4. **Nomear nodes + HTML raso** (detalhe: `html-to-figma` regra 8, validado empiricamente): `aria-label="Nome do Node"` em cada bloco → o node vira esse nome no Figma (`<div aria-label>` = nome limpo; `title`/`data-*` NÃO funcionam). Wrapper de topo com `aria-label` + `<title>` curto. HTML raso, sem `<div>` redundante, `data-h2d-suppress-before/after` nos pseudo decorativos.
 
 ### Estrutura da página de guidelines
 

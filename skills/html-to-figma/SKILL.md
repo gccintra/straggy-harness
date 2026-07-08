@@ -207,27 +207,34 @@ O `capture.js` do Figma NÃO resolve `<use href="#id"/>` nem `<symbol>` — o í
 
 Onde achar o path: `lucide.dev/icons/<nome>` ou o pacote `lucide-static`. Nunca invente path — copie o oficial.
 
-**8. Saída limpa no Figma — HTML raso e semântico**
+**8. Saída limpa no Figma — nomear nodes + HTML raso**
 
-O `capture.js` faz espelho 1:1 do DOM: **não achata nada**, e cada `<div>` de wrapper vira um frame "Container". Árvore poluída no Figma = HTML com wrappers demais. Para saída editável:
+O `capture.js` faz espelho 1:1 do DOM: **não achata nada**, e cada `<div>` sem nome vira frame "Container". Mas o **nome do node É controlável** — validado empiricamente (teste 2026-07-08).
 
-- **Achatar wrappers** — no máximo 1 `<div>` de estilo por bloco. Wrapper que só existe pra CSS e não agrupa nada semântico → remover ou fundir. Menos aninhamento no HTML = árvore rasa no Figma.
-- **Tag semântica pro bloco** — use `<section>`, `<article>`, `<header>`, `<nav>`, `<footer>`, `<table>`, `<button>` em vez de `<div>` genérico. Melhora a divisão e o naming do node.
-- **Suprimir pseudo-elementos decorativos** — `::before`/`::after` viram nodes lixo. Marque o elemento com `data-h2d-suppress-before` / `data-h2d-suppress-after` para o motor pular esses nodes.
+**Naming — a regra que manda: `aria-label`.**
+- **`aria-label="Nome do Node"` no elemento → o node vira exatamente esse nome.** Funciona em HTML puro. É o único hook confiável.
+- Use **`<div aria-label="...">`** (ou `<div role="region" aria-label="...">`) pra nome **limpo, sem prefixo**.
+- `<section>`/`<nav>` + `aria-label` funcionam mas **prefixam** "Section - "/"Navigation - " no nome. Evite se quiser nome puro.
+- **NÃO funcionam** (ignorados): `title`, `data-figma-name`, `data-name`, `data-fg-name`.
+- Sem `aria-label`: `<div>`→"Container", `<button>`→"Button" (fallback pela tag).
+- **Top frame** ganha sufixo `(<title>)` do `<title>` do HTML. Ex: `<title>Gerenciar Medições</title>` → frame de topo "Container (Gerenciar Medições)". Ponha `aria-label` no wrapper de topo pra nome limpo, e um `<title>` curto.
+- Text node = nomeado pelo próprio texto (automático).
 
 ```html
-<!-- POLUÍDO — 3 wrappers só de estilo, viram 3 "Container" aninhados -->
-<div class="wrap"><div class="inner"><div class="pad">
-  <span>50%</span>
-</div></div></div>
-
-<!-- LIMPO — 1 bloco semântico, pseudo decorativo suprimido -->
-<article class="card" data-h2d-suppress-before>
-  <span>50%</span>
-</article>
+<!-- CADA bloco leva aria-label = nome do node no Figma -->
+<div id="frame-1" aria-label="Tela · Gerenciar Medições">   <!-- topo, nome limpo -->
+  <div class="card" aria-label="Card · Resumo da medição">
+    <span>50%</span>
+  </div>
+  <div class="row" aria-label="Linha · Ações">...</div>
+</div>
 ```
 
-**Limite realista:** nome custom de node (ex: "Card de medição") NÃO é suportado pelo `capture.js` — não há atributo de naming. `<div>` tende a virar "Container". Se nomes cravados forem essenciais, renomeie em lote no Figma depois (plugin "Rename Layers") — não dá pra forçar na captura.
+**HTML raso (menos nodes):**
+- **Achatar wrappers** — máx 1 `<div>` de estilo por bloco. Wrapper que só existe pra CSS e não agrupa nada → remover/fundir.
+- **Suprimir pseudo decorativo** — `::before`/`::after` viram nodes lixo. Marque com `data-h2d-suppress-before` / `data-h2d-suppress-after`.
+
+> Regra prática: todo container que deve virar node identificável no Figma leva `aria-label`. Bônus: `aria-label` também é acessibilidade real.
 
 ---
 
@@ -324,8 +331,9 @@ Antes de abrir o browser para captura, verificar:
 - [ ] Ícones do Lucide, inline (sem `<use>`/`<symbol>`)
 - [ ] Frame desktop principal em `width:1280px`
 - [ ] Multi-tela: cada frame de topo com `id` único (`frame-1`, `frame-2`, ...)
+- [ ] Cada bloco com `aria-label` = nome do node (usa `<div aria-label>` p/ nome limpo)
+- [ ] Wrapper de topo com `aria-label` + `<title>` curto (controla o sufixo do frame)
 - [ ] HTML raso: sem wrapper `<div>` redundante (máx 1 por bloco)
-- [ ] Blocos em tag semântica (`<section>`/`<article>`/`<header>`/...), não `<div>`
 - [ ] `::before`/`::after` decorativos suprimidos (`data-h2d-suppress-before/after`)
 
 ---

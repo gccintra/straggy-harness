@@ -115,7 +115,10 @@ Use a skill `html-to-figma` como base técnica para criar o HTML. Aplique també
 1. **Largura desktop = `1280px`** no frame/`.win` principal (não 1440, não 1920).
 2. **Ícones = Lucide, inline** — lib fixa do projeto. Nunca `<use href="#id"/>`/`<symbol>` (o `capture.js` não resolve, ícone sai vazio). Copie o SVG oficial do Lucide e repita o markup completo em cada uso.
 3. **Multi-tela = uma captura por frame** — dê `id="frame-1"`, `frame-2"`... a cada frame de topo e capture um por um com `figmaselector=%23frame-N`. Nunca capture `body` inteiro (vira um node só com tudo aninhado).
-4. **HTML raso e semântico pra saída limpa no Figma** — o `capture.js` espelha o DOM 1:1 e não achata. Sem wrapper `<div>` redundante (máx 1 por bloco), blocos em tag semântica (`<section>`/`<article>`/...), e `data-h2d-suppress-before/after` nos `::before`/`::after` decorativos. Nome custom de node não existe no capture.js — `<div>` vira "Container"; se precisar cravar nome, renomeie em lote no Figma depois.
+4. **Nomear nodes + HTML raso pra saída limpa no Figma** (detalhe: `html-to-figma` regra 8, validado empiricamente):
+   - **`aria-label="Nome do Node"` em cada bloco → o node vira esse nome no Figma.** É o hook confiável (`title`/`data-*` NÃO funcionam). Use `<div aria-label>` pra nome limpo sem prefixo.
+   - Wrapper de topo com `aria-label` + `<title>` curto — controla o nome/sufixo do frame de topo.
+   - HTML raso: sem `<div>` de embrulho redundante; `data-h2d-suppress-before/after` nos `::before`/`::after` decorativos.
 
 **Estrutura de layout típica do projeto** (adapte conforme o contexto real extraído dos guidelines):
 
