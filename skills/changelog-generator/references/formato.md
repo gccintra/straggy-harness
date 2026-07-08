@@ -40,7 +40,7 @@
 | Ordem de Serviço | OS Contratual |
 | Identificação da HU (ex: HU003.17) | Épico / HU → extrair só `003.17` |
 | Escopo + HU + CAs | Descrição da Mudança (Delta) → sintetizar |
-| Seção "Descrição de Interface" / Escopo | Telas Impactadas |
+| Seção "Protótipo" / CAs / Escopo | Telas Impactadas |
 
 ---
 

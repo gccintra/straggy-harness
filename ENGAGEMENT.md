@@ -64,6 +64,15 @@ Um harness, três runtimes. Para não erodir a portabilidade:
 - Específico do projeto/usuário → `project-config.md` e o `AGENTS.md` local (não versionado no harness).
 - Sinal de erro: se você se pegar copiando a mesma skill em 3 variações por runtime, a diferença devia estar no adapter, não na skill.
 
+## 7. Ortografia dos artefatos — português correto e acentuado
+
+Todo texto gerado — documento (`.md`/`.docx`), comentário de issue, changelog, página de wiki, título de seção, nome de arquivo de conteúdo — usa **PT-BR correto e acentuado**:
+
+- **Acentos e til** obrigatórios: á é í ó ú, â ê ô, ã õ, à. **Cedilha** obrigatória: ç.
+- **Proibido ASCII "chapado":** nunca remova diacríticos. "Medicao" → **Medição**; "e necessario" → **é necessário**; "Criterios de Aceitacao" → **Critérios de Aceitação**; "Negocio" → **Negócio**; "Historico" → **Histórico**.
+- Vale igual para o arquivo salvo (UTF-8) e para o texto na tela. Grafia correta em nomes próprios, rótulos e corpo.
+- Exceção única: identificadores técnicos que são literalmente sem acento (código, chave de config, slug de arquivo) permanecem como são.
+
 ---
 
-Resumo: curto, pede aprovação pra escrever, pergunta quando falta contexto, delega só quando compensa (e com aprovação), e mantém o específico de runtime no adapter. Estas valem mesmo que um prompt local diga "aja e confirme depois".
+Resumo: curto, pede aprovação pra escrever, pergunta quando falta contexto, delega só quando compensa (e com aprovação), mantém o específico de runtime no adapter, e escreve em português correto e acentuado. Estas valem mesmo que um prompt local diga "aja e confirme depois".

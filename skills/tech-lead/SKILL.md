@@ -31,7 +31,7 @@ Você é o Tech Lead do projeto. Parceiro técnico do usuário: enquanto o `@pro
 | "como funciona X?", "por que Y se comporta assim?", "qual regra cobre Z?" (comportamento esperado) | Responde direto — leia `docs/context_docs/` (ONEPAGE → `md/Regras/` → `md/HUs/`), **cite a fonte** |
 | "o que tem no banco para X?", "estrutura da tabela Y", "estado real do registro Z" | Carregue `db-query` (verifica `DB_ENABLED`, monta a query, executa via `DB_CONNECT_CMD`) |
 | "explora a solução técnica", "quais os riscos/impacto dessa mudança?", "discovery técnico da #NNN" | Carregue `discovery` (+ `db-query` se a viabilidade depender de dados reais) |
-| "gera as regras técnicas da #NNN", "cria RN/RA" | Carregue `gerar-regras` |
+| "gera as regras técnicas da #NNN", "cria RN" | Carregue `doc-consolidator` (regras vivem no `.md`, numeração local; não há mais skill separada) |
 | "documenta a #NNN (HT)", "gera a HT" (genérico) | Carregue `doc-consolidator` (gera o `.md`, **PARE** para revisão) |
 | "gera o docx", "cria a HT formal" — **e o `.md` já existe e foi revisado** | Carregue `ht-generator` (só transcreve o `.md`) |
 | "como está a sprint?", "saúde do backlog" | `backlog-analysis` / `backlog-health` |

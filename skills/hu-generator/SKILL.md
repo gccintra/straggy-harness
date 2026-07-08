@@ -1,7 +1,7 @@
 ---
 name: hu-generator
 description: >
-  Passo FINAL da documentação: transcreve um `.md` consolidado JÁ REVISADO (gerado pela skill doc-consolidator) para um `.docx` de História de Usuário — 7 seções (Entendendo o Problema, História de Usuário, Escopo, Critérios de Aceitação, Regras de Negócio, Descrição de Interface, Complemento de Documentação). Use SOMENTE quando o usuário pedir EXPLICITAMENTE o docx/HU formal — "gera o docx", "agora o docx", "transforma o md em docx", "cria a HU formal" — E o `.md` da issue já existir. NÃO use para pedido genérico de documentação ("documenta a #NNN", "gera a documentação"): isso gera o `.md` primeiro via doc-consolidator, com parada para revisão humana antes do docx. Só transcreve o `.md`; não relê o discovery. Output é SEMPRE um `.docx`.
+  Passo FINAL da documentação: transcreve um `.md` consolidado JÁ REVISADO (gerado pela skill doc-consolidator) para um `.docx` de História de Usuário — 9 seções (Problema, História de Usuário, Escopo, Critérios de Aceitação, Regras de Negócio, Mensagens, Referências Globais, Protótipo, Complemento de Documentação). Use SOMENTE quando o usuário pedir EXPLICITAMENTE o docx/HU formal — "gera o docx", "agora o docx", "transforma o md em docx", "cria a HU formal" — E o `.md` da issue já existir. NÃO use para pedido genérico de documentação ("documenta a #NNN", "gera a documentação"): isso gera o `.md` primeiro via doc-consolidator, com parada para revisão humana antes do docx. Só transcreve o `.md`; não relê o discovery. Output é SEMPRE um `.docx`.
 ---
 
 # HU Generator
@@ -30,13 +30,15 @@ ls outputs/${ID}_*/HU*${ID}* 2>/dev/null
 - **Se NÃO existir:** **PARE** e avise que falta o `.md` consolidado — o usuário deve gerá-lo antes
   com a skill `doc-consolidator` e revisá-lo. **Não** gere o `.md` automaticamente daqui.
 
-A seção 5 do `.docx` leva **apenas os rótulos** das regras (`RN_XXXX — Título`), extraídos do
-`.md`. A descrição completa fica no `.md` e em `{ID}_regras.md` — não vai para o `.docx`.
+O `.md` é **autocontido**: as seções 5 (Regras de Negócio), 6 (Mensagens) e 7 (Referências
+Globais) levam o **texto completo** para o `.docx` — não há mais `{ID}_regras.md` separado nem
+rótulo-só. RN em SBVR, MSG com texto literal, GL como bullets.
 
 > ⚠️ **Formato do `.md`:** o `generate_doc.py` faz parsing por padrão de linha. O `.md` deve seguir o
 > **Contrato de formato** do `doc-consolidator` (seções `## N. Título`; metadados `- **Campo:** valor`;
-> CAs `- **CANN:** …`; regras `- **CODE — Título:** …`, nunca `### RN_`; apêndice de discovery é
-> cortado automaticamente). Se o `.docx` sair errado, **conserte o `.md`** (não o `.docx`) e regere.
+> CAs `- **CANN:** **Dado que** … **Quando** … **Então** … [RN_0X]`; regras `- **RN_0X** — <frase SBVR>`;
+> mensagens `- **MSG_0X** (Tipo) — "…"`; apêndices `## Apêndice — …` cortados automaticamente).
+> Se o `.docx` sair errado, **conserte o `.md`** (não o `.docx`) e regere.
 
 ---
 
@@ -78,64 +80,46 @@ Nome: `HU{ID}_{TOKEN}_{NomeCurto}.docx` (TOKEN = project-config) → `outputs/{I
 
 ## 2. Regras de escrita
 
-### Seção 1 — Entendendo o Problema
+> Esta etapa **transcreve** o `.md` — não reescreve o conteúdo. As regras de autoria (CA
+> coeso, RN em SBVR, MSG, GL) são do `doc-consolidator` (`references/regras.md`). Abaixo, só o
+> que cada seção do `.md` vira no `.docx`.
 
-* **Persona:** perfil exato (ex: `Engenheiro (GEENG)`)
-* **Cenário do Usuário (Dor):** 2–4 frases focando na frustração, sem mencionar a solução
+### Seção 1 — Problema
+Persona + Cenário do Usuário (Dor). Transcrito como está.
 
 ### Seção 2 — História de Usuário
-
-Tabela obrigatória com três linhas: `Como` / `Quero` / `Para`
+Tabela de três linhas: `Como` / `Quero` / `Para`.
 
 ### Seção 3 — Escopo
-
-**1 parágrafo curto (~3 frases), nível resumo concreto.** Descreva o que a HU entrega: a funcionalidade, o ponto de acesso e os principais comportamentos/blocos (como nos exemplos). Pode citar os componentes principais de forma compacta; NÃO faça lista exaustiva campo-a-campo nem repita verbatim os CAs/regras — o detalhe vai nas seções 4, 5 e 6. **Apenas o que está dentro do escopo** (não descreva o que fica de fora). Use **bold** em 1–2 termos-chave.
+1 parágrafo curto. Transcrito como está.
 
 ### Seção 4 — Critérios de Aceitação
+* CAs em subseções temáticas (H3), `Dado que / Quando / Então`, **coesos**.
+* Cada CA carrega as referências `[RN_0X]` / `[MSG_0X]` / `[GL_0X]` como texto literal no fim.
+* `CA01:` sai em verde bold; palavras-chave `Dado que/Quando/Então` em bold escuro.
 
-* Formato: **Dado que... Quando... Então...**
-* Numeração: CA01, CA02... Mínimo 3, máximo recomendado 7.
-* **Organizar obrigatoriamente em subseções temáticas** (H3/Heading3). Exemplos de subseções:
-  * 4.1. Carregamento e Exibição da Listagem
-  * 4.2. Alertas Visuais de Vencimento
-  * 4.3. Filtros e Pesquisa
-  * 4.4. Ações da Listagem
-* Adapte os nomes das subseções ao contexto da HU gerada. Os CAs ficam dentro de cada subseção correspondente.
+### Seção 5 — Regras de Negócio
+* **Texto completo** de cada RN (SBVR), um bullet por regra: `RN_0X — <frase>` (sem título).
+* Numeração local à issue. Sem rótulo-só, sem grupos RA/existentes.
 
-### Seção 5 — Rótulos das regras (do `.md` consolidado)
+### Seção 6 — Mensagens
+* Um bullet por mensagem: `MSG_0X (Tipo) — "texto literal"`. Texto completo.
 
-Quatro blocos (RN / RA / MSG criadas/editadas + Regras existentes referenciadas). Cada um: título
-**bold** + um bullet por regra contendo **apenas o rótulo** (`RN_XXXX — Título`) extraído da seção 5
-do `.md` consolidado — **sem a descrição completa**, que fica no `.md` e em `{ID}_regras.md`. Bloco
-sem item → um único bullet "N/A".
+### Seção 7 — Referências Globais
+* Um bullet por GL referenciado: `GL_0X — Título — usado em CA_NN.`
+* Só o que a issue **referencia** (o conteúdo do GL vive no doc do Drive).
+* Nenhuma → um único bullet `N/A`.
 
-```
-Regras de Negócio (RN) criadas ou editadas nesta HU:
-• RN_0033 — Bloqueio de turma incompleta
+### Seção 8 — Protótipo
+* **Sempre vazia** — placeholder para o usuário colar as **prints das telas** do protótipo
+  (imagens), não links. O link vai na seção 9. Nunca transcrever links/notas aqui.
 
-Regras de Apresentação (RA) criadas ou editadas nesta HU:
-• RA_0016 — Ocultar botão Salvar após consolidação
+### Seção 9 — Complemento de Documentação
+* **Sempre vazia** — dois placeholders em negrito, fonte normal (não heading): `Documento de
+  Regras de Negócio:` e `Link do Protótipo de Telas Impactadas:`. O usuário preenche.
 
-Mensagens do Sistema (MSG) criadas ou editadas nesta HU:
-• N/A
-
-Regras existentes referenciadas (aplicáveis a esta HU, não alteradas):
-• RN_0015 — Vínculo turma-curso
-```
-
-> O script `generate_doc.py` já renderiza esse bloco: rótulo em **bold** + um bullet por
-> regra (ou `N/A`), lendo direto a seção 5 do `.md` consolidado.
-
-### Seção 6
-
-* **Deixar SEMPRE vazia** — apenas o heading, sem conteúdo. O usuário preencherá manualmente.
-
-### Seção 7
-
-* **Deixar com os seguintes placeholders em negrito, fonte normal (não heading):**
-  * `Documento de Regras de Negócio:`
-  * `Link do Protótipo de Telas Impactadas:`
-* Nenhum outro conteúdo.
+> **Não existe** seção "Descrição de Interface". O apêndice de discovery e o apêndice "Novas
+> Referências Globais — copiar para o Drive" **não vão** para o `.docx` (o script os corta).
 
 **Tom:** português formal, sem jargão de implementação, voz ativa.
 
@@ -158,7 +142,7 @@ Resumo do que o script aplica (para conferência visual):
 - **Tabela "2. História de Usuário":** 1 tabela por linha (Como/Quero/Para), bordas single, label 2220 / valor 8246 twips.
 - **CAs:** bullet ●, organizados em subseções (Heading), `CA01:` verde `38761d` bold, `Dado que/Quando/Então` bold cor `1b1c1d`.
 - **Bullets:** ● com recuo pendente (left 465 / hanging 360 twips).
-- **Seção 5:** rótulos das regras (RN/RA/MSG) vindos do `.md`. **Seção 6:** vazia. **Seção 7:** placeholders em bold.
+- **Seções 5/6/7:** texto completo de RN (SBVR), MSG e GL como bullets. **Apêndices** (discovery, GLs a copiar) cortados do `.docx`.
 
 O conteúdo (texto das seções) vem do `.md` consolidado; o script só aplica formatação.
 Mudou o template? Edite `generate_doc.py`, não este arquivo.

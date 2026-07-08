@@ -326,29 +326,6 @@ def setup_styles(doc):
         st.paragraph_format.line_spacing = 1.5
 
 
-RULE_RE = re.compile(r"^\*{0,2}(RN|RA|MSG)_", re.IGNORECASE)
-
-
-def rule_label(text):
-    """Bullet de regra (RN/RA/MSG) -> devolve só o rótulo (código + título), sem a
-    descrição. Não-regra -> None. O .docx leva apenas o rótulo; a descrição completa
-    fica no .md consolidado."""
-    t = text.strip()
-    if not RULE_RE.match(t):
-        return None
-    m = re.match(r"^\*\*(.+?)\*\*", t)          # rótulo em **negrito**
-    lbl = m.group(1) if m else t.split(":", 1)[0]
-    return f"**{lbl.strip().rstrip(':').strip()}**"
-
-
-def is_group_header(text):
-    """Cabecalho de grupo da Seção 5: linha toda em negrito terminando em ':'
-    (ex: '**Regras de Negócio (RN) ...:**', '**Regras existentes referenciadas...:**').
-    Distingue de descricao em prosa (que nao comeca com '**')."""
-    t = text.strip()
-    return t.startswith("**") and t.rstrip("*").rstrip().endswith(":")
-
-
 def build(md_path, out_path, label=None):
     tipo, metadata, sections = parse_md(Path(md_path).read_text(encoding="utf-8"))
     if label is None:
@@ -410,38 +387,13 @@ def build(md_path, out_path, label=None):
 
     # secoes
     for s in sections:
-        # apendice de discovery NAO vai para o .docx (fica so no .md consolidado)
+        # apendices (trilha de discovery, GLs a copiar pro Drive) NAO vao pro .docx
         if s["heading"].startswith("Apêndice"):
             continue
         doc.add_paragraph(s["heading"], style="Heading 1")
-        # secao de regras = tem regra (bullet/subtitulo RN_/RA_/MSG_) OU cabecalho de grupo "(RN)".
-        # Nela o .docx leva: cabecalhos de grupo (RN/RA/MSG) + rotulos das regras (+ "N/A" se houver);
-        # descricao, invariantes e notas ficam so no .md.
-        is_rules = any(
-            (bt in ("bullet", "subheading") and rule_label(pl))
-            or (bt == "paragraph" and is_group_header(pl))
-            for bt, pl in s["blocks"]
-        )
+        # Todas as secoes renderizam o conteudo completo do .md (autocontido): RN em SBVR,
+        # MSG com texto literal e GL como bullets sao bullets comuns; CA tem estilo proprio.
         for btype, payload in s["blocks"]:
-            if is_rules:
-                if btype == "subheading":
-                    lbl = rule_label(payload)
-                    if lbl:
-                        bullet_para(doc, lbl)  # regra escrita como ### RN_/RA_/MSG_ -> rotulo
-                    else:
-                        doc.add_paragraph(payload, style="Heading 2")  # subtitulo da secao
-                elif btype == "paragraph":
-                    if is_group_header(payload):
-                        body_para(doc, payload)  # cabecalho de grupo "(RN) criadas/editadas..."
-                    # demais paragrafos (descricao/notas) -> descartados
-                elif btype == "bullet":
-                    lbl = rule_label(payload)
-                    if lbl:
-                        bullet_para(doc, lbl)
-                    elif payload.strip().upper().replace(".", "").replace("/", "") == "NA":
-                        bullet_para(doc, payload.strip())  # "N/A" em grupo sem regras
-                    # demais bullets -> descartados
-                continue
             if btype == "paragraph":
                 body_para(doc, payload)
             elif btype == "subheading":
