@@ -28,7 +28,8 @@ Quatro fases. Cada fase = um comentário na issue + um bloco no arquivo de histo
 3. **Suposição é suposição.** Declarar explicitamente e confirmar antes de usar.
 4. **Sem resposta = em aberto.** Nunca preencher com chute. Registrar como "em aberto".
 5. **ICE/MoSCoW negociados.** Cada valor: propor + justificar → aguardar aprovação.
-6. **Uma fase de cada vez.** Nunca apresentar D1a e D1b juntos.
+6. **Uma fase de cada vez.** Nunca apresentar D1a e D1b juntos. No D2b, um sub-passo por vez (fluxo → campos → regras → edge cases → critérios → ICE) — não despejar tudo num rascunho só.
+7. **Investigar antes de escrever (D2).** Solução sai do sistema real (regras, HUs, dados), não de analogia. Toda regra proposta é marcada `[EXISTENTE]` / `[CONFIRMADO]` / `[SUPOSIÇÃO]`.
 
 ---
 
@@ -174,14 +175,45 @@ Após postar: perguntar se pode avançar para D2a.
 
 ## 4. Diamond 2 — Solução
 
+> **Princípio do D2: investigar antes de escrever.** O D1 tem ritual de leitura; o D2 também precisa. A solução sai do sistema real (regras, HUs, fluxo, dados) — não de analogia ou chute. Onde você inventaria um campo, uma validação ou uma regra, primeiro **ancore** ou **declare suposição**.
+
+### D2.0 — Ancoragem (obrigatória antes de propor solução)
+
+Não avance para D2a sem isto. É leitura + listagem; segue direto (sem postar).
+
+1. **Reler o sistema no escopo da demanda:**
+   - `docs/context_docs/md/Regras/` — regras de negócio existentes que tocam a área.
+   - `docs/context_docs/md/HUs/` — HUs do mesmo módulo (padrões de tela, fluxo, campos já usados).
+   - ONEPAGE.md e discoveries anteriores do módulo em `history/discoveries/`.
+2. **Montar a lista de incógnitas técnicas** — o que trava a solução e você não pode responder sozinho lendo docs:
+   - existe tabela/campo para isso? quais colunas?
+   - o valor é armazenado ou derivado (ex.: valor atual do contrato vem de aditivos)?
+   - há regra/validação já implementada que a solução precisa respeitar?
+3. **Apresentar a lista e PARAR.** Não consultar banco sozinha, não delegar sozinha:
+   > "Pra fechar a solução preciso confirmar: [lista de incógnitas]. Você resolve como preferir — responde aqui, consulta o banco (`db-query` / `@tech-lead`), ou seguimos marcando como **suposição declarada**. Como quer seguir?"
+4. O usuário decide o meio. Registrar cada resposta como `[CONFIRMADO: fonte]` ou, se ele mandar seguir, `[SUPOSIÇÃO: confirmar]`.
+
+**Salvar no history (append):**
+```markdown
+## D2.0 — YYYY-MM-DD (ancoragem)
+- Regras existentes lidas: [RN/arquivo — o que cobre]
+- HUs de referência: [NNN — padrão reutilizado]
+- Incógnitas técnicas: [pergunta → CONFIRMADO(fonte) / SUPOSIÇÃO]
+```
+
+Fallback: se o projeto não tem banco (`DB_ENABLED=false`), incógnita de dado vira `[SUPOSIÇÃO: confirmar com dev]` — não trava o fluxo.
+
+---
+
 ### D2a — Exploração (diverge)
 
-Sempre ao menos 2 soluções. Uma proposta única não é discovery.
+Explorar soluções **reais**, ancoradas no que a D2.0 revelou.
 
 1. Apresentar rascunho com alternativas. Não postar ainda.
-2. Discutir: preferências, restrições, refinamentos.
-3. Para demandas grandes: propor decomposição em HUs/HTs e perguntar como dividir.
-4. Postar só após o usuário indicar quais alternativas registrar.
+2. **Proibido espantalho.** Não invente uma "Solução B" fraca só para ter duas. Se há mais de um caminho viável, apresente com prós/contras honestos. Se só há um caminho real, **diga**: "Caminho único porque [X]" — e explique por que as alternativas óbvias não servem. Discovery honesto de uma opção > duas opções teatrais.
+3. Discutir: preferências, restrições, refinamentos.
+4. Para demandas grandes: propor decomposição em HUs/HTs e perguntar como dividir.
+5. Postar só após o usuário indicar quais alternativas registrar.
 
 **Comentário (rascunho → aprovação → postar):**
 ```markdown
@@ -194,6 +226,7 @@ Sempre ao menos 2 soluções. Uma proposta única não é discovery.
 
 **[Solução A]:** [o que é + como funciona em 3-5 linhas] | Prós: [...] | Contras: [...]
 **[Solução B]:** [idem]
+<!-- Se caminho único: uma linha só, "Caminho único porque X; alternativas Y/Z não servem porque..." -->
 ```
 
 ```bash
@@ -203,7 +236,7 @@ glab issue note create NNN -R ${GITLAB_REPO} -m "..."
 **Salvar no history (append):**
 ```markdown
 ## D2a — YYYY-MM-DD
-- Soluções: A=[nome] ✅ / B=[nome] ❌ [motivo]
+- Soluções: A=[nome] ✅ / B=[nome] ❌ [motivo]  (ou: caminho único — motivo)
 - Escolha: [nome] — [razão dada pelo usuário]
 - Decomposição: HU NNN.1 [escopo] / HT NNN.1 [escopo]
 ```
@@ -214,11 +247,20 @@ Avançar para D2b só com confirmação explícita da solução escolhida.
 
 ### D2b — Definição (converge)
 
-1. Apresentar rascunho: fluxo, campos, RN/RA, critérios → iterar até aprovação.
-2. Propor Facilidade → justificar → aguardar aprovação.
-3. Calcular ICE → apresentar quadrante → aguardar confirmação.
-4. Se MoSCoW mudou: explicar e confirmar.
-5. Apresentar Comentário 4 completo → aprovar → postar → atualizar issue.
+Iterativo, **um passo por vez** — não despeje fluxo + campos + regras + ICE num rascunho só. Aprovar cada passo antes do próximo:
+
+1. **Fluxo** → apresentar passo a passo (incluir edge cases) → aprovar.
+2. **Campos** → tabela por tela → aprovar.
+3. **Regras** → cada RN/RA marcada com a origem:
+   - `[EXISTENTE: RN-xx / arquivo]` — já está no sistema, você a leu na D2.0.
+   - `[CONFIRMADO: banco/dev]` — validado com dado real.
+   - `[SUPOSIÇÃO: confirmar]` — proposta nova ainda não validada; sinalizar para o usuário confirmar.
+   → aprovar.
+4. **Edge cases** → o que acontece nos limites (saldo estourado, vazio, concorrência) → aprovar.
+5. **Reabrir a lista "em aberto" do D1a** — item a item: respondido (com a resposta) ou adiado (com motivo). Nenhuma pendência do D1a pode ser fechada em silêncio.
+6. **Critérios de aceite** → aprovar.
+7. **Facilidade** → propor → justificar → aprovar. **ICE** → calcular → quadrante → confirmar. Se **MoSCoW** mudou: explicar e confirmar.
+8. Montar o Comentário 4 completo → aprovar → postar → atualizar issue.
 
 **Comentário (rascunho → aprovação → postar):**
 ```markdown
@@ -238,8 +280,11 @@ Avançar para D2b só com confirmação explícita da solução escolhida.
 | [campo] | [tipo] | S/N | [validação / default] |
 
 ### Regras
-- RN: [regra de domínio]
-- RA: [comportamento de UI]
+- RN: [regra de domínio] `[EXISTENTE: fonte]` / `[CONFIRMADO: banco]` / `[SUPOSIÇÃO: confirmar]`
+- RA: [comportamento de UI] `[origem]`
+
+### Pendências do D1a
+- [pergunta em aberto do D1a] → respondido: [resposta] / adiado: [motivo]
 
 ### Critérios de aceite
 - [ ] [dado X, quando Y, então Z]
@@ -269,6 +314,8 @@ glab issue update NNN -R ${GITLAB_REPO} -l "[labels com PRIORIDADE::QUADRANTE]"
 ```markdown
 ## D2b — YYYY-MM-DD
 - Solução: [nome]
+- Regras: [RN/RA — EXISTENTE(fonte) / CONFIRMADO(banco) / SUPOSIÇÃO]
+- Pendências D1a: [pergunta → respondida / adiada(motivo)]
 - ICE: I=[N] × C=[N] × F=[N] = [resultado] → [quadrante]
 - Negociação F: [proposto X → aprovado Y — motivo, se ajustou]
 - MoSCoW=[X] | I=[N] | C=[N] | F=[N] | ICE=[resultado] | Quadrante=[X]

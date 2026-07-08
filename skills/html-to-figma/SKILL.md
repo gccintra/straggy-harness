@@ -39,12 +39,13 @@ Ativar SEMPRE que a tarefa envolver:
 Antes de escrever uma linha de HTML, defina:
 
 1. **Leia `PROJECT_CONTEXT.md`** — identifique design system existente, paleta, tipografia, componentes já estabelecidos
-2. **Defina a hierarquia visual** seguindo os princípios da skill `frontend-design`:
+2. **Largura de referência desktop: `1280px` (fixa).** Todo frame/`.win` principal de tela desktop nova usa `width:1280px` — NÃO 1440, NÃO 1920. É a largura padrão do projeto.
+3. **Defina a hierarquia visual** seguindo os princípios da skill `frontend-design`:
    - Layout: qual estrutura (split, centered, grid, sidebar)?
    - Tipografia: escala clara (display, heading, body, caption)
    - Paleta: tokens de cor (primary, surface, text, border, etc.)
    - Espaçamento: sistema consistente (4px base grid)
-3. **Liste os componentes da tela** em ordem hierárquica (Atomic Design):
+4. **Liste os componentes da tela** em ordem hierárquica (Atomic Design):
    - Átomos: botões, inputs, labels, badges
    - Moléculas: form fields, cards, nav items
    - Organismos: header, form, sidebar, footer
@@ -183,6 +184,51 @@ Card:
 body { font-family: var(--font-sans); color: var(--color-text-primary); background: var(--color-bg); line-height: 1.5; -webkit-font-smoothing: antialiased; }
 ```
 
+**7. Ícones — lib fixa: Lucide. SEMPRE inline, NUNCA `<use>`/`<symbol>`**
+
+**Lib de ícones do projeto: [Lucide](https://lucide.dev)** (MIT). Todo ícone novo vem do Lucide — não misture sets. Pegue o SVG bruto do ícone e inline o markup completo.
+
+Padrão Lucide (manter atributos): `viewBox="0 0 24 24"`, `fill="none"`, `stroke="currentColor"`, `stroke-width="2"`, `stroke-linecap="round"`, `stroke-linejoin="round"`. A cor sai de `currentColor` — controle via `color` no CSS. Tamanho via `width`/`height` (ex: 20 ou 24).
+
+O `capture.js` do Figma NÃO resolve `<use href="#id"/>` nem `<symbol>` — o ícone sai vazio/sem forma no Figma. Inline o SVG completo em CADA uso, mesmo repetindo o markup.
+
+```html
+<!-- ERRADO — não renderiza no Figma -->
+<svg style="display:none"><symbol id="i-check" viewBox="0 0 24 24"><path d="..."/></symbol></svg>
+<svg><use href="#i-check"/></svg>
+
+<!-- CERTO — ícone Lucide inline, atributos preservados, repetido em cada ocorrência -->
+<!-- ex: "check" -->
+<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24"
+     fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M20 6 9 17l-5-5"/>
+</svg>
+```
+
+Onde achar o path: `lucide.dev/icons/<nome>` ou o pacote `lucide-static`. Nunca invente path — copie o oficial.
+
+**8. Saída limpa no Figma — HTML raso e semântico**
+
+O `capture.js` faz espelho 1:1 do DOM: **não achata nada**, e cada `<div>` de wrapper vira um frame "Container". Árvore poluída no Figma = HTML com wrappers demais. Para saída editável:
+
+- **Achatar wrappers** — no máximo 1 `<div>` de estilo por bloco. Wrapper que só existe pra CSS e não agrupa nada semântico → remover ou fundir. Menos aninhamento no HTML = árvore rasa no Figma.
+- **Tag semântica pro bloco** — use `<section>`, `<article>`, `<header>`, `<nav>`, `<footer>`, `<table>`, `<button>` em vez de `<div>` genérico. Melhora a divisão e o naming do node.
+- **Suprimir pseudo-elementos decorativos** — `::before`/`::after` viram nodes lixo. Marque o elemento com `data-h2d-suppress-before` / `data-h2d-suppress-after` para o motor pular esses nodes.
+
+```html
+<!-- POLUÍDO — 3 wrappers só de estilo, viram 3 "Container" aninhados -->
+<div class="wrap"><div class="inner"><div class="pad">
+  <span>50%</span>
+</div></div></div>
+
+<!-- LIMPO — 1 bloco semântico, pseudo decorativo suprimido -->
+<article class="card" data-h2d-suppress-before>
+  <span>50%</span>
+</article>
+```
+
+**Limite realista:** nome custom de node (ex: "Card de medição") NÃO é suportado pelo `capture.js` — não há atributo de naming. `<div>` tende a virar "Container". Se nomes cravados forem essenciais, renomeie em lote no Figma depois (plugin "Rename Layers") — não dá pra forçar na captura.
+
 ---
 
 ### Etapa 3 — Injetar o Script de Captura Figma
@@ -221,19 +267,32 @@ Se o projeto já possui um dev server (Vite, Next.js, etc.), usar o URL do proje
 
 ### Etapa 5 — Gerar o Capture ID e Inserir no Figma
 
+**REGRA: uma captura por frame de topo. NUNCA capturar a página inteira (`selector: body`) quando há mais de uma tela/frame/modal no mesmo arquivo.**
+
+Padrão comum aqui: várias `.win`/frames empilhados num único HTML pra preview local. Capturar `body` de uma vez cria UM único node no Figma com tudo aninhado dentro de um frame só. Em vez disso:
+
+1. Dê um `id` único a cada frame de topo: `id="frame-1"`, `id="frame-2"`, ...
+2. Faça UMA chamada de `generate_figma_design` por frame, com `figmaselector=%23frame-N` na URL de captura (`%23` = `#`). Cada uma vira um node separado no Figma.
+
+Se o HTML tem só uma tela, faça uma única captura (pode omitir o `figmaselector` ou apontar pro id da única `.win`).
+
+**Fluxo por frame** (repetir para cada `frame-N`):
+
 ```
 1. Chamar generate_figma_design com outputMode="existingFile" e fileKey=<fileKey>
    → Retorna um captureId
 
-2. Abrir a URL de captura no browser (macOS):
-   open "http://localhost:<port>/<screen>.html#figmacapture=<captureId>&figmaendpoint=https%3A%2F%2Fmcp.figma.com%2Fmcp%2Fcapture%2F<captureId>%2Fsubmit&figmadelay=1000"
+2. Abrir a URL de captura no browser (macOS), incluindo figmaselector do frame:
+   open "http://localhost:<port>/<screen>.html#figmacapture=<captureId>&figmaselector=%23frame-N&figmaendpoint=https%3A%2F%2Fmcp.figma.com%2Fmcp%2Fcapture%2F<captureId>%2Fsubmit&figmadelay=1000"
 
 3. Aguardar 5 segundos
 
 4. Iniciar polling: chamar generate_figma_design com captureId=<captureId> e fileKey=<fileKey>
    → Repetir a cada 5s até status="completed" (máximo 10 tentativas)
 
-5. Quando completed: retornar a URL do node criado no Figma
+5. Quando completed: guardar a URL do node criado
+
+6. Repetir 1–5 para o próximo frame. Ao final, retornar todas as URLs de node.
 ```
 
 ---
@@ -262,6 +321,12 @@ Antes de abrir o browser para captura, verificar:
 - [ ] Reset CSS aplicado
 - [ ] Script de captura Figma no `<head>`
 - [ ] Responsive (viewport meta tag presente)
+- [ ] Ícones do Lucide, inline (sem `<use>`/`<symbol>`)
+- [ ] Frame desktop principal em `width:1280px`
+- [ ] Multi-tela: cada frame de topo com `id` único (`frame-1`, `frame-2`, ...)
+- [ ] HTML raso: sem wrapper `<div>` redundante (máx 1 por bloco)
+- [ ] Blocos em tag semântica (`<section>`/`<article>`/`<header>`/...), não `<div>`
+- [ ] `::before`/`::after` decorativos suprimidos (`data-h2d-suppress-before/after`)
 
 ---
 

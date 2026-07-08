@@ -84,6 +84,12 @@ Use a skill `html-to-figma` como base técnica para criar o HTML. Aplique també
 
 **Use os tokens do design system** extraídos no passo anterior — não invente valores novos. Se um componente existe nos guidelines, copie sua estrutura exata.
 
+**Três regras fixas de captura HTML→Figma** (detalhe na skill `html-to-figma`):
+1. **Largura desktop = `1280px`** no frame/`.win` principal (não 1440, não 1920).
+2. **Ícones = Lucide, inline** — lib fixa do projeto. Nunca `<use href="#id"/>`/`<symbol>` (o `capture.js` não resolve, ícone sai vazio). Copie o SVG oficial do Lucide e repita o markup completo em cada uso.
+3. **Multi-tela = uma captura por frame** — dê `id="frame-1"`, `frame-2"`... a cada frame de topo e capture um por um com `figmaselector=%23frame-N`. Nunca capture `body` inteiro (vira um node só com tudo aninhado).
+4. **HTML raso e semântico pra saída limpa no Figma** — o `capture.js` espelha o DOM 1:1 e não achata. Sem wrapper `<div>` redundante (máx 1 por bloco), blocos em tag semântica (`<section>`/`<article>`/...), e `data-h2d-suppress-before/after` nos `::before`/`::after` decorativos. Nome custom de node não existe no capture.js — `<div>` vira "Container"; se precisar cravar nome, renomeie em lote no Figma depois.
+
 **Estrutura de layout típica do projeto** (adapte conforme o contexto real extraído dos guidelines):
 
 ```html
@@ -120,7 +126,13 @@ python3 -m http.server 4321 --directory <dir>
 
 Dê as URLs locais ao usuário e **PARE**. Itere no feedback editando o HTML — o server serve o update no refresh. Nenhuma chamada ao Figma acontece aqui.
 
-> Push pro Figma é escrita externa (write-gate do `AGENTS.md`): só avance para a Etapa 6 depois do usuário pedir explicitamente ("manda pro Figma"). Uma execução padrão termina aqui.
+> Push pro Figma é escrita externa (write-gate do `.agents/ENGAGEMENT.md`): só avance para a Etapa 6 depois do usuário pedir explicitamente ("manda pro Figma"). Uma execução padrão termina aqui.
+
+> **Dois destinos possíveis a partir do HTML aprovado — PERGUNTE qual quando não for explícito:**
+> - **Fluxo A** (Etapa 6, `html-to-figma`/capture.js) — preview rápido, árvore poluída, descartável. Bom pra só visualizar.
+> - **Fluxo B** (skill `design-promote --from-html`) — node limpo, nomeado, com tokens/componentes, editável na mão. É o **entregável**.
+>
+> Se o usuário só disse "manda pro Figma" (sem cravar A ou B), **não assuma** — pergunte com o trade-off curto. Só um usuário que conhece o harness distingue os dois; alguém novo precisa da escolha explícita. Frase clara ("preview rápido" → A; "versão limpa/editável" → B) roteia direto.
 
 ## 6. Inserir no Figma (SÓ sob pedido explícito)
 

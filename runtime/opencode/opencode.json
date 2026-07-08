@@ -1,6 +1,6 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["../AGENTS.md"],
+  "instructions": ["../.agents/ENGAGEMENT.md", "../AGENTS.md"],
   "default_agent": "product-manager",
   "permission": {
     "skill": {
