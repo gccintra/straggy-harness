@@ -33,9 +33,52 @@ Leia do ambiente:
 |---|---|---|
 | "setup do design system", "cria os guidelines", "configura o Figma", OU `FIGMA_GUIDELINES_NODE_ID` vazio | **Setup** | `design-setup` |
 | "cria a tela de X", "protótipo de X", "wireframe", "gera o design da #NNN", "componente X" | **Screen** | `design-screen` |
+| "promove", "limpa", "gera versão limpa", "transforma em componentes", "deixa editável na mão" uma tela/node | **Promote** | `design-promote` |
 | "implementa esse design", "traduz esse node do Figma pra código", forneceu URL/nodeId do Figma | — | `figma-implement-design` |
 
 > `html-to-figma` (motor de captura HTML→Figma) e `frontend-design` (qualidade visual/acessibilidade) **NÃO são gatilho direto** — são invocadas por `design-screen`/`design-setup` quando necessário. Não carregue-as você mesmo; carregue a skill de modo (`design-screen` ou `design-setup`) e ela puxa o motor.
+
+### Como pedir — comandos e frases canônicas
+
+Cada fluxo tem um comando (skill) e frases-gatilho fixas. Fale a frase canônica OU use o slash-command — ambos roteiam igual, sem ambiguidade.
+
+| Quero | Slash-command | Frase canônica | Fluxo |
+|-------|---------------|----------------|-------|
+| Configurar design system (1x) | `/design-setup` | "setup do design system" | — |
+| Criar tela + preview local | `/design-screen <tela ou #NNN>` | "cria a tela de X" / "design da #NNN" | gera HTML, PARA no preview |
+| Ver rápido no Figma (sujo) | (dentro do screen) | "manda pro Figma" | A (capture.js) |
+| Versão limpa / editável | `/design-promote --from-html <arquivo>` | "promove pro Figma limpo" / "versão limpa" | HTML→B |
+| Limpar node que editei na mão | `/design-promote --from-node <link/id>` | "limpa o node <link>" | A→B (lossy) |
+
+Regras de roteamento (duras):
+- **Pedido de subir pro Figma SEM fluxo explícito ("manda pro Figma", "sobe pro Figma", "joga no Figma") → PERGUNTE qual fluxo.** Nunca assuma A nem B. Outra pessoa usando o harness não conhece a distinção — sempre ofereça a escolha com o trade-off curto (ver abaixo).
+- Só roteia direto quando a frase **crava** o fluxo:
+  - "preview rápido", "só ver", "rascunho", "sujo mesmo" → **A** (capture.js).
+  - "promove", "limpo", "limpa", "versão limpa", "editável na mão", "vira componentes", "entregável" → **B**.
+- Frase cita link/nodeId do Figma como ORIGEM + intenção de limpar → **A→B** (`--from-node`).
+- Frase cita arquivo HTML ou tela recém-criada como origem → **HTML→B** (`--from-html`).
+- Ambíguo entre A→B e HTML→B → pergunte qual origem (o HTML aprovado é mais barato e fiel).
+
+**Pergunta padrão ao subir pro Figma sem fluxo explícito:**
+> "Como quer no Figma?
+> **A) Preview rápido** — mais barato, mas árvore poluída ('Container'), difícil editar. Bom pra só visualizar.
+> **B) Versão limpa** — nomes coerentes, Auto Layout, tokens/componentes, editável na mão. Mais cara, é o entregável.
+> (A→B: se quiser limpar um node que você já ajustou na mão no Figma, me passe o link.)"
+
+### Três fluxos HTML/Figma — A, HTML→B, A→B
+
+```
+                    ┌─ A: capture.js (html-to-figma) ─→ Figma sujo, rápido, descartável
+HTML (design-screen)┤
+                    └─ B: use_figma (design-promote --from-html) ─→ Figma LIMPO, entregável
+
+Figma sujo (A) ── design-promote --from-node ─→ B: use_figma ─→ Figma LIMPO (lossy, best-effort)
+```
+
+- **A** = preview rápido. Árvore "Container", sem naming. Iteração barata do dia a dia.
+- **B** = entregável limpo: nomes coerentes, Auto Layout, tokens vinculados, componentes reusados, editável na mão. On-demand, mais caro — roda 1x por tela final, não por iteração.
+- **A→B** só quando o usuário já ajustou o node na mão no Figma e esses ajustes não estão no HTML; caso contrário `--from-html` é melhor e mais barato.
+- B exige design system publicado (variáveis/componentes) pela `design-setup` Etapa 4b. Sem isso, degrada para nodes nomeados sem tokens/instâncias.
 
 ## REGRAS DURAS — ZERO EXCEÇÃO
 

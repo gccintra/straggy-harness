@@ -90,6 +90,12 @@ Liste os componentes recorrentes encontrados nas evidências:
 
 Use a skill `html-to-figma` para construir a página de guidelines como HTML estruturado e inserir no Figma.
 
+**Três regras fixas de captura** (herdam de `html-to-figma`):
+1. **Ícones = Lucide, inline** — lib fixa do projeto ([lucide.dev](https://lucide.dev)). Nunca `<use>`/`<symbol>` (ícone sai vazio no Figma); copie o SVG oficial e repita o markup em cada uso.
+2. **Largura desktop = `1280px`** nos exemplos de layout/padrões de tela.
+3. **Se a página de guidelines tiver múltiplos frames de topo**, dê `id="frame-N"` a cada um e capture um por um com `figmaselector=%23frame-N` — nunca capture `body` inteiro.
+4. **HTML raso e semântico** — o `capture.js` espelha o DOM 1:1 e não achata. Sem wrapper `<div>` redundante (máx 1 por bloco), blocos em tag semântica, e `data-h2d-suppress-before/after` nos pseudo-elementos decorativos. `<div>` vira "Container" no Figma; nome custom de node não é suportado.
+
 ### Estrutura da página de guidelines
 
 ```html
@@ -120,19 +126,60 @@ Use a skill `html-to-figma` para construir a página de guidelines como HTML est
 
 Aplique os princípios da skill `frontend-design` para garantir qualidade visual e acessibilidade.
 
+> A página de guidelines (captura HTML) serve o fluxo **A** (`design-screen` → `html-to-figma`) como referência visual. Para o fluxo **B** (`design-promote`, saída limpa) o design system precisa existir como **variáveis e componentes publicados** — não como captura. É o que a Etapa 4b faz.
+
+---
+
+## 4b. Publicar variáveis e componentes reais (fundação do fluxo B)
+
+O fluxo **B** (skill `design-promote`) monta telas limpas reusando **variáveis e componentes publicados** no Figma — não a captura HTML. Esta etapa publica esses ativos via `use_figma` e cacheia as keys para o promote não re-explorar o design system a cada tela (amortização do custo).
+
+Use a skill oficial `figma-generate-library` como base técnica para criar variáveis e componentes reais no Figma via `use_figma`.
+
+### 4b.1 Publicar variáveis (tokens)
+
+A partir dos tokens extraídos na Etapa 3, crie **variáveis Figma reais** (não swatches capturados):
+- Coleção de cor: cada token nomeado (`color/primary`, `color/surface`, `color/text-primary`, ...)
+- Coleção de espaçamento: `space/1`..`space/16` (grid base do projeto)
+- Coleção de radius: `radius/sm`..`radius/full`
+
+### 4b.2 Publicar componentes
+
+A partir dos componentes identificados na Etapa 3.4, crie **componentes Figma reais** com variantes, vinculando as variáveis acima (não hex/px hardcoded):
+- Button (variantes: primary, secondary, ghost, link, destructive)
+- Input (texto, select, date, search)
+- Table (cabeçalho, linha, paginação)
+- Badge/chip de status, Card, Modal, Stepper, Toast, itens de navegação
+- Largura de referência desktop: **1280px** (padrão do projeto)
+
+### 4b.3 Cachear as keys
+
+Salve o mapa de keys em arquivos json no repositório (o promote lê daqui, sem re-descobrir):
+
+```
+.agents/design-system/figma-variables-map.json   → { "color/primary": "<variableKey>", ... }
+.agents/design-system/figma-components-map.json   → { "Button": "<componentSetKey>", ... }
+```
+
+> Se por restrição de tempo só publicar variáveis nesta rodada, tudo bem: o promote ainda gera nodes nomeados + Auto Layout + tokens vinculados (só sem instância de componente). Publicar componentes depois é incremental — re-execute esta etapa.
+
 ---
 
 ## 5. Registrar no .env
 
-Após criar a página de guidelines no Figma, adicione ao `.env` do projeto:
+Após criar os guidelines e publicar variáveis/componentes, adicione ao `.env` do projeto:
 
 ```bash
 # Design System (Figma)
 FIGMA_FILE_KEY=<fileKey do arquivo>
 FIGMA_GUIDELINES_NODE_ID=<nodeId da página de guidelines criada>
+
+# Mapas de keys publicadas (fundação do fluxo B / design-promote)
+FIGMA_VARIABLES_MAP=.agents/design-system/figma-variables-map.json
+FIGMA_COMPONENTS_MAP=.agents/design-system/figma-components-map.json
 ```
 
-O `FIGMA_GUIDELINES_NODE_ID` é o que o `@product-designer` usará como referência ao criar novas telas — ele copia os componentes desta página em vez de criá-los do zero.
+O `FIGMA_GUIDELINES_NODE_ID` é a referência visual que o `@product-designer` usa no fluxo A. Os mapas `FIGMA_VARIABLES_MAP`/`FIGMA_COMPONENTS_MAP` são a fundação do fluxo B — se estiverem ausentes, `design-promote` degrada para nodes nomeados sem tokens/instâncias e avisa o usuário.
 
 ---
 
@@ -157,9 +204,15 @@ Agente: designer
 - Arquivo: ${FIGMA_FILE_KEY}
 - Página de guidelines: [URL do node]
 
+## Publicado para o fluxo B
+- Variáveis: [N variáveis] → figma-variables-map.json
+- Componentes: [N componentes] → figma-components-map.json (ou "não nesta rodada")
+
 ## .env atualizado
 - FIGMA_FILE_KEY
 - FIGMA_GUIDELINES_NODE_ID
+- FIGMA_VARIABLES_MAP
+- FIGMA_COMPONENTS_MAP
 ```
 
 ---
