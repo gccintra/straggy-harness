@@ -76,6 +76,33 @@ Se o guidelines node for grande, use `get_metadata` para mapear a estrutura e le
 
 ---
 
+## 3.5 Alinhar o protótipo EM TEXTO antes de construir (gate anti-desperdício)
+
+**Não escreva HTML direto.** Gerar HTML e jogar fora em iteração queima token. Primeiro **descreva o protótipo em texto/chat** e alinhe com o usuário. Só construa depois do "pode".
+
+Proponha em texto, curto:
+- **Layout** — estrutura (sidebar+main, centered, grid, stepper...) e largura (1280 desktop)
+- **Seções** — na ordem vertical (ex: topbar → filtros → tabela → paginação)
+- **Componentes por seção** — quais dos guidelines entram (tabela ordenável, modal, badges...)
+- **Estados a renderizar** — vazio, com dados, loading, erro
+- **Dados de exemplo** — o que preencher (nomes, valores plausíveis)
+
+Formato sugerido (bullets ou ASCII rápido, sem CSS):
+```
+Tela: Listagem de medições (1280, sidebar+main)
+1. Topbar: título + botão "Nova medição"
+2. Filtros: busca + select de status + range de data
+3. Tabela: colunas [Obra | Medição | % | Status | Ações], ordenável, 10/pág
+4. Paginação + contador
+Estados: com dados (5 linhas), vazio, loading
+```
+
+Espere o usuário confirmar/ajustar o texto. **Iterar aqui é quase de graça** — é onde a discussão de layout deve acontecer, não no HTML. Um "pode" ou ajustes → então vá pra Etapa 4.
+
+Se o pedido já vier detalhado (issue/HU com layout claro), resuma o protótipo em 3-4 linhas e confirme rápido em vez de perguntar do zero.
+
+---
+
 ## 4. Criar o HTML da tela
 
 Use a skill `html-to-figma` como base técnica para criar o HTML. Aplique também os princípios de qualidade da skill `frontend-design`.
