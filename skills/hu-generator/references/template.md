@@ -1,10 +1,12 @@
 # Template — História de Usuário
 
-Use este template para gerar cada HU. Substitua todos os campos entre `[colchetes]`.
+Estrutura de conteúdo da HU (9 seções + apêndices). O `.md` é a fonte de verdade e é
+**autocontido** — RN, MSG e GL levam o texto completo. Substitua os campos entre `[colchetes]`.
+Rigor de autoria (CA coeso, RN em SBVR, MSG, GL) em `doc-consolidator/references/regras.md`.
 
 ---
 
-## Cabeçalho (Capa)
+## Cabeçalho (Capa) — Metadados
 
 ```
 Cliente: [CLIENTE]
@@ -21,19 +23,20 @@ Data de Emissão: [DATA]
 ## Sumário
 
 ```
-Sumário
-1. Entendendo o Problema
+1. Problema
 2. História de Usuário
 3. Escopo
 4. Critérios de Aceitação
 5. Regras de Negócio
-6. Descrição de Interface
-7. Complemento de Documentação
+6. Mensagens
+7. Referências Globais
+8. Protótipo
+9. Complemento de Documentação
 ```
 
 ---
 
-## 1. Entendendo o Problema
+## 1. Problema
 
 **Persona**
 
@@ -41,7 +44,8 @@ Sumário
 
 **Cenário do Usuário (Dor)**
 
-[Descrição do problema atual em 2–4 frases. Descreva a dor real do usuário, sem mencionar a solução. Foque no impacto negativo no trabalho diário.]
+[2–4 frases. A dor real do usuário, sem mencionar a solução. Foco no impacto negativo no
+trabalho diário.]
 
 ---
 
@@ -57,55 +61,76 @@ Sumário
 
 ## 3. Escopo
 
-[1 parágrafo curto (~3 frases): o que a entrega cobre concretamente — funcionalidade, acesso e principais comportamentos, em resumo. Sem lista exaustiva nem repetir CAs/regras. Apenas o que está dentro do escopo. Use **bold** em 1–2 termos-chave.
-
-PROIBIDO enumerar campos, telas, fluxos, regras, validações ou qualquer detalhe já coberto nos CAs e seções 4, 5 e 6 — escopo é só o contorno, não a lista.]
+[1 parágrafo curto (~3 frases): o que a entrega cobre concretamente — funcionalidade, acesso e
+principais comportamentos, em resumo. Sem lista exaustiva nem repetir CAs/regras. Apenas o que
+está dentro do escopo. **bold** em 1–2 termos-chave.]
 
 ---
 
 ## 4. Critérios de Aceitação
 
-### 4.1. [Nome da Subseção 1]
+Cenário Dado/Quando/Então, **coesos** (agrupam o relacionado), comportamento de tela embutido,
+referenciando regras/mensagens/globais por código.
 
-- **CA01:** **Dado que** [contexto/pré-condição], **Quando** [ação do usuário ou evento], **Então** [resultado esperado do sistema].
-- **CA02:** **Dado que** [contexto/pré-condição], **Quando** [ação do usuário ou evento], **Então** [resultado esperado do sistema].
+### 4.1. [Nome da Subseção]
 
-### 4.2. [Nome da Subseção 2]
+- **CA01:** **Dado que** [contexto], **Quando** [ação], **Então** [resultado observável]. [RN_01]
+- **CA02:** **Dado que** [contexto], **Quando** [ação], **Então** [resultado]. [MSG_01] [RN_01]
 
-- **CA03:** **Dado que** [contexto/pré-condição], **Quando** [ação do usuário ou evento], **Então** [resultado esperado do sistema].
+### 4.2. [Nome da Subseção]
 
-### 4.3. [Nome da Subseção 3]
-
-- **CA04:** **Dado que** [contexto/pré-condição], **Quando** [ação do usuário ou evento], **Então** [resultado esperado do sistema].
-
-[Adapte os nomes das subseções ao contexto da HU. Distribua os CAs pelas subseções correspondentes.]
+- **CA03:** **Dado que** [contexto], **Quando** [ação], **Então** [resultado]. [GL_01]
 
 ---
 
-## 5. Regras 
+## 5. Regras de Negócio
 
-**Regras de Negócio (RN) criadas ou editadas nesta HU:**
+Formato SBVR, linguagem de negócio, numeração local à issue (reinicia em `01`). Texto completo,
+**sem título** (a frase SBVR já se descreve).
 
-- N/A
-
-**Regras de Apresentação (RA) criadas ou editadas nesta HU:**
-
-- N/A
-
-**Mensagens do Sistema (MSG) criadas ou editadas nesta HU:**
-
-- N/A
+- **RN_01** — [É necessário/proibido/obrigatório que… / … é calculado como…]
+- **RN_02** — [frase SBVR]
 
 ---
 
-## 6. Descrição de Interface
+## 6. Mensagens
 
-[VAZIO — preencher manualmente]
+Numeração local à issue. Tipo + texto literal.
+
+- **MSG_01** (Erro) — "[texto exato]"
+- **MSG_02** (Sucesso) — "[texto exato com <Placeholder> se dinâmico]"
 
 ---
 
-## 7. Complemento de Documentação
+## 7. Referências Globais
 
-**Documento de Regras de Negócio:**
+Só o que a issue referencia. O conteúdo do GL vive no doc do Drive (read-only). Nenhuma → `- N/A`.
 
-**Link do Protótipo de Telas Impactadas:**
+- **GL_01 — [Título]** — usado em CA03. (ver Referencias-Globais.md — Drive)
+
+---
+
+## 8. Protótipo
+
+Sempre vazia — placeholder para o usuário colar as **prints das telas** do protótipo (imagens),
+não links. O link vai na seção 9.
+
+[Vazio — inserir as prints das telas do protótipo manualmente.]
+
+---
+
+## 9. Complemento de Documentação
+
+Sempre vazia — só os dois placeholders, para o usuário preencher manualmente.
+
+**Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+
+**Link do Protótipo de Telas Impactadas:** [Vazio — preenchido manualmente pelo usuário.]
+
+---
+
+## Apêndices (não vão para o `.docx`)
+
+- `## Apêndice — Trilha de Discovery` — registro D1a→D2b + priorização.
+- `## Apêndice — Novas Referências Globais (copiar para o Drive)` — conteúdo de GLs novos a
+  promover manualmente no Drive, ou "Nenhuma."

@@ -76,6 +76,33 @@ Se o guidelines node for grande, use `get_metadata` para mapear a estrutura e le
 
 ---
 
+## 3.5 Alinhar o protótipo EM TEXTO antes de construir (gate anti-desperdício)
+
+**Não escreva HTML direto.** Gerar HTML e jogar fora em iteração queima token. Primeiro **descreva o protótipo em texto/chat** e alinhe com o usuário. Só construa depois do "pode".
+
+Proponha em texto, curto:
+- **Layout** — estrutura (sidebar+main, centered, grid, stepper...) e largura (1280 desktop)
+- **Seções** — na ordem vertical (ex: topbar → filtros → tabela → paginação)
+- **Componentes por seção** — quais dos guidelines entram (tabela ordenável, modal, badges...)
+- **Estados a renderizar** — vazio, com dados, loading, erro
+- **Dados de exemplo** — o que preencher (nomes, valores plausíveis)
+
+Formato sugerido (bullets ou ASCII rápido, sem CSS):
+```
+Tela: Listagem de medições (1280, sidebar+main)
+1. Topbar: título + botão "Nova medição"
+2. Filtros: busca + select de status + range de data
+3. Tabela: colunas [Obra | Medição | % | Status | Ações], ordenável, 10/pág
+4. Paginação + contador
+Estados: com dados (5 linhas), vazio, loading
+```
+
+Espere o usuário confirmar/ajustar o texto. **Iterar aqui é quase de graça** — é onde a discussão de layout deve acontecer, não no HTML. Um "pode" ou ajustes → então vá pra Etapa 4.
+
+Se o pedido já vier detalhado (issue/HU com layout claro), resuma o protótipo em 3-4 linhas e confirme rápido em vez de perguntar do zero.
+
+---
+
 ## 4. Criar o HTML da tela
 
 Use a skill `html-to-figma` como base técnica para criar o HTML. Aplique também os princípios de qualidade da skill `frontend-design`.
@@ -88,7 +115,10 @@ Use a skill `html-to-figma` como base técnica para criar o HTML. Aplique també
 1. **Largura desktop = `1280px`** no frame/`.win` principal (não 1440, não 1920).
 2. **Ícones = Lucide, inline** — lib fixa do projeto. Nunca `<use href="#id"/>`/`<symbol>` (o `capture.js` não resolve, ícone sai vazio). Copie o SVG oficial do Lucide e repita o markup completo em cada uso.
 3. **Multi-tela = uma captura por frame** — dê `id="frame-1"`, `frame-2"`... a cada frame de topo e capture um por um com `figmaselector=%23frame-N`. Nunca capture `body` inteiro (vira um node só com tudo aninhado).
-4. **HTML raso e semântico pra saída limpa no Figma** — o `capture.js` espelha o DOM 1:1 e não achata. Sem wrapper `<div>` redundante (máx 1 por bloco), blocos em tag semântica (`<section>`/`<article>`/...), e `data-h2d-suppress-before/after` nos `::before`/`::after` decorativos. Nome custom de node não existe no capture.js — `<div>` vira "Container"; se precisar cravar nome, renomeie em lote no Figma depois.
+4. **Nomear nodes + HTML raso pra saída limpa no Figma** (detalhe: `html-to-figma` regra 8, validado empiricamente):
+   - **`aria-label="Nome do Node"` em cada bloco → o node vira esse nome no Figma.** É o hook confiável (`title`/`data-*` NÃO funcionam). Use `<div aria-label>` pra nome limpo sem prefixo.
+   - Wrapper de topo com `aria-label` + `<title>` curto — controla o nome/sufixo do frame de topo.
+   - HTML raso: sem `<div>` de embrulho redundante; `data-h2d-suppress-before/after` nos `::before`/`::after` decorativos.
 
 **Estrutura de layout típica do projeto** (adapte conforme o contexto real extraído dos guidelines):
 

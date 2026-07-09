@@ -17,7 +17,12 @@ description: >
 
 Quatro fases. Cada fase = um comentário na issue + um bloco no arquivo de history. A descrição da issue nunca é alterada, exceto o bloco `PRIORIZACAO`.
 
-**Fronteira:** só discute e documenta. Não gera .docx, RN/RA/MSG numeradas, nem novas issues.
+**Fronteira:** só discute e documenta, em **material descritivo/bruto**. Não gera .docx, não
+numera RN/MSG/GL nem espelha o formato final do `.md` (CA coeso, RN em SBVR, seções numeradas
+— isso é do `doc-consolidator`), nem cria novas issues. O discovery é rico e narrativo; o
+consolidator é quem estrutura. Cada regra/comportamento capturado ganha um **marcador de
+destino** (`[→CA]` / `[→RN]` / `[→MSG]` / `[→GL candidato]`) para alimentar o consolidator sem
+duplicar o trabalho dele.
 
 ---
 
@@ -184,6 +189,11 @@ Não avance para D2a sem isto. É leitura + listagem; segue direto (sem postar).
 1. **Reler o sistema no escopo da demanda:**
    - `docs/context_docs/md/Regras/` — regras de negócio existentes que tocam a área.
    - `docs/context_docs/md/HUs/` — HUs do mesmo módulo (padrões de tela, fluxo, campos já usados).
+   - `docs/context_docs/md/Referencias-Globais.md` — catálogo de globais (GL), **se existir**. Se
+     a demanda mexe em numeração sequencial, histórico de ações, valor atual do contrato,
+     status/estados, papéis ou catálogos → marque `[→GL candidato]`. Já existe no catálogo →
+     aponte o GL (reúso). Não existe (ou catálogo ausente) → segue como candidato; o consolidator
+     decide promoção depois, com prova. Só não trate o conceito como novidade exclusiva da issue.
    - ONEPAGE.md e discoveries anteriores do módulo em `history/discoveries/`.
 2. **Montar a lista de incógnitas técnicas** — o que trava a solução e você não pode responder sozinho lendo docs:
    - existe tabela/campo para isso? quais colunas?
@@ -251,10 +261,16 @@ Iterativo, **um passo por vez** — não despeje fluxo + campos + regras + ICE n
 
 1. **Fluxo** → apresentar passo a passo (incluir edge cases) → aprovar.
 2. **Campos** → tabela por tela → aprovar.
-3. **Regras** → cada RN/RA marcada com a origem:
-   - `[EXISTENTE: RN-xx / arquivo]` — já está no sistema, você a leu na D2.0.
-   - `[CONFIRMADO: banco/dev]` — validado com dado real.
-   - `[SUPOSIÇÃO: confirmar]` — proposta nova ainda não validada; sinalizar para o usuário confirmar.
+3. **Regras e comportamentos** → capture o material **bruto e descritivo**, em linguagem de
+   negócio. **Não** numere como RN/CA final nem force o formato do `.md` — isso é do
+   `doc-consolidator`. Seja mais detalhado aqui do que no `.md` (contexto, porquês, edge cases),
+   para o consolidator ter matéria-prima sem redundância. Marque cada item com **origem** e
+   **destino**:
+   - **Origem:** `[EXISTENTE: RN-xx / arquivo]` (já lida na D2.0) / `[CONFIRMADO: banco/dev]`
+     (validado) / `[SUPOSIÇÃO: confirmar]` (proposta nova).
+   - **Destino:** `[→CA]` comportamento de tela/fluxo (habilita botão, campo dinâmico, recálculo)
+     · `[→RN]` fórmula/política/invariante · `[→MSG]` texto de feedback · `[→GL candidato]`
+     dado/estado/fluxo compartilhado por 2+ issues (status, numeração, histórico).
    → aprovar.
 4. **Edge cases** → o que acontece nos limites (saldo estourado, vazio, concorrência) → aprovar.
 5. **Reabrir a lista "em aberto" do D1a** — item a item: respondido (com a resposta) ou adiado (com motivo). Nenhuma pendência do D1a pode ser fechada em silêncio.
@@ -279,9 +295,9 @@ Iterativo, **um passo por vez** — não despeje fluxo + campos + regras + ICE n
 |-------|------|-------------|------------|
 | [campo] | [tipo] | S/N | [validação / default] |
 
-### Regras
-- RN: [regra de domínio] `[EXISTENTE: fonte]` / `[CONFIRMADO: banco]` / `[SUPOSIÇÃO: confirmar]`
-- RA: [comportamento de UI] `[origem]`
+### Regras e comportamentos
+<!-- Material bruto/descritivo. Cada item: origem + destino. O consolidator estrutura em CA/RN/MSG/GL. -->
+- [descrição em linguagem de negócio, com contexto/porquê] — origem `[EXISTENTE/CONFIRMADO/SUPOSIÇÃO]` · destino `[→CA]`/`[→RN]`/`[→MSG]`/`[→GL candidato]`
 
 ### Pendências do D1a
 - [pergunta em aberto do D1a] → respondido: [resposta] / adiado: [motivo]
@@ -314,7 +330,7 @@ glab issue update NNN -R ${GITLAB_REPO} -l "[labels com PRIORIDADE::QUADRANTE]"
 ```markdown
 ## D2b — YYYY-MM-DD
 - Solução: [nome]
-- Regras: [RN/RA — EXISTENTE(fonte) / CONFIRMADO(banco) / SUPOSIÇÃO]
+- Regras/comportamentos: [descrição — origem EXISTENTE(fonte)/CONFIRMADO(banco)/SUPOSIÇÃO · destino →CA/→RN/→MSG/→GL candidato]
 - Pendências D1a: [pergunta → respondida / adiada(motivo)]
 - ICE: I=[N] × C=[N] × F=[N] = [resultado] → [quadrante]
 - Negociação F: [proposto X → aprovado Y — motivo, se ajustou]
@@ -324,7 +340,7 @@ glab issue update NNN -R ${GITLAB_REPO} -l "[labels com PRIORIDADE::QUADRANTE]"
 
 ---
 Status: completo ✓
-Próximos passos: `documenter` — "cria as regras da #NNN" (só regras) ou "gera o docx da #NNN" (regras + .docx)
+Próximos passos: `doc-consolidator` — "documenta a #NNN" (gera o `.md` autocontido com CA/RN/MSG/GL); depois, só sob pedido explícito, `hu-generator` gera o `.docx`
 ```
 
 Se sessão encerrar sem D2b completo, adicionar ao final do history:

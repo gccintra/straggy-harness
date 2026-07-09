@@ -1,14 +1,14 @@
 ---
 name: doc-consolidator
 description: >
-  Gera o documento .md consolidado de uma issue, fonte de verdade que reúne discovery
-  D1a→D2b, regras RN/RA/MSG por rótulo e o padrão de `project-config.md`. Use para pedidos
-  genéricos como "documenta a #NNN", "gera a documentação", "consolida", "gera o md",
-  "monta o documento base" ou "centraliza discovery e regras". Gera somente o `.md` em
-  `outputs/{ID}_{NomeCurto}/` e PARA para revisão humana. Nunca segue para `.docx`, que é um
-  passo separado com `hu-generator` ou `ht-generator`, somente após revisão e pedido explícito.
-  O `.md` espelha as seções HU/HT, contém os rótulos das regras e o apêndice de discovery; as
-  descrições completas permanecem em `{ID}_regras.md`.
+  Gera o documento .md consolidado de uma issue, fonte de verdade única que reúne a descrição
+  da funcionalidade + Critérios de Aceitação coesos + Regras de Negócio (SBVR) + Mensagens +
+  Referências Globais + trilha de discovery. Use para pedidos genéricos como "documenta a #NNN",
+  "gera a documentação", "consolida", "gera o md", "monta o documento base", "cria as regras da
+  #NNN" ou "centraliza discovery e regras". Escreve as regras direto no .md (não há mais arquivo
+  de regras separado nem skill gerar-regras). Gera somente o `.md` em `outputs/{ID}_{NomeCurto}/`
+  e PARA para revisão humana. Nunca segue para `.docx`, que é passo separado com `hu-generator`
+  ou `ht-generator`, só após revisão e pedido explícito.
 ---
 
 # Doc Consolidado (.md)
@@ -17,13 +17,19 @@ description: >
 > caminhos) vêm de **`project-config.md`**. Campo em branco lá → use o placeholder
 > indicado (`[ASSIM]`) no `.md` gerado.
 
-Gera o **documento de verdade** de uma issue: um único `.md` que centraliza descrição completa
-da funcionalidade + regras (só rótulo/título) + trilha de discovery. É a **base** do `.docx`.
-A descrição completa de cada regra mora só em `{ID}_regras.md`.
+Gera o **documento de verdade** de uma issue: um único `.md` **autocontido** que centraliza a
+descrição da funcionalidade + Critérios de Aceitação + Regras de Negócio + Mensagens +
+Referências Globais + trilha de discovery. É a **base** do `.docx`.
+
+**Não existe mais** `{ID}_regras.md` separado nem a skill `gerar-regras`: as regras (RN),
+mensagens (MSG) e referências globais (GL) são escritas **direto nas seções 5, 6 e 7 deste `.md`**,
+com numeração **local por issue** (RN/MSG) ou **referência ao doc do Drive** (GL). Consulte o
+rigor de classificação em **`references/regras.md`**.
 
 **Divisão de trabalho (motivo desta skill existir):**
-- **Modelo pesado** → escreve este `.md` (pensa o conteúdo, consolida discovery + regras).
-- **Modelo leve** → roda `hu-generator`/`ht-generator`, que só **transcreve** este `.md` para `.docx` (trabalho mecânico de formatação/script).
+- **Modelo pesado** → escreve este `.md` (pensa o conteúdo: CA coeso, RN em SBVR, MSG, GL).
+- **Modelo leve** → roda `hu-generator`/`ht-generator`, que só **transcreve** este `.md` para
+  `.docx` (trabalho mecânico de formatação/script).
 
 **SEMPRE gere `.md`. Nunca `.docx` aqui.**
 
@@ -43,16 +49,17 @@ glab api "projects/${GITLAB_REPO//\//%2F}/issues/NNN/notes" --paginate \
 ```
 
 Também ler, se existirem:
-- `history/discoveries/*issue-NNN*` — registro consolidado do discovery
-- `outputs/{ID}_*/{ID}_regras.md` — regras já formalizadas (RN/RA/MSG) na pasta da issue
-- `docs/context_docs/` — ONEPAGE, metadados de projeto/cliente/OS
+- `history/discoveries/*issue-NNN*` — registro consolidado do discovery (material bruto,
+  com marcadores `[→CA]` / `[→RN]` / `[→MSG]` / `[→GL candidato]`).
+- `docs/context_docs/md/Referencias-Globais.md` — doc de Referências Globais (Drive, read-only).
+- `docs/context_docs/` — ONEPAGE, metadados de projeto/cliente/OS.
 
 **Se não houver D2b** (nem na issue, nem em `history/discoveries/`): pare e avise
 "Discovery não concluído até D2b — não há material para consolidar. Rode o discovery primeiro."
 
 ### Passo 2 — Determinar HU ou HT
 
-- Tem persona / usuário final impactado por uma tela ou ação → **HU** (7 seções).
+- Tem persona / usuário final impactado por uma tela ou ação → **HU** (9 seções).
 - Demanda técnica, sem persona (infra, refactor, migração, débito) → **HT** (6 seções).
 - Em dúvida, pergunte ao usuário.
 
@@ -70,112 +77,129 @@ Leia os valores em `project-config.md`. **Campo em branco no config → use o pl
 | Responsável | project-config → Responsável padrão | `[RESPONSÁVEL]` |
 | Data de Emissão | hoje | data de hoje |
 
-### Passo 4 — Consolidar as regras (só rótulo/título na Seção 5)
+### Passo 4a — Ler o catálogo global (só para REUSAR)
 
-Na Seção 5 do `.md` entra **só o rótulo** de cada regra (`RN_XXXX — Título curto`), igual ao `.docx`.
-A descrição completa (invariantes, consequências, texto integral) fica **exclusivamente** em
-`{ID}_regras.md` — não repita a descrição na Seção 5.
+Antes de escrever, leia o doc de Referências Globais **uma vez**, com um único objetivo:
+**ver se já existe um GL que dá para reutilizar** nesta issue. Nada de decidir promoção aqui.
 
-1. Se já houver `outputs/{ID}_*/{ID}_regras.md`, use-o como fonte das regras.
-2. Se não houver, **carregue a skill `gerar-regras`** e proponha as regras a partir do D2b,
-   itere com o usuário, e **salve** em `outputs/{ID}_{NomeCurto}/{ID}_regras.md` antes de fechar o `.md`.
-3. Numeração oficial = última de `docs/context_docs/md/Regras/` + 1 (md/Regras, sincronizado do Drive, é a fonte da verdade).
-4. **Regras existentes referenciadas (obrigatório):** leia o documento de regras `docs/context_docs/md/Regras/`
-   e identifique as RN/RA/MSG **já existentes** que se aplicam à demanda (mesmo módulo/fluxo), mas que
-   **não** estão sendo criadas/editadas nesta HU. Liste-as no 4º bloco da Seção 5 ("Regras existentes
-   referenciadas"), só o rótulo (`- **RN_XXXX — Título curto**`), sem explicação de como se aplica.
-   Objetivo: rastreabilidade — o leitor vê quais regras governam a demanda sem reescrevê-las. Nenhuma
-   aplicável → bullet `- N/A`.
+- Doc: `docs/context_docs/md/Referencias-Globais.md` — **read-only** (sincronizado do Drive;
+  escrever lá perde no sync).
+- **Se existir e um conceito da issue já é um GL de lá** → nas seções 4/7 referencie `[GL_0X]`
+  em vez de escrever regra local.
+- **Se o arquivo NÃO existir** → catálogo global **vazio**. Não há GL a reusar; **tudo nasce
+  local**. **Proibido** usar qualquer exemplo de `outputs/` (ex.: `EXEMPLO_referencias-globais.md`)
+  como se fosse catálogo — exemplo não é fonte de verdade.
 
-Ver o **Contrato de formato do `.md`** abaixo — o gerador do `.docx` depende dele.
+### Passo 4b — Escrever CA, Regras, Mensagens (seções 4, 5, 6) — tudo LOCAL
+
+Este é o trabalho de conteúdo. Siga **`references/regras.md`** à risca. **Escreva todas as regras
+como LOCAIS (RN/MSG)**, exceto as que reusam um GL existente do Passo 4a. A decisão de *promover*
+uma local a global é uma fase **posterior** (Passo 5) — não misture aqui.
+
+- **Seção 4 — Critérios de Aceitação:** cenário Dado/Quando/Então, **coesos** (agrupam o
+  relacionado, separam o não-relacionado), comportamento de tela embutido, referenciando
+  `[RN_0X]` / `[MSG_0X]` / `[GL_0X]` por número. Nunca escreva a mensagem ou a fórmula dentro do
+  CA — só o código.
+- **Seção 5 — Regras de Negócio:** só o que carrega fórmula/política/invariante que o CA não
+  tem. Formato **SBVR** (*É necessário/proibido/obrigatório que… / é calculado como*),
+  linguagem de negócio (entidade+atributo, nunca "campo/botão/tela"). Numeração **local**
+  `RN_01…RN_N`, reinicia por issue. Texto completo mora aqui.
+- **Seção 6 — Mensagens:** seção própria, numeração **local** `MSG_01…MSG_N`, tipo + texto
+  literal. Nunca inline no CA.
+- **Não há mais RA.** Comportamento de tela virou CA. Não existe seção "Descrição de
+  Interface" nem "Complemento de Documentação".
+
+### Passo 5 — Revisão de promoção a GL (só DEPOIS do doc completo)
+
+Com o documento já escrito com regras locais, **releia as RNs** e pergunte, uma a uma: esta
+regra merece virar global? Aqui vale o critério de **prova**, não de suposição:
+
+- **Promove** só com **2+ consumidores REAIS** — issues de fato documentadas que usam o mesmo
+  conceito — **ou** por ser enum/fluxo/status estrutural do sistema. Exemplo fictício ou de
+  demonstração **não conta como prova**.
+- **1º consumidor real** (a issue atual é a primeira que usa o conceito) → **fica LOCAL** e você
+  **marca "candidato a GL"** numa nota — não promove sozinho o primeiro. Promove quando o 2º
+  consumidor real aparecer.
+- **Promoveu (tem prova)** → **não escreva o doc do Drive**. Em vez disso:
+  - referencie `[GL_0X]` (número = última do doc + 1, sugerido) nas seções 4/7;
+  - traga o **conteúdo completo** do GL no apêndice **"Novas Referências Globais — copiar para o
+    Drive"** (o `.docx` ignora esse apêndice; você cola no Drive depois).
+
+Regra nova **nasce local**; promoção é revisão pós-escrita, com prova real. Não globalizar por
+suposição nem com base em exemplo.
 
 ---
 
 ## ⚠️ Contrato de formato do `.md` — OBRIGATÓRIO (o gerador do `.docx` depende disto)
 
-O `generate_doc.py` faz parsing **por padrão de linha**. Se a autoria fugir destes formatos, o `.docx`
-sai errado (perde blocos, vaza conteúdo ou ignora a seção). Siga **exatamente**:
+O `generate_doc.py` faz parsing **por padrão de linha**. Se a autoria fugir destes formatos, o
+`.docx` sai errado. Siga **exatamente**:
 
 | Bloco | Formato EXATO | Erro comum (não faça) |
 |---|---|---|
-| **Frontmatter** | 1ª linha `---`, com `tipo: HU` ou `tipo: HT`, fecha com `---` | Omitir `tipo:` → header do `.docx` sai com rótulo errado |
+| **Frontmatter** | 1ª linha `---`, com `tipo: HU` ou `tipo: HT`, fecha com `---` | Omitir `tipo:` → header do `.docx` com rótulo errado |
 | **Metadados** | `## Metadados` e abaixo `- **Campo:** valor` (rótulo em negrito + `:`) | `Campo: valor` sem `- **…:**` → linha ignorada |
-| **Cabeçalho de seção** | `## N. Título` (número + ponto) ou `## Apêndice — …` | `## Regras` (sem número) → **seção não é reconhecida**, conteúdo gruda na seção anterior |
+| **Cabeçalho de seção** | `## N. Título` (número + ponto) ou `## Apêndice — …` | `## Regras` (sem número) → seção não reconhecida |
 | **Subseção** | `### Título` | — |
 | **Tabela 2 colunas** | `\| **Rótulo** \| valor \|` (1ª célula em negrito) | célula sem `**…**` → linha não vira tabela |
-| **Critério de aceite** | `- **CANN:** texto` (colado: `CA` + número + `:` dentro do negrito) | `- **CA 01 -**` / `- CA01:` → perde o estilo de CA |
-| **Regra (RN/RA/MSG)** | `- **CODE — Título**` (só rótulo, sem descrição) | ver bloco abaixo |
+| **Critério de aceite** | `- **CANN:** **Dado que** … **Quando** … **Então** … [RN_0X] [MSG_0X]` | `- **CA 01 -**` / `- CA01:` → perde o estilo de CA |
+| **Regra de Negócio** | `- **RN_0X** — <frase SBVR>` (sem título; texto completo) | escrever título repetindo a frase |
+| **Mensagem** | `- **MSG_0X** (Tipo) — "texto"` | — |
+| **Ref. Global** | `- **GL_0X — Título** — usado em CA_NN.` | — |
 | **Bullet comum** | `- texto` | — |
 | **Parágrafo** | linha normal (não começa com `#`, `\|`, `-`) | — |
 
-### Seção 5 (Regras) — o ponto mais sensível
+**Referências nos CAs** (`[RN_01]`, `[MSG_02]`, `[GL_03]`): texto normal, entre colchetes, **sem
+crase**, no fim da linha do CA. O gerador as renderiza como texto literal.
 
-Aqui entra **só o rótulo** de cada regra — sem descrição, sem invariantes, sem consequências. A
-descrição completa mora em `{ID}_regras.md`; a Seção 5 é um **índice**. Os **4 cabeçalhos de grupo
-são fixos** (texto exato) e cada regra é **um único bullet**:
-
-```
-**Regras de Negócio (RN) criadas ou editadas nesta HU:**
-- **RN_XXXX — Título curto**
-- **RN_YYYY — Outro título**
-
-**Regras de Apresentação (RA) criadas ou editadas nesta HU:**
-- N/A
-
-**Mensagens do Sistema (MSG) criadas ou editadas nesta HU:**
-- **MSG_XX — Título curto**
-
-**Regras existentes referenciadas (aplicáveis a esta HU, não alteradas):**
-- **RN_ZZZZ — Título curto**
-```
-
-- ✅ Os **4 cabeçalhos** aparecem SEMPRE, com o texto exato: `**Regras de Negócio (RN) criadas ou editadas nesta HU:**`, `**Regras de Apresentação (RA) criadas ou editadas nesta HU:**`, `**Mensagens do Sistema (MSG) criadas ou editadas nesta HU:**`, `**Regras existentes referenciadas (aplicáveis a esta HU, não alteradas):**`. Em negrito, nunca `###`.
-- ✅ O 4º bloco vem das regras já existentes em `docs/context_docs/md/Regras/` que se aplicam à demanda (ver Passo 4.4) — referência, não recriação.
-- ✅ Cada regra = **um bullet** `- **CODE — Título**` (CODE = `RN_`/`RA_`/`MSG_`); rótulo inteiro em `**negrito**`, sem `:` nem texto depois.
-- ✅ Grupo sem item → um único bullet `- N/A` (mantém a divisão).
-- 🚫 **NUNCA** regra como subtítulo `### RN_XXXX …`.
-- 🚫 **NUNCA** incluir descrição, invariantes ou consequências após o rótulo — nem inline, nem em sub-bullet, nem em parágrafo abaixo. Só o rótulo.
+**Apêndices** (`## Apêndice — …`, incluindo "Novas Referências Globais — copiar para o Drive")
+são cortados do `.docx` automaticamente.
 
 ### Auto-checagem antes de salvar o `.md`
 
 1. Toda seção numerada é `## N. …`? (nenhuma `## Título` sem número)
 2. Metadados em `- **Campo:** valor`?
-3. CAs em `- **CANN:** …`?
-4. Seção 5: nenhuma linha `### RN_/RA_/MSG_`, toda citação de código começa com `- **` e termina no rótulo (sem `:` nem descrição depois)?
-5. Apêndice de discovery presente como `## Apêndice — …` (o gerador o exclui do `.docx` sozinho)?
+3. CAs em `- **CANN:** **Dado que** … **Quando** … **Então** …`, **coesos** (agrupam o relacionado, separam o não-relacionado)?
+4. Nenhuma mensagem/fórmula escrita dentro de um CA — só `[RN_0X]`/`[MSG_0X]`/`[GL_0X]`?
+5. RN em SBVR, sem vocabulário de tela (`campo/botão/tela/exibir/tempo real`)?
+6. RN e MSG com numeração local reiniciando em `01`?
+7. Apêndices como `## Apêndice — …`?
+8. **Todo o texto em PT-BR acentuado** (acentos + ç), sem ASCII chapado ("Medicao"→"Medição", "e necessario"→"é necessário")? Ver ENGAGEMENT §7.
 
 Se algo falhar, **reescreva no formato** antes de fechar o `.md`.
 
-### Passo 5 — Escrever o `.md`
+### Passo 6 — Escrever o `.md`
 
-Salvar em `outputs/{ID}_{NomeCurto}/{HU|HT}{ID}_{TOKEN}_{NomeCurto}.md` (TOKEN = `Token de arquivo` do project-config; mesma pasta da issue onde ficam `{ID}_regras.md` e o `.docx`).
-Estrutura exata na Seção 2 (HU) ou Seção 3 (HT).
+Salvar em `outputs/{ID}_{NomeCurto}/{HU|HT}{ID}_{TOKEN}_{NomeCurto}.md` (TOKEN = `Token de
+arquivo` do project-config). Estrutura exata na Seção 2 (HU) ou Seção 3 (HT).
 
-### Passo 6 — Apresentar e confirmar
+### Passo 7 — Apresentar e confirmar
 
-Resumir ao usuário: seções preenchidas, nº de regras, caminho do arquivo. Só então o `.md` está
-pronto para virar `.docx` (modelo leve).
+Resumir ao usuário: seções preenchidas, nº de RN/MSG, GLs referenciados/promovidos, caminho do
+arquivo. Se houve GL novo, avise que o apêndice "Novas Referências Globais" precisa ser colado no
+Drive. Só então o `.md` está pronto para virar `.docx` (modelo leve).
 
 ---
 
 ## Princípio editorial da HU — foco no PROBLEMA, não na solução
 
-A HU descreve **o problema, a necessidade e o valor** — não a implementação. As HUs estão saindo
-longas e centradas na solução; corrija isso na origem:
+A HU descreve **o problema, a necessidade e o valor** — não a implementação:
 
-- **Seções 1–3** (Entendendo o Problema, História de Usuário, Escopo) falam do **porquê** e do **o quê**
-  na ótica do usuário. **Nunca** prescrevem o **como** (telas, campos, fluxos, lógica, passos, tecnologia).
-- O **como** mora nos **Critérios de Aceite** (comportamento verificável), nas **Regras** (lógica) e no
-  **protótipo** (visual). Não antecipe nada disso nas seções de problema.
-- **Enxuto:** seções 1–3 são curtas (poucas frases cada). Prosa longa descrevendo a solução = sinal de
-  erro → corte e mova o conteúdo para CA/regra, ou deixe para o protótipo.
+- **Seções 1–3** (Problema, História, Escopo) falam do **porquê** e do **o quê** na ótica do
+  usuário. **Nunca** prescrevem o **como** (telas, campos, fluxos, lógica, passos, tecnologia).
+- O **como** mora nos **Critérios de Aceitação** (comportamento verificável), nas **Regras**
+  (lógica) e no **protótipo** (visual).
+- **Enxuto:** seções 1–3 curtas (poucas frases cada). Prosa longa descrevendo solução = erro →
+  mova para CA/regra ou protótipo.
 
-- ✅ Problema (seção 1): *"o gestor não tem como saber se um cronograma ficou inconsistente após uma alteração, e hoje revisa tudo manualmente."*
-- ❌ Solução vazando na descrição: *"adicionar um ícone ⚠ no cabeçalho que ao clicar abre um modal listando os aditivos afetados com…"* → isso é CA/protótipo, não vai na seção de problema.
+- ✅ Problema: *"o gestor não sabe se um cronograma ficou inconsistente após uma alteração, e
+  hoje revisa tudo manualmente."*
+- ❌ Solução vazando: *"adicionar um ícone ⚠ que ao clicar abre um modal listando os aditivos…"*
+  → isso é CA/protótipo.
 
-Regra prática: se um parágrafo das seções 1–3 responde "como o sistema faz", ele está no lugar errado.
+---
 
-## 2. Estrutura do `.md` — HU (7 seções + apêndice)
+## 2. Estrutura do `.md` — HU (9 seções + apêndices)
 
 ````markdown
 ---
@@ -197,7 +221,7 @@ data: YYYY-MM-DD
 - **Responsável:** [RESPONSÁVEL]
 - **Data de Emissão:** DD/MM/AAAA
 
-## 1. Entendendo o Problema
+## 1. Problema
 
 **Persona:** [perfil exato, ex: Engenheiro (GEENG)]
 
@@ -213,43 +237,47 @@ data: YYYY-MM-DD
 
 ## 3. Escopo
 
-[1 parágrafo curto (~3 frases), nível RESUMO concreto (ver exemplos). Descreva o que a entrega cobre: a funcionalidade, o ponto de acesso e os principais comportamentos/blocos. Pode citar os componentes principais de forma compacta (ex: "dados contratuais, cronograma, resumo de impactos"), mas SEM lista exaustiva campo-a-campo e SEM repetir verbatim os CAs/regras. **Apenas o que está DENTRO do escopo** — não descreva o que fica de fora. **bold** em 1–2 termos-chave.]
+[1 parágrafo curto (~3 frases), nível resumo concreto: o que a entrega cobre, o ponto de
+acesso e os principais comportamentos/blocos. SEM lista exaustiva campo-a-campo, SEM repetir
+verbatim os CAs/regras. **Apenas o que está DENTRO do escopo.** **bold** em 1–2 termos-chave.]
 
 ## 4. Critérios de Aceitação
 
 ### 4.1. [Subseção temática]
-- **CA01:** **Dado que** [...], **Quando** [...], **Então** [...].
-- **CA02:** **Dado que** [...], **Quando** [...], **Então** [...].
+- **CA01:** **Dado que** [contexto], **Quando** [ação], **Então** [resultado observável]. [RN_01]
+- **CA02:** **Dado que** [contexto], **Quando** [ação], **Então** [resultado]. [MSG_01] [RN_01]
 
 ### 4.2. [Subseção temática]
-- **CA03:** **Dado que** [...], **Quando** [...], **Então** [...].
+- **CA03:** **Dado que** [contexto], **Quando** [ação], **Então** [resultado]. [GL_01]
 
-## 5. Regras
-<!-- FORMATO OBRIGATÓRIO (ver Contrato no Passo 4): os 4 cabeçalhos de grupo SEMPRE presentes, com o
-     texto EXATO abaixo (em **negrito**, nunca `###`). Cada regra = 1 bullet `- **CODE — Título**`,
-     SÓ o rótulo, sem descrição. Descrição completa fica em {ID}_regras.md. Grupo sem item → um único
-     bullet `- N/A`. -->
+## 5. Regras de Negócio
 
-**Regras de Negócio (RN) criadas ou editadas nesta HU:**
-- **RN_XXXX — [Título curto]**
+- **RN_01** — [Frase SBVR: É necessário/proibido/obrigatório que… / … é calculado como…]
+- **RN_02** — [Frase SBVR]
 
-**Regras de Apresentação (RA) criadas ou editadas nesta HU:**
-- **RA_XXXX — [Título curto]**
+## 6. Mensagens
 
-**Mensagens do Sistema (MSG) criadas ou editadas nesta HU:**
-- **MSG_XX — [Título curto]**
+- **MSG_01** (Erro) — "[texto exato]"
+- **MSG_02** (Sucesso) — "[texto exato com <Placeholder> se dinâmico]"
 
-**Regras existentes referenciadas (aplicáveis a esta HU, não alteradas):**
-- **RN_XXXX — [Título curto]**
+## 7. Referências Globais
+<!-- GLs reusados/promovidos, um por bullet. NENHUMA → um único bullet `- N/A` (sem prosa
+     explicando catálogo ausente). -->
 
-## 6. Descrição de Interface
+- **GL_01 — [Título]** — usado em CA03. (ver Referencias-Globais.md — Drive)
 
-[Vazio — preenchido manualmente pelo usuário. Manter o heading.]
+## 8. Protótipo
+<!-- SEMPRE vazia — placeholder para o usuário colar as PRINTS das telas do protótipo (imagens),
+     não links (o link vai na seção 9). Nunca auto-preencher com notas do discovery. -->
 
-## 7. Complemento de Documentação
+[Vazio — inserir as prints das telas do protótipo manualmente.]
 
-- **Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
-- **Link do Protótipo de Telas Impactadas:** [Vazio — preenchido manualmente pelo usuário.]
+## 9. Complemento de Documentação
+<!-- SEMPRE vazia — só os dois placeholders, para o usuário preencher. Nunca auto-preencher. -->
+
+**Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+
+**Link do Protótipo de Telas Impactadas:** [Vazio — preenchido manualmente pelo usuário.]
 
 ---
 
@@ -269,11 +297,16 @@ data: YYYY-MM-DD
 
 ### Priorização final
 MoSCoW: [...] | ICE: I[..] × C[..] × F[..] | Quadrante: [...]
+
+## Apêndice — Novas Referências Globais (copiar para o Drive)
+
+[Conteúdo completo de cada GL novo promovido nesta issue, no formato do doc do Drive, pronto
+para colar. Se nenhum GL novo: "Nenhuma."]
 ````
 
 ---
 
-## 3. Estrutura do `.md` — HT (6 seções + apêndice)
+## 3. Estrutura do `.md` — HT (6 seções + apêndices)
 
 ````markdown
 ---
@@ -307,10 +340,10 @@ data: YYYY-MM-DD
 | **Por quê** | [benefício para sistema/time] |
 
 ## 3. Escopo
-[1 parágrafo curto (~3 frases), nível RESUMO concreto. Descreva o que a entrega cobre — o que muda e os principais comportamentos. Compacto; SEM lista exaustiva nem repetir verbatim os CAs/seções seguintes. **Apenas o que está DENTRO do escopo** — não descreva o que fica de fora. **bold** em 1–2 termos-chave.]
+[1 parágrafo curto (~3 frases), nível resumo concreto. **Apenas o que está DENTRO do escopo.**]
 
 ## 4. Critérios de Aceite
-- **CA01:** **Dado que** [...], **Quando** [...], **Então** [...].
+- **CA01:** **Dado que** [...], **Quando** [...], **Então** [...]. [RN_01]
 - **CA02:** **Dado que** [...], **Quando** [...], **Então** [...].
 
 ## 5. Dependências e restrições
@@ -323,21 +356,31 @@ data: YYYY-MM-DD
 
 ## Apêndice — Trilha de Discovery
 [D1a / D1b / D2a / D2b resumidos + priorização final]
-````
 
-> HT normalmente não tem seção de regras. Se a demanda técnica gerar RN/RA/MSG, liste-as no
-> apêndice só por rótulo (mesmo formato da HU) — descrição completa fica em `{ID}_regras.md`.
+## Apêndice — Regras de Negócio (se houver)
+<!-- HT normalmente não tem regras. Se gerar, mesmo formato/rigor da HU (SBVR, local RN_01…),
+     texto completo aqui — não vai pro .docx. Senão: "Nenhuma." -->
+- **RN_01** — [Frase SBVR]
+
+## Apêndice — Novas Referências Globais (copiar para o Drive)
+[GLs novos, ou "Nenhuma."]
+````
 
 ---
 
 ## 4. Regras de ouro
 
-1. **Este `.md` é a fonte de verdade.** O `.docx` é derivado dele — nunca o contrário.
-2. **Seção 5 do `.md` leva só o rótulo** (`RN_XXXX — Título`), igual ao `.docx`. Descrição completa
-   (invariantes, consequências, texto integral) fica exclusivamente em `{ID}_regras.md`.
-3. **Seção 5 tem sempre os 4 cabeçalhos de grupo** (RN/RA/MSG criadas/editadas + Regras existentes referenciadas, texto exato). Grupo sem item → bullet `- N/A`. Nunca omita um grupo. O 4º bloco sai da leitura de `docs/context_docs/md/Regras/` (regras aplicáveis à demanda).
-4. **Apêndice de discovery é obrigatório** — é o registro do processo (decisão do usuário).
-5. **Não pule o salvamento das regras** em `outputs/{ID}_{NomeCurto}/{ID}_regras.md` quando criadas do zero.
-6. **Seção 7 (Complemento de Documentação) sempre em branco** — os dois campos (Documento de Regras
-   de Negócio, Link do Protótipo) levam `[Vazio — preenchido manualmente pelo usuário.]`, mesmo que o
-   caminho de `{ID}_regras.md` já seja conhecido. Nunca auto-preencher.
+1. **Este `.md` é a fonte de verdade e é autocontido.** O `.docx` é derivado dele. RN e MSG
+   têm o texto completo aqui — não há arquivo de regras separado.
+2. **Numeração local por issue** para RN e MSG (`RN_01…`, `MSG_01…`, reinicia por issue). GL é
+   global e vive no Drive (read-only) — a issue só referencia.
+3. **Sem RA, sem "Descrição de Interface", sem "Complemento de Documentação".** Comportamento de
+   tela vira CA.
+4. **CA coeso e referencia por código** — nunca escreve mensagem/fórmula inline.
+5. **Doc de Referências Globais é read-only** — GL novo vai no apêndice "copiar para o Drive",
+   nunca escrito direto no arquivo do Drive.
+6. **Apêndice de discovery é obrigatório** — registro do processo.
+7. **Seção 7 (Referências Globais):** GLs por bullet; nenhuma → um único `- N/A` (sem prosa).
+8. **Seções 8 (Protótipo) e 9 (Complemento de Documentação):** SEMPRE vazias, só os placeholders
+   — o usuário preenche. Nunca colar notas de protótipo/regras do discovery aqui.
+9. Rigor de classificação completo em **`references/regras.md`**.

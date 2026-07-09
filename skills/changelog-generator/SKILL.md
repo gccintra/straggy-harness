@@ -24,7 +24,7 @@ Leia o documento fornecido (HU, OS, descrição livre ou qualquer combinação) 
 | **OS Contratual** | Campo "Ordem de Serviço" da HU | Perguntar ao usuário |
 | **Épico / HU** | Número da HU no formato `XXX.YY` extraído do campo "Identificação da HU" | Perguntar ao usuário |
 | **Descrição da Mudança (Delta)** | Sintetizar a partir do Escopo, da História de Usuário e dos Critérios de Aceitação | — ver regras abaixo — |
-| **Telas Impactadas** | Extrair da seção "Descrição de Interface", "Telas Impactadas" ou do Escopo | Inferir pelo contexto |
+| **Telas Impactadas** | Extrair da seção "Protótipo", dos Critérios de Aceitação ou do Escopo | Inferir pelo contexto |
 
 ### Passo 2 — Perguntar apenas o que não foi possível extrair
 

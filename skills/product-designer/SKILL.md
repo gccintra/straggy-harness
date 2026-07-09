@@ -84,16 +84,18 @@ Figma sujo (A) ── design-promote --from-node ─→ B: use_figma ─→ Figm
 
 1. **LEIA O CONTEXTO PRIMEIRO** — demanda (issue/HU/descrição), `docs/context_docs/`, e os guidelines do Figma (`FIGMA_GUIDELINES_NODE_ID`) antes de desenhar.
 2. **RESPEITE O DESIGN SYSTEM** — toda cor/fonte/espaçamento/componente usa os tokens dos guidelines. Nunca invente tokens.
-3. **PUSH PRO FIGMA É GATED — PREVIEW LOCAL PRIMEIRO** — construa o HTML, sirva localmente, e PARE para revisão. Insira no Figma SÓ depois do usuário pedir explicitamente ("manda pro Figma"). Execução padrão termina no preview local — a captura pro Figma é a parte cara e opt-in (write-gate do `.agents/ENGAGEMENT.md`).
-4. **INLINE POR PADRÃO** — leia contexto e rode as skills você mesmo na thread principal; junte contexto uma vez e reuse em cada tela. Delegue a subagente só quando compensa e com aprovação (`.agents/ENGAGEMENT.md` §5).
+3. **ALINHE EM TEXTO ANTES DE CONSTRUIR** — não gere HTML direto. Primeiro descreva o protótipo em texto/chat (layout, seções, componentes, estados, dados de exemplo) e alinhe com o usuário. Iterar layout em texto é quase de graça; iterar em HTML queima token. Só construa o HTML depois do "pode" (detalhe: `design-screen` Etapa 3.5).
+4. **PUSH PRO FIGMA É GATED — PREVIEW LOCAL PRIMEIRO** — construa o HTML, sirva localmente, e PARE para revisão. Insira no Figma SÓ depois do usuário pedir explicitamente ("manda pro Figma"). Execução padrão termina no preview local — a captura pro Figma é a parte cara e opt-in (write-gate do `.agents/ENGAGEMENT.md`).
+5. **INLINE POR PADRÃO** — leia contexto e rode as skills você mesmo na thread principal; junte contexto uma vez e reuse em cada tela. Delegue a subagente só quando compensa e com aprovação (`.agents/ENGAGEMENT.md` §5).
 
 ## Modo Screen — fluxo
 
 1. **Contexto:** se `#NNN`, leia a issue (skill `glab-backlog` antes de operar GitLab); se descrição, use direto; se vaga, busque em `docs/context_docs/`. Leia os guidelines do Figma. Se `FIGMA_GUIDELINES_NODE_ID` vazio → PARE, rode o setup primeiro.
-2. **HTML:** carregue `design-screen`, aplique `frontend-design`. Só tokens dos guidelines. Auto-layout (flexbox/grid). HTML5 semântico, WCAG AA. Renderize todos os estados (default/hover/focus/disabled/loading/vazio/erro). Reuse componentes existentes.
-3. **Preview local + PARE:** suba `python3 -m http.server 4321 --directory <dir>`, dê as URLs, itere no feedback. Nenhuma chamada ao Figma aqui.
-4. **Figma (opt-in):** só quando o usuário pedir — fluxo de captura da `html-to-figma`, `outputMode="existingFile"` + `fileKey=${FIGMA_FILE_KEY}`. Reporte a URL do node.
-5. Registre em `history/YYYY-MM-DD_design_<nome>.md`.
+2. **Alinhe em texto + PARE:** descreva o protótipo (layout, seções, componentes, estados, dados) em bullets/ASCII, sem CSS. Espere "pode"/ajustes. Iteração de layout acontece aqui, barato. (`design-screen` Etapa 3.5)
+3. **HTML:** carregue `design-screen`, aplique `frontend-design`. Só tokens dos guidelines. Auto-layout (flexbox/grid). HTML5 semântico, WCAG AA. Renderize todos os estados (default/hover/focus/disabled/loading/vazio/erro). Reuse componentes existentes.
+4. **Preview local + PARE:** suba `python3 -m http.server 4321 --directory <dir>`, dê as URLs, itere no feedback. Nenhuma chamada ao Figma aqui.
+5. **Figma (opt-in):** só quando o usuário pedir — pergunte A vs B se não for explícito. A = captura `html-to-figma`; B = `design-promote`. `outputMode="existingFile"` + `fileKey=${FIGMA_FILE_KEY}`. Reporte a URL do node.
+6. Registre em `history/YYYY-MM-DD_design_<nome>.md`.
 
 ## Fora do seu escopo → diga a quem pedir
 
