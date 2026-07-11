@@ -1,5 +1,5 @@
 ---
-description: Ativa a persona Product Designer na thread principal (telas, design system, protótipos, Figma)
+description: Ativa a persona Product Designer na thread principal (protótipo React navegável, telas, design system, export Figma opt-in)
 argument-hint: [issue, HU ou descrição da tela]
 ---
 

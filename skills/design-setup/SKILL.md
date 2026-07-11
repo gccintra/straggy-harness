@@ -1,19 +1,22 @@
 ---
 name: design-setup
 description: >
-  Cria o design system do projeto no Figma a partir de prints/screenshots do sistema
-  atual. Extrai tokens de cor, tipografia, espaçamento e padrões de componentes das
-  imagens fornecidas, gera uma página de guidelines estruturada no Figma, e registra
-  o fileKey e nodeId de referência no .env do projeto. Use esta skill na primeira vez
-  que o designer for acionado em um projeto — antes de criar qualquer tela nova.
-  Também use para atualizar os guidelines quando o design system evoluir.
+  Configura o design system do projeto E faz o scaffold do app de protótipo React
+  (prototype/) na primeira vez que o designer é acionado. Extrai tokens de cor,
+  tipografia, espaçamento e padrões de componentes de prints/screenshots do sistema
+  atual; grava os tokens no tailwind.config.js e cria os componentes base em
+  src/components/ui/ transcritos das evidências. Push dos guidelines pro Figma é
+  opt-in. Use na primeira vez que o designer for acionado — antes de criar qualquer
+  tela — e para atualizar o design system quando ele evoluir.
 ---
 
 # design-setup
 
-Cria o design system do projeto no Figma a partir de evidências visuais do sistema atual (prints, screenshots, protótipos). O objetivo é ter uma página de guidelines no Figma que sirva como fonte de verdade para todas as telas geradas a seguir — componentes, tokens e padrões ficam lá, não em arquivos locais.
+Estabelece a base de design do projeto: **um app React (`prototype/`) com o design system embutido**, extraído de evidências visuais do sistema atual (prints, screenshots, protótipos).
 
-**Este fluxo é executado uma vez por projeto.** Depois que os guidelines existem no Figma, o `@product-designer` copia os componentes de lá em vez de reinventá-los.
+Depois deste setup, o `@product-designer` cria telas como rotas nesse app (`design-screen`), reusando os componentes de `src/components/ui/` e os tokens do `tailwind.config.js`.
+
+**Executado uma vez por projeto** (re-execute só quando o design system evoluir). Push dos guidelines pro Figma é **opt-in** — a fonte de verdade do design system passa a ser o código (`tailwind.config.js` + `components/ui/`), não o Figma.
 
 ---
 
@@ -21,165 +24,141 @@ Cria o design system do projeto no Figma a partir de evidências visuais do sist
 
 Leia do ambiente:
 ```
+FIGMA_FILE_KEY:      ${FIGMA_FILE_KEY}       ← arquivo Figma do projeto (opcional; só p/ export)
 FIGMA_CLIENT_ID:     ${FIGMA_CLIENT_ID}
 FIGMA_CLIENT_SECRET: ${FIGMA_CLIENT_SECRET}
-FIGMA_FILE_KEY:      ${FIGMA_FILE_KEY}       ← arquivo Figma do projeto (preencher no .env)
 ```
 
-Se `FIGMA_FILE_KEY` não estiver no `.env`, peça ao usuário o link do arquivo Figma e extraia o fileKey da URL: `figma.com/design/:fileKey/...`
+Figma não é obrigatório no setup — é só destino de export opt-in. Se o usuário pedir push dos guidelines pro Figma e `FIGMA_FILE_KEY` faltar, peça o link e extraia o fileKey de `figma.com/design/:fileKey/...`.
 
 ---
 
 ## 2. Fontes de input
 
-O agente deve solicitar ao usuário pelo menos uma dessas fontes antes de iniciar:
+Peça ao menos uma antes de iniciar:
 
 | Fonte | Como fornecer |
 |---|---|
-| Screenshots do sistema atual | Arrastar imagens para o terminal ou fornecer caminhos locais |
-| URL do protótipo (Axure, Figma, etc.) | Link direto para o protótipo funcional |
-| PDF de especificação visual | Caminho local para o arquivo |
-| Descrição textual do estilo | "O sistema usa azul escuro como cor primária, fonte sans-serif, tabelas com bordas finas..." |
+| Screenshots do sistema atual | Arrastar imagens pro terminal ou caminhos locais |
+| URL do protótipo (Axure, Figma, etc.) | Link direto |
+| PDF de especificação visual | Caminho local |
+| Descrição textual do estilo | "azul escuro primário, sans-serif, tabelas de borda fina..." |
 
-Quanto mais evidências visuais, mais preciso será o design system extraído. Se nenhuma fonte for fornecida, avise o usuário e pergunte qual prefere usar.
+Mais evidência visual = design system mais preciso. Nenhuma fonte → avise e pergunte qual usar. **Meça cor de print com Pillow, não estime no olho** (`design-screen` 3B.1).
 
 ---
 
 ## 3. Extração de tokens
 
-A partir das fontes fornecidas, extraia:
+Das fontes, extraia:
 
 ### 3.1 Cores
-Identifique e nomeie:
-- **Cor primária** — botões principais, links, destaques ativos
-- **Cor secundária** — elementos de apoio, badges, highlights
-- **Background** — fundo da página
-- **Surface** — cards, modais, painéis
-- **Border** — bordas de campos, separadores
-- **Texto primário** — corpo de texto principal
-- **Texto secundário** — labels, subtítulos, placeholders
-- **Erro / Sucesso / Aviso** — feedback de sistema
-- **Cores de status** — se houver (ex: cores de workflow, badges coloridos)
+Primária · secundária · background · surface · border · texto primário · texto secundário · erro/sucesso/aviso · cores de status (workflow, badges).
 
 ### 3.2 Tipografia
-- Família(s) de fonte usada(s)
-- Tamanhos identificados (px) → mapeados para escala: `xs`, `sm`, `base`, `lg`, `xl`, `2xl`, `3xl`
-- Pesos usados (regular, medium, semibold, bold)
-- Line-heights e letter-spacings se identificáveis
+Família(s) · tamanhos px → escala `xs`/`sm`/`base`/`lg`/`xl`/`2xl`/`3xl` · pesos · line-heights.
 
 ### 3.3 Espaçamento
-- Grid base (4px, 8px, ou outro)
-- Padding interno de componentes
-- Gap entre elementos em listas/tabelas
+Grid base (4/8px) · padding de componentes · gap de listas/tabelas · radius · sombras.
 
-### 3.4 Componentes identificados
-Liste os componentes recorrentes encontrados nas evidências:
-- Botões (tipos: primário, secundário, ghost, link, destrutivo)
-- Inputs (texto, select, date, search)
-- Tabelas (cabeçalho, linhas, paginação, ordenação)
-- Modais
-- Badges / chips de status
-- Steppers
-- Cards
-- Toasts / alertas
-- Navegação (sidebar, topbar, breadcrumb)
+### 3.4 Componentes recorrentes
+Botões (primário/secundário/ghost/link/destrutivo) · inputs (texto/select/date/search) · tabelas (cabeçalho/linha/paginação/ordenação) · modais · badges/chips de status · steppers · cards · toasts/alertas · navegação (sidebar/topbar/breadcrumb).
+
+**Valores raw, verbatim.** Hex e px como medidos — não aproxime pro token "mais próximo". Faltou e não há evidência → pergunte.
 
 ---
 
-## 4. Criar a página de guidelines no Figma
+## 4. Scaffold do app `prototype/`
 
-Use a skill `html-to-figma` para construir a página de guidelines como HTML estruturado e inserir no Figma.
+**A saída primária deste setup é o app React.** Grave no repositório, na raiz do projeto, em `prototype/`.
 
-**Três regras fixas de captura** (herdam de `html-to-figma`):
-1. **Ícones = Lucide, inline** — lib fixa do projeto ([lucide.dev](https://lucide.dev)). Nunca `<use>`/`<symbol>` (ícone sai vazio no Figma); copie o SVG oficial e repita o markup em cada uso.
-2. **Largura desktop = `1280px`** nos exemplos de layout/padrões de tela.
-3. **Se a página de guidelines tiver múltiplos frames de topo**, dê `id="frame-N"` a cada um e capture um por um com `figmaselector=%23frame-N` — nunca capture `body` inteiro.
-4. **Nomear nodes + HTML raso** (detalhe: `html-to-figma` regra 8, validado empiricamente): `aria-label="Nome do Node"` em cada bloco → o node vira esse nome no Figma (`<div aria-label>` = nome limpo; `title`/`data-*` NÃO funcionam). Wrapper de topo com `aria-label` + `<title>` curto. HTML raso, sem `<div>` redundante, `data-h2d-suppress-before/after` nos pseudo decorativos.
-
-### Estrutura da página de guidelines
-
-```html
-<!-- Organização em seções verticais, cada uma com título e exemplos visuais -->
-
-<!-- Seção 1: Cores -->
-<!-- Paleta completa com nome do token, valor hex e exemplo de uso -->
-
-<!-- Seção 2: Tipografia -->
-<!-- Cada estilo com fonte, tamanho, peso e exemplo de texto -->
-
-<!-- Seção 3: Espaçamento -->
-<!-- Grid visual com os valores do sistema -->
-
-<!-- Seção 4: Componentes -->
-<!-- Cada componente em seus estados: default, hover, focus, disabled, error -->
-
-<!-- Seção 5: Padrões de tela -->
-<!-- Layout típico do sistema: sidebar + main, header, tabela paginada -->
-```
-
-### Requisitos visuais da página de guidelines
-- Fundo neutro (branco ou cinza muito claro)
-- Cada seção separada visualmente com título em destaque
-- Componentes renderizados em todos os estados relevantes
-- Tokens de cor mostrados como swatches com nome e valor hex
-- Escala tipográfica mostrada com texto de exemplo real (não "Lorem ipsum")
-
-Aplique os princípios da skill `frontend-design` para garantir qualidade visual e acessibilidade.
-
-> A página de guidelines (captura HTML) serve o fluxo **A** (`design-screen` → `html-to-figma`) como referência visual. Para o fluxo **B** (`design-promote`, saída limpa) o design system precisa existir como **variáveis e componentes publicados** — não como captura. É o que a Etapa 4b faz.
-
----
-
-## 4b. Publicar variáveis e componentes reais (fundação do fluxo B)
-
-O fluxo **B** (skill `design-promote`) monta telas limpas reusando **variáveis e componentes publicados** no Figma — não a captura HTML. Esta etapa publica esses ativos via `use_figma` e cacheia as keys para o promote não re-explorar o design system a cada tela (amortização do custo).
-
-Use a skill oficial `figma-generate-library` como base técnica para criar variáveis e componentes reais no Figma via `use_figma`.
-
-### 4b.1 Publicar variáveis (tokens)
-
-A partir dos tokens extraídos na Etapa 3, crie **variáveis Figma reais** (não swatches capturados):
-- Coleção de cor: cada token nomeado (`color/primary`, `color/surface`, `color/text-primary`, ...)
-- Coleção de espaçamento: `space/1`..`space/16` (grid base do projeto)
-- Coleção de radius: `radius/sm`..`radius/full`
-
-### 4b.2 Publicar componentes
-
-A partir dos componentes identificados na Etapa 3.4, crie **componentes Figma reais** com variantes, vinculando as variáveis acima (não hex/px hardcoded):
-- Button (variantes: primary, secondary, ghost, link, destructive)
-- Input (texto, select, date, search)
-- Table (cabeçalho, linha, paginação)
-- Badge/chip de status, Card, Modal, Stepper, Toast, itens de navegação
-- Largura de referência desktop: **1280px** (padrão do projeto)
-
-### 4b.3 Cachear as keys
-
-Salve o mapa de keys em arquivos json no repositório (o promote lê daqui, sem re-descobrir):
-
-```
-.agents/design-system/figma-variables-map.json   → { "color/primary": "<variableKey>", ... }
-.agents/design-system/figma-components-map.json   → { "Button": "<componentSetKey>", ... }
-```
-
-> Se por restrição de tempo só publicar variáveis nesta rodada, tudo bem: o promote ainda gera nodes nomeados + Auto Layout + tokens vinculados (só sem instância de componente). Publicar componentes depois é incremental — re-execute esta etapa.
-
----
-
-## 5. Registrar no .env
-
-Após criar os guidelines e publicar variáveis/componentes, adicione ao `.env` do projeto:
+### 4.1 Criar o projeto (só se `prototype/` não existir)
 
 ```bash
-# Design System (Figma)
-FIGMA_FILE_KEY=<fileKey do arquivo>
-FIGMA_GUIDELINES_NODE_ID=<nodeId da página de guidelines criada>
-
-# Mapas de keys publicadas (fundação do fluxo B / design-promote)
-FIGMA_VARIABLES_MAP=.agents/design-system/figma-variables-map.json
-FIGMA_COMPONENTS_MAP=.agents/design-system/figma-components-map.json
+npm create vite@latest prototype -- --template react-ts
+cd prototype
+npm install
+npm install react-router-dom lucide-react
+npm install -D tailwindcss @tailwindcss/vite
 ```
 
-O `FIGMA_GUIDELINES_NODE_ID` é a referência visual que o `@product-designer` usa no fluxo A. Os mapas `FIGMA_VARIABLES_MAP`/`FIGMA_COMPONENTS_MAP` são a fundação do fluxo B — se estiverem ausentes, `design-promote` degrada para nodes nomeados sem tokens/instâncias e avisa o usuário.
+Tailwind v4 via plugin do Vite. Em `vite.config.ts`, adicione o plugin `@tailwindcss/vite`. Em `src/index.css`, `@import "tailwindcss";`.
+
+> Se o projeto real usa outra versão de Tailwind/React, alinhe com o usuário antes. O default é Vite + React + TS + Tailwind v4 + react-router.
+
+### 4.2 Estrutura obrigatória
+
+```
+prototype/
+├── tailwind.config.js         ← tokens da Etapa 3 (cor/fonte/espaco/radius/shadow)
+├── vite.config.ts
+├── index.html                 ← <div id="root">; script capture.js NÃO fica fixo aqui
+├── src/
+│   ├── main.tsx               ← monta o Router
+│   ├── App.tsx                ← <AppLayout> + <Outlet/> (chrome global)
+│   ├── router.tsx             ← tabela de rotas; `/` redireciona à tela default
+│   ├── index.css              ← @import tailwindcss + base
+│   ├── routes/
+│   │   └── <modulo>/<tela>.tsx ← telas (sem página-índice/hub)
+│   ├── components/
+│   │   ├── ui/                ← Button, Input, Table, Modal, Badge, Field... (Etapa 4.4)
+│   │   └── layout/            ← AppLayout, AppHeader (topbar + menu de navegação)
+│   ├── lib/
+│   │   └── ExportFrame.tsx    ← wrapper 1280 sem chrome, p/ export Figma (Etapa 4.5)
+│   └── mock/                  ← dados de exemplo por dominio
+```
+
+### 4.3 Tokens no `tailwind.config.js`
+
+Os tokens da Etapa 3 viram o `theme.extend` — cores nomeadas pelo papel, escala de fonte, espaçamento, radius, shadow. Este arquivo é a **fonte de verdade dos tokens**; nenhum hex solto no JSX (use as classes Tailwind geradas).
+
+```js
+// exemplo de forma — valores REAIS saem da Etapa 3, nunca placeholder
+export default {
+  content: ["./index.html", "./src/**/*.{ts,tsx}"],
+  theme: {
+    extend: {
+      colors: {
+        navy: "#003770",       // <- valor medido/extraido, verbatim
+        // primary, surface, border, text, status...
+      },
+      fontFamily: { sans: ["Roboto", "system-ui", "sans-serif"] },
+      // spacing, borderRadius, boxShadow do sistema
+    },
+  },
+};
+```
+
+### 4.4 Componentes base em `src/components/ui/`
+
+Os componentes da Etapa 3.4 viram componentes React tipados — **fiéis à evidência, verbatim** (mesma altura, radius, cor, estados). Um arquivo por componente. Props pros estados (`variant`, `disabled`, `loading`, `error`).
+
+**Construa sobre libs prontas — não reinvente do zero.** Comportamento/acessibilidade/estado vêm da lib; a aparência sai dos tokens. Ordem: lib pronta reestilizada pros tokens > mão própria. Cada `ui/<Nome>.tsx` envolve o primitivo da lib já estilizado (as telas importam de `ui/`, nunca da lib direto). Libs recomendadas: `design-screen` 3.6 (shadcn/ui, Radix, TanStack Table, Recharts, react-day-picker). Instale o que o design system precisa (`npm i`) já no setup.
+
+Regra dura (mesma da `design-screen`): **a aparência copia a evidência, não inventa.** Um botão que existe no sistema entra com os valores medidos; não "melhore". A lib dá o esqueleto, os tokens dão o visual. Componente/valor sem evidência → pergunte antes de criar.
+
+Ícones: `lucide-react` (`import { Check } from "lucide-react"`) — SVG inline, compatível com a captura Figma.
+
+### 4.5 Layout e navegação
+
+- `components/layout/AppLayout` + `AppHeader` — o chrome do produto (topbar com o **menu de navegação real**). `App.tsx` renderiza `<AppLayout><Outlet/></AppLayout>`. Transcreva a barra de menu da evidência (mesmos itens do sistema atual).
+- **Navegação é pelo menu do topbar**, como no sistema real. **Não existe hub/galeria de telas.** Cada item de menu (`AppHeader` NAV) aponta `to` para a rota da tela; item sem tela ainda construída fica inerte.
+- `router.tsx` — a rota `/` **redireciona pra tela default** do produto (ex: `/projetos`), nunca uma página-índice.
+- `lib/ExportFrame.tsx` — envolve uma tela em um container `w-[1280px]` **sem** o chrome (topbar/menu), ativado por `?export=1`. É o que a captura pro Figma mira (`html-to-figma`).
+
+### 4.6 Rodar
+
+```bash
+cd prototype && npm run dev   # http://localhost:5173
+```
+
+`/` deve abrir a tela default e os itens do menu do topbar devem navegar entre as telas. Verifique no Chrome antes de encerrar o setup.
+
+---
+
+## 5. Guidelines no Figma (OPT-IN)
+
+Fonte de verdade do design system = código. Só publique uma página de guidelines no Figma se o usuário pedir explicitamente ("manda o design system pro Figma"). Se pedir: renderize uma rota `/design-system` (showcase dos tokens e componentes) e capture via `html-to-figma`. Registre `FIGMA_GUIDELINES_NODE_ID` no `.env` só nesse caso.
 
 ---
 
@@ -188,40 +167,30 @@ O `FIGMA_GUIDELINES_NODE_ID` é a referência visual que o `@product-designer` u
 Crie `history/YYYY-MM-DD_design-setup.md`:
 
 ```markdown
-# [DESIGN SETUP] Design System criado no Figma
+# [DESIGN SETUP] Design system + app prototype
 Data: YYYY-MM-DD
 Agente: designer
 
 ## Fontes utilizadas
-- [lista de prints/protótipos/descrições fornecidas]
+- [prints/protótipos/descrições fornecidas]
 
 ## Tokens extraídos
-- Cores: [N cores nomeadas]
-- Tipografia: [N estilos]
-- Componentes: [lista de componentes documentados]
+- Cores: [N nomeadas] · Tipografia: [N estilos] · Componentes: [lista]
 
-## Figma
-- Arquivo: ${FIGMA_FILE_KEY}
-- Página de guidelines: [URL do node]
+## App
+- prototype/ criado (Vite + React + TS + Tailwind + react-router)
+- Componentes base: [lista de src/components/ui/]
 
-## Publicado para o fluxo B
-- Variáveis: [N variáveis] → figma-variables-map.json
-- Componentes: [N componentes] → figma-components-map.json (ou "não nesta rodada")
-
-## .env atualizado
-- FIGMA_FILE_KEY
-- FIGMA_GUIDELINES_NODE_ID
-- FIGMA_VARIABLES_MAP
-- FIGMA_COMPONENTS_MAP
+## Figma (se aplicável)
+- Guidelines publicados: [URL ou "não"]
 ```
 
 ---
 
 ## 7. Quando re-executar
 
-Execute este fluxo novamente quando:
-- O design system evoluir significativamente (novos componentes, rebrand de cores)
-- O usuário pedir para atualizar os guidelines
-- Após a primeira versão, para refinar com base em feedback
+- Design system evoluiu (novos componentes, rebrand)
+- Usuário pediu atualização
+- Refinar após feedback
 
-Ao re-executar, atualize a página existente no Figma (não crie duplicata) e atualize o `FIGMA_GUIDELINES_NODE_ID` se o node mudar.
+Re-execução **não recria** `prototype/` — edita `tailwind.config.js` e `components/ui/` existentes. Só crie do zero se a pasta não existir.
