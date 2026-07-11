@@ -50,6 +50,19 @@
           "*": "allow"
         }
       }
+    },
+    "figma-node-reader": {
+      "description": "Transcritor de nodes do Figma para HTML — lê, fatia o que estoura, transcreve a árvore em fragmentos HTML fiéis; devolve caminho, índice e chutes. Usado só quando o node estoura, para manter o dump (80k+) fora do contexto principal.",
+      "mode": "subagent",
+      "prompt": "{file:../.agents/skills/figma-node-reader/SKILL.md}",
+      "permission": {
+        "bash": "allow",
+        "read": "allow",
+        "edit": "allow",
+        "skill": {
+          "*": "allow"
+        }
+      }
     }
   },
   "mcp": {
