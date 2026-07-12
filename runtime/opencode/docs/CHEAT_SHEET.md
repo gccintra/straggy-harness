@@ -33,7 +33,7 @@ Cada agente carrega a skill certa conforme o pedido (progressive disclosure — 
 |---|---|
 | `@product-manager` | Issues: `backlog-issue-creator` + `glab-backlog` · Discovery: `discovery` · Docs: `gerar-regras`, `doc-consolidator`, `hu-generator`/`ht-generator` · Backlog: `backlog-analysis`, `backlog-health`, `backlog-prioritization`, `gitlab-sprint-ops`, `sprint-goal-generator` · Wiki/changelog: `gitlab-wiki`, `changelog-generator` |
 | `@tech-lead` | `db-query` · `discovery` · `gerar-regras`, `doc-consolidator`, `ht-generator` · `backlog-analysis`, `backlog-health` |
-| `@product-designer` | `design-setup` ou `design-screen` (+ `html-to-figma` + `frontend-design`) · `figma-implement-design` |
+| `@product-designer` | `design-brief` → `design-setup` ou `design-screen` (+ `html-to-figma` no export opt-in) |
 
 ---
 
@@ -189,7 +189,7 @@ Um pedido = um passo. `.docx` errado → corrija o `.md` e regere, nunca edite o
    │     Lê issue/HU/descrição → copia tokens dos guidelines → HTML → preview local
    │     → (sob pedido "manda pro Figma") insere no Figma via html-to-figma
    │
-   └── "implementa design"   →  figma-implement-design
+   └── "implementa design"   →  design-screen (§3A Figma autoral / §3D wireframe)
          Traduz node do Figma para código de produção
 ```
 

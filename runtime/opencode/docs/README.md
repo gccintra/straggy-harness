@@ -20,8 +20,7 @@ Agentes (quem faz)          Skills (como faz)               Fontes de verdade
                             gitlab-sprint-ops / gitlab-wiki
                             sprint-goal-generator
                             design-setup / design-screen
-                            html-to-figma / frontend-design
-                            figma-implement-design
+                            design-brief / html-to-figma
                             db-query
 ```
 
@@ -40,7 +39,7 @@ Agentes (quem faz)          Skills (como faz)               Fontes de verdade
 |---|---|---|---|
 | `@product-manager` | PO — ponto de entrada universal de produto | Qualquer demanda de produto/backlog/processo: criar/refinar issue, discovery, regras, HU/HT, análise e saúde de backlog, priorização, sprint ops, meta, changelog, wiki, dúvida de produto | `backlog-issue-creator`, `discovery`, `gerar-regras`, `doc-consolidator`, `hu-generator`/`ht-generator`, `backlog-analysis`, `backlog-health`, `backlog-prioritization`, `gitlab-sprint-ops`, `sprint-goal-generator`, `changelog-generator`, `gitlab-wiki`, `glab-backlog` |
 | `@tech-lead` | Viabilidade, dados reais, HTs, arquitetura | "Como funciona X de verdade?", "O que está no banco para Y?", impacto/risco técnico, discovery técnico, gerar HT | `db-query`, `discovery`, `gerar-regras`, `doc-consolidator`, `ht-generator`, `backlog-analysis`, `backlog-health` |
-| `@product-designer` | Design — telas, design system, protótipos | Criar tela no Figma, setup/atualizar guidelines, protótipo, wireframe, consistência visual | `design-setup`, `design-screen`, `html-to-figma`, `frontend-design`, `figma-implement-design` |
+| `@product-designer` | Design — telas, design system, protótipos | Criar tela no Figma, setup/atualizar guidelines, protótipo, wireframe, consistência visual | `design-brief`, `design-setup`, `design-screen`, `html-to-figma` |
 
 > HU é do `@product-manager`; HT pode ser do `@product-manager` ou do `@tech-lead`. Ambos seguem os mesmos portões humanos: `regras → .md → (sob pedido) .docx`.
 
@@ -99,8 +98,8 @@ Agentes (quem faz)          Skills (como faz)               Fontes de verdade
 | `design-setup` | Cria o design system no Figma a partir de prints do sistema. Extrai tokens de cor, tipografia, espaçamento, componentes. |
 | `design-screen` | Cria telas/componentes no Figma a partir de issue, HU ou descrição. Copia tokens e componentes dos guidelines. |
 | `html-to-figma` | Cria tela HTML com design system e insere no Figma via captura. |
-| `frontend-design` | Interfaces frontend com alta qualidade visual e acessibilidade. |
-| `figma-implement-design` | Traduz nodes do Figma para código de produção com fidelidade 1:1. |
+| `design-brief` | Analisa a demanda antes de construir: lê a doc/issue/wireframe, varre o protótipo e conversa (navegação, reuso, gaps, estados, impacto). Documento de design opt-in. |
+| `design-screen` §3A | Figma autoral (você desenhou a tela lá) → rota no prototype/. Absorveu a antiga figma-implement-design. |
 
 ### Banco de Dados
 
@@ -213,7 +212,7 @@ Fonte primária: **Comentário 4** (`[D2 · Definição da Solução]`). Duas et
 
 - **Setup:** criar design system a partir de screenshots do sistema atual
 - **Screen:** criar tela copiando tokens/componentes dos guidelines. Padrão: HTML → preview local; push pro Figma só sob pedido explícito ("manda pro Figma")
-- **Implementação:** `figma-implement-design` para traduzir Figma → código
+- **Implementação:** `design-screen` (§3.2 node de produção · §3A Figma autoral · §3B imagem · §3D wireframe) → rota no prototype/
 
 ---
 
@@ -298,8 +297,7 @@ FIGMA_GUIDELINES_NODE_ID=...
 │   ├── design-setup/        ← Design system no Figma
 │   ├── design-screen/       ← Telas no Figma
 │   ├── html-to-figma/       ← HTML → Figma
-│   ├── frontend-design/     ← Interfaces frontend
-│   └── figma-implement-design/  ← Figma → código
+│   ├── design-brief/        ← Análise da demanda antes de codar
 ├── README.md            ← Este arquivo
 ├── CHEAT_SHEET.md       ← Referência rápida
 └── opencode.json        ← Configuração do OpenCode

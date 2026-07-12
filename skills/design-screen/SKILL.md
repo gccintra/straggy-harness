@@ -64,9 +64,22 @@ Se o contexto não deixar claro:
 | Modo | Quando | Referência | Peço print/node? |
 |---|---|---|---|
 | **Ajuste** | a tela/componente **já existe** no protótipo (consertar, alinhar ao sistema, aumentar texto, arrumar espaçamento, trocar por token) | o **próprio protótipo**: o arquivo, os tokens, uma tela irmã | **NÃO** — está nos arquivos |
-| **Novo** | tela/componente que **não existe** no protótipo | node do Figma ou imagem de produção | Sim |
+| **Novo** | tela/componente que **não existe** no protótipo | Figma autoral, node/print de produção, imagem ou wireframe | Sim |
 
 Como decidir: **olhe o protótipo primeiro** (3.0). A tela/componente já está em `prototype/src/`? → **Ajuste**: abra o arquivo, ache o valor, corrija pelo token/tela irmã, sem pedir nada. Não está? → **Novo**: peça a referência (3.1).
+
+### 3.-1 AUTORIDADE DA REFERÊNCIA — quem manda no visual
+
+**Nem toda referência vale a mesma coisa.** Antes de transcrever, saiba **de onde ela veio** — isso decide se o visual segue a referência ou o design system. Pergunte se não estiver claro.
+
+| Referência | O que ela é | Quem manda no **visual** | Onde |
+|---|---|---|---|
+| **Node/print da produção** | tela do sistema atual, já existe em produção | o **design system do protótipo** — a produção dá só estrutura, campos, colunas, ordem, estados | 3.2 / 3B |
+| **Figma autoral** | você **desenhou a tela nova** no Figma; é a intenção de design, não um retrato do que existe | o **seu desenho** — alta fidelidade ao que foi desenhado | 3A |
+| **Wireframe / rabisco** | esboço feio, à mão, caixinha e seta; comunica intenção e hierarquia, não aparência | o **design system**, 100% — o rabisco não tem visual a copiar | 3D |
+| **Nada** (só texto) | descrição em palavras | o **design system** + tela irmã | 3.5-ALIGN |
+
+Erro clássico dos dois lados: copiar o hex cru de um print de produção quando já existe token (tela sai fora do sistema) **e** tratar um wireframe como se fosse spec visual (tela sai feia, com as caixas cinzas do rabisco). Saiba qual referência você tem.
 
 > Pedir print pra "aumentar o texto pra bater com o sistema" é erro — "bater com o sistema" quer dizer usar o token/tamanho que as outras telas já usam. Isso se acha com `grep`, não com pergunta.
 
@@ -197,6 +210,25 @@ Instale no `prototype/` (`npm i <lib>`). Quando a referência do Figma traz um c
 
 ---
 
+## 3A. Referência é Figma AUTORAL (você desenhou a tela lá)
+
+Caso: o usuário prototipou **à mão no Figma** uma tela que **não existe** no sistema, e quer trazer pro `prototype/`. Isso **não** é referência de produção — é **a intenção de design dele**. A autoridade se inverte.
+
+| | Node da **produção** | Node **autoral** (este caso) |
+|---|---|---|
+| A referência representa | o que **já existe** no sistema | o que o usuário **quer que exista** |
+| Manda no visual | design system do protótipo | **o desenho** — ele é a decisão de design |
+| Valor divergente do token | usa o **token** (é ruído de antialiasing/legado) | usa o **desenho** — e o valor novo **entra no sistema** (`tailwind.config` / `ui/`) |
+
+Leitura idêntica à 3.2 (`get_design_context`, caminho A inline; caminho B via `figma-node-reader` se estourar). O que muda é a **conversão**:
+
+1. **Reuse `ui/` mesmo assim.** Um botão desenhado no Figma que é o botão do sistema → `<Button>` de `ui/`. O desenho manda no que é **novo**, não no que já foi resolvido. Precedência da 3.0 continua valendo para tudo que já existe.
+2. **Valor genuinamente novo** (cor, escala, espaçamento, componente que o design system não tem) → **adicione ao sistema** (`tailwind.config` / `components/ui/`), não hardcode na tela. Foi você que decidiu que o sistema cresce — cresça direito.
+3. **Divergência entre desenho e token existente** → **pergunte**. "Você desenhou o header em `#0A4C8B`, mas o sistema tem `navy #003770`. É cor nova ou era pra ser o navy?" Rabisco de cor no Figma quase sempre é aproximação; mudança deliberada de token, quase nunca.
+4. **Verificação visual (3C) roda igual** — aqui o diff **é** contra o seu desenho, e o alvo é fidelidade alta. Diferente do node de produção, onde diferença de cor por usar token é *correta*.
+
+---
+
 ## 3B. Referência é imagem (nada no Figma)
 
 Vale quando o usuário manda print/mockup ou a tela não existe no Figma. **Imagem é referência de primeira classe — desde que medida.**
@@ -220,9 +252,56 @@ Pergunte/meça a largura real. Print de 1440 e projeto 1280 → recalcule propor
 
 ---
 
+## 3D. Referência é WIREFRAME (rabisco, esboço, papel, caixinha e seta)
+
+Caso: o usuário manda um **wireframe feio de propósito** — rabisco à mão, foto de papel, caixas cinzas, Excalidraw. Ele está comunicando **o que vai onde**, não **como parece**.
+
+> **Regra que governa tudo aqui: o rabisco dá INTENÇÃO; o design system dá TUDO que é visual.** O wireframe não tem cor, não tem tipografia, não tem espaçamento — ele tem hierarquia, ordem e agrupamento. Transcrever um wireframe "fielmente" produz uma tela cinza e feia. **Não faça isso.**
+
+### 3D.1 O que você extrai do rabisco — e só isso
+
+| Extraia | Ignore |
+|---|---|
+| **Seções** e ordem vertical | cor (não existe) |
+| **Hierarquia** — o que é título, o que é secundário | tipografia (letra do usuário ≠ fonte) |
+| **Agrupamento** — o que está junto, o que está separado | espaçamento exato do rabisco |
+| **Tipo de cada bloco** — "isso é uma tabela", "isso é um filtro", "isso é um card" | proporção/tamanho do desenho (não é medida) |
+| **Ações** — que botões existem e onde | qualquer traço de estilo |
+| **Anotações** — texto escrito à mão, setas, "aqui vai X" | — |
+
+**NÃO meça com Pillow.** Medir um rabisco é medir a mão trêmula do usuário. Pillow é para print de produção (3B), nunca para wireframe.
+
+### 3D.2 O visual vem 100% do design system
+Cada bloco do rabisco vira o componente de `ui/` equivalente, com os tokens do `tailwind.config`, seguindo a **tela irmã** (3.0). Uma "caixa com linhas dentro" no papel é a `<Table>` do sistema, com o header, o padding e a paginação que as outras telas usam. Você não está copiando um desenho — está **realizando** uma intenção no design system que já existe.
+
+### 3D.3 Rabisco é ambíguo — a brief resolve, não o chute
+Wireframe **sempre** deixa buraco. Não preencha no escuro:
+
+- Bloco que não dá pra saber o que é ("uma caixa com um X dentro")
+- Campo sem label / label ilegível
+- Estados (vazio, erro, loading) — rabisco nunca desenha
+- Comportamento (essa lista pagina? esse filtro é múltiplo? esse botão abre modal ou navega?)
+- O que está fora da folha (o rabisco acaba, a tela não)
+
+**Entrada de wireframe passa pela `design-brief` (nível médio-alto) antes de virar JSX.** É lá que você lê o rabisco, cruza com o protótipo, propõe a leitura ("entendi 4 seções; a caixa do meio eu li como a `<Table>` padrão") e tira as dúvidas **de uma vez**. Chegou wireframe direto no `design-screen` sem brief → rode a brief primeiro.
+
+### 3D.4 Verificação visual — o diff NÃO se aplica
+**Não rode diff numérico (3C) contra um wireframe.** O alvo não é parecer com o rabisco — a tela final tem que parecer com **as outras telas do protótipo**. Verificação aqui é:
+
+1. Renderize a rota no Vite.
+2. Renderize a **tela irmã** ao lado.
+3. Confira: mesma cara de sistema? mesmos componentes? mesma densidade? mesmo header?
+4. Confira contra o **rabisco** só a **checklist de estrutura**: toda seção do desenho existe? na mesma ordem? todo botão está lá?
+
+Estrutura confere com o rabisco; visual confere com a tela irmã. São duas verificações diferentes.
+
+---
+
 ## 3C. Loop de verificação visual — OBRIGATÓRIO
 
-Vale pros dois caminhos. **Gerar com os valores certos não garante 1:1. Conferir garante.** Nunca diga "está fiel" sem ter rodado a comparação.
+**Gerar com os valores certos não garante 1:1. Conferir garante.** Nunca diga "está fiel" sem ter rodado a comparação.
+
+Vale quando a referência **tem visual**: node de produção, Figma autoral (3A), imagem/print (3B). **Não vale para wireframe** — rabisco não tem visual pra bater; a verificação de wireframe é a 3D.4 (estrutura contra o rabisco, visual contra a tela irmã).
 
 1. Suba o Vite (Etapa 5), renderize a rota no Chrome (`claude-in-chrome`) no **mesmo viewport da referência**. Use `?export=1` (tela sem chrome) pra comparar só a tela.
 2. Screenshot do resultado.
@@ -252,6 +331,18 @@ for i in np.argsort(rows)[-5:]:
 ## 3.5-ALIGN. Alinhar o protótipo EM TEXTO antes de construir (gate anti-desperdício)
 
 **Não escreva JSX direto.** Descreva o protótipo em texto/chat e alinhe. Só construa depois do "pode".
+
+### 3.5.0 Já existe um documento de design? Ele É o plano.
+
+Antes de alinhar do zero, procure `outputs/{ID}_*/{ID}_design.md` (gerado pela `design-brief`).
+
+- **Existe** → **ele é o plano; não realinhe.** Navegação, telas, seções, componentes reusados, gap real, estados e impacto já foram decididos e aprovados lá. Leia, confirme em 2-3 linhas ("vou construir /medicoes conforme o design doc") e vá pra Etapa 4. Realinhar o que já foi alinhado é desperdício e reabre decisão fechada.
+- **Não existe, mas a demanda veio de doc/HU/issue** → a análise não foi feita. Rode a `design-brief` antes (regra dura 9 do `product-designer`), não improvise o plano aqui.
+- **Não existe e a demanda é texto simples ou imagem** → siga o alinhamento curto abaixo. É o caminho normal.
+
+Divergiu do doc durante a construção (o doc previu reuso de `<Table>` mas a tela precisa de coluna expansível)? **Decisão pequena → siga e reporte.** Decisão grande que contraria o doc → pare e alinhe.
+
+### 3.5.1 Alinhamento curto (sem design doc)
 
 Proponha, curto (depois de inventariar o protótipo — 3.0):
 - **Rota** — caminho (`/projetos/listagem`) e módulo/pasta
@@ -310,11 +401,39 @@ prototype/src/
 
 ### 4.2 Regras de componente
 - **HTML semântico** dentro do JSX (`<main>`, `<section>`, `<table>`, `<form>`, `<label for>`); hierarquia de headings correta.
-- **WCAG AA**: label associada a input, `aria-label` em botão de ícone, foco visível, contraste ≥ 4.5:1.
 - **Ícones**: `lucide-react` (`import { Trash2 } from "lucide-react"`).
 - **`aria-label` nos blocos** = nome do node no export Figma (§ html-to-figma). Ponha desde já nos containers relevantes.
 - **Largura desktop 1280** no `ExportFrame` — o AppShell já dá o container; o `?export=1` fixa 1280 sem chrome.
 - **Renderize todos os estados pedidos** — vazio, dados, loading, erro. Mais valioso que uma tela estática perfeita.
+
+### 4.3 Checklist de acessibilidade — WCAG AA, não opcional
+
+Passe por ele **antes de entregar**. Não é enfeite: metade disso o `design-screen` já quebra por padrão (botão de ícone sem label, erro não ligado ao campo).
+
+**Visual**
+- [ ] Contraste ≥ **4.5:1** (texto normal) · ≥ **3:1** (texto grande, ícone, borda de input)
+- [ ] Nenhuma informação transmitida **só por cor** (status precisa de texto/ícone, não só de bolinha)
+- [ ] **Foco visível** em tudo que é interativo (não remova o outline sem repor)
+
+**Interação**
+- [ ] Todo elemento interativo é alcançável por **teclado**; ordem de foco lógica
+- [ ] Sem armadilha de foco — modal fecha no `Esc` e devolve o foco pra quem abriu
+- [ ] Alvo de toque ≥ **44×44px** (linha de tabela com botão de ícone é o infrator clássico)
+
+**Leitor de tela**
+- [ ] `aria-label` em **todo botão só de ícone** (lixeira, lápis, três pontinhos)
+- [ ] Hierarquia de headings correta (`h1 → h2 → h3`, sem pular)
+- [ ] `alt` em imagem com significado; `alt=""` em decorativa
+
+**Formulário**
+- [ ] `<label for>` associada a **todo** input (placeholder **não** é label)
+- [ ] Mensagem de erro **ligada ao campo** (`aria-describedby`), não só um texto vermelho solto
+- [ ] Campo obrigatório marcado de forma acessível (não só com asterisco vermelho)
+
+**Estados — desenhe todos os que existem**
+`default` · `hover` · `focus` · `disabled` · `loading` · `error` · `empty`
+
+> Contraste: cheque contra o **token**, não contra o que parece. Texto `text-muted` sobre `surface` é o par que mais falha.
 
 ---
 
@@ -383,4 +502,8 @@ Issue: #NNN (se aplicável)
 ---
 
 ## Quando não há nada no Figma
-Peça **imagem** (print, mockup) e siga a Etapa 3B. Nunca recuse por falta de Figma — imagem medida é referência válida. Só pare se não houver **nem node nem imagem**.
+Peça **imagem** (print, mockup) e siga a Etapa 3B — imagem medida é referência válida. Nunca recuse por falta de Figma.
+
+**Wireframe rabiscado também serve** (3D) — e é entrada de primeira classe, não plano B. Ele dá intenção; o design system dá o visual. Passa pela `design-brief` antes.
+
+Só pare se não houver **nem node, nem imagem, nem wireframe, nem tela irmã** que sirva de base.

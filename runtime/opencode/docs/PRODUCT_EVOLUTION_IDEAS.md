@@ -35,7 +35,7 @@ ninguém sabe se o trabalho gerou valor. As evoluções abaixo fecham esse ciclo
 | Discovery | `discovery` (Double Diamond D1/D2) |
 | Documentação | `doc-consolidator`, `hu-generator`, `ht-generator`, `gerar-regras` |
 | Sprint | `sprint-goal-generator`, `gitlab-sprint-ops` |
-| Design | `design-setup`, `design-screen`, `figma-implement-design`, `frontend-design`, `html-to-figma` |
+| Design | `design-brief`, `design-setup`, `design-screen`, `html-to-figma` |
 | Engenharia | `tech-lead`, `tech-qa`, `db-query` |
 | Comunicação | `wiki`, skill `changelog-generator` + `gitlab-wiki` (changelog via PM) |
 | Contexto | sync Drive→md (`sync-context.sh`), `context_docs/` |

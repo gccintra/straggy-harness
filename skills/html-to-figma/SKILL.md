@@ -17,7 +17,7 @@ Motor de export do protótipo pro Figma. O protótipo é o app React (`prototype
 
 Fluxo: **rota React renderizada no Vite (`?export=1`) → capture.js espelha o DOM → insert no Figma**.
 
-> **Skill inversa:** `figma-implement-design` faz Figma → código.
+> **Caminho inverso:** Figma → código é a `design-screen` (§3.2 node de produção, §3A Figma autoral).
 
 ---
 
