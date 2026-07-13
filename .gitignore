@@ -3,6 +3,11 @@ __pycache__/
 node_modules/
 .DS_Store
 
+# Segredos — o harness ships o .env.example; o .env preenchido é do projeto e nunca entra aqui
+.env
+.env.*
+!.env.example
+
 # Regras de engajamento — cada dev cria/personaliza o próprio, não versionar no harness
 AGENTS.md
 CLAUDE.md
