@@ -187,7 +187,15 @@ Agente: designer
 
 ---
 
-## 7. Quando re-executar
+## 7. Publicar o protótipo
+
+Scaffold e telas rodam local (`npm run dev`). Para o protótipo virar **URL compartilhável** — cliente ou time revisando fora da sua máquina — use a skill `prototype-deploy`: ela hospeda o `prototype/` como site estático numa VPS, com basic auth e HTTPS.
+
+Não é passo do setup; chame quando houver o que mostrar.
+
+---
+
+## 8. Quando re-executar
 
 - Design system evoluiu (novos componentes, rebrand)
 - Usuário pediu atualização

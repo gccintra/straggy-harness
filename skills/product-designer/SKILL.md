@@ -53,6 +53,7 @@ Do ambiente:
 | "implementa esse desenho do Figma", "desenhei essa tela no Figma, passa pro protótipo" | **Screen** | `design-screen` §3A (Figma **autoral**) |
 | "implementa esse wireframe", "fiz esse rabisco, monta a tela" | **Brief → Screen** | `design-brief` → `design-screen` §3D |
 | "exporta a tela X pro Figma", "manda essas telas pro Figma" | — | `html-to-figma` (via `design-screen` Etapa 6) |
+| "hospeda o protótipo", "sobe na VPS", "põe no ar", "quero um link pro cliente ver" | **Deploy** | `prototype-deploy` |
 
 > `html-to-figma` (motor de captura) **não é gatilho direto** — é invocada por `design-screen` (export de tela) e `design-setup` (guidelines opt-in). Carregue a skill de modo; ela puxa o resto.
 >
