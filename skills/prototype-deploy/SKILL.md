@@ -24,6 +24,24 @@ Duas consequências práticas, e são as duas fontes de bug deste deploy:
 
 ---
 
+## 0. O ciclo — leia antes de executar qualquer coisa
+
+A skill tem duas metades, e a maior parte dela **roda uma vez só na vida do projeto**.
+
+**Setup (uma vez, §1 a §3 e §6):** descobrir o porteiro HTTP, criar o server block, basic auth, DNS, certificado. Mexe no servidor que hospeda outras coisas — é a metade com risco.
+
+**Publicação (toda vez, §4):**
+```bash
+cd prototype && ./deploy.sh
+```
+Builda local, envia o `dist/` por rsync, recarrega o nginx. Não precisa de git, nem de Node na VPS, nem de tocar em config. Protótipo mudou → roda de novo.
+
+O certificado renova sozinho (timer do certbot). O deploy não encosta nisso.
+
+> **Antes de executar, descubra em qual metade você está.** Já existe `prototype/deploy.sh` e o domínio já responde? É **republicação**: vá direto pro §4. Refazer §2/§3 numa republicação é mexer em config de servidor à toa — e é lá que mora o risco de derrubar site alheio.
+
+---
+
 ## 1. Configuração
 
 Leia de `project-config.md`, seção `## Deploy do protótipo`:

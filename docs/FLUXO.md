@@ -155,6 +155,8 @@ design-screen ─── cria ou ajusta a tela como rota React em prototype/
                   reusa src/components/ui/ e os tokens do tailwind.config.js
 
 prototype-deploy ─ publica o prototype/ numa VPS: site estático, basic auth, HTTPS
+                  setup do servidor é uma vez; depois, republicar é só
+                  `cd prototype && ./deploy.sh`
 ```
 
 A **fonte de verdade do design é o código** (`tailwind.config.js` + `components/ui/`), não o
