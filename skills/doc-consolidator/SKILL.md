@@ -37,6 +37,10 @@ rigor de classificação em **`references/regras.md`**.
 
 ## 1. Fluxo
 
+### Passo 0 — GitLab desabilitado?
+
+Se `GITLAB_ENABLED` no `.env` não for `true`: pule o Passo 1 (`glab issue view`/notes). A fonte vira só `history/discoveries/*` + `docs/context_docs/`. Sem número de issue, peça ao usuário o conteúdo do discovery ou a descrição da demanda direto. O `.md` gerado continua indo para `outputs/{ID}_{NomeCurto}/` normalmente.
+
 ### Passo 1 — Carregar todo o material da issue
 
 ```bash

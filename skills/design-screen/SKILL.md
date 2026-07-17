@@ -40,6 +40,9 @@ App do protótipo: `prototype/` (Vite + React + TS + Tailwind + react-router). D
 ## 2. Carregar o contexto da tela
 
 ### Recebeu número de issue
+
+Se `GITLAB_ENABLED` no `.env` não for `true`: não dá pra ler a issue. Avise e busque `outputs/{ID}_*/{ID}.md` no repo (mesmo ID); sem isso, peça a descrição direto (trate como "Recebeu descrição livre" abaixo).
+
 ```bash
 GITLAB_HOST=${GITLAB_HOST} GITLAB_URI=${GITLAB_URI} \
   glab issue view NNN -R ${GITLAB_REPO}

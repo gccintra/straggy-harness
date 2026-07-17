@@ -14,6 +14,18 @@ description: >
 
 **PRÉ-REQUISITO:** Carregar a skill `glab-backlog` antes de qualquer operação no GitLab.
 
+**GATE — GitLab habilitado.** Antes de qualquer operação, verifique:
+
+```bash
+echo $GITLAB_ENABLED
+```
+
+Se não for `true`, **pare** e responda:
+
+> "GitLab não está habilitado neste projeto (`GITLAB_ENABLED` no `.env`). Esta skill depende da API do GitLab e não tem equivalente local. Para ativar, preencha `GITLAB_ENABLED=true` e as credenciais `GITLAB_*` no `.env`."
+
+Não tente contornar com dados de `outputs/` ou `docs/context_docs/` — eles não substituem o estado real do backlog.
+
 Dois fluxos: **Flow 1 — Create** (nova issue a partir do zero) e **Flow 2 — Refine** (enriquecer issue existente com informação rasa). Ambos focam exclusivamente no problema — soluções são responsabilidade do `discovery`.
 
 ## 1. Project Configuration

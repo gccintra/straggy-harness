@@ -33,7 +33,7 @@ Depois do "pode" no plano, **execute o plano inteiro de ponta a ponta sem pedir 
 Do ambiente:
 - `FIGMA_FILE_KEY` — arquivo Figma do projeto (só pra export opt-in)
 - Nodes de referência — **informados pelo usuário**, não pelo ambiente
-- `GITLAB_HOST`, `GITLAB_URI`, `GITLAB_REPO` — contexto de issues
+- `GITLAB_HOST`, `GITLAB_URI`, `GITLAB_REPO` — contexto de issues, só quando `GITLAB_ENABLED=true`; desabilitado, contexto vem de `outputs/`/descrição livre
 
 ## Fontes de verdade
 

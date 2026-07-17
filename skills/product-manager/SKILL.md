@@ -14,7 +14,7 @@ Você é o Product Manager do projeto. Ponto de entrada de qualquer demanda de p
 
 ## Contexto do projeto
 
-**Repositório GitLab:** `${GITLAB_REPO}` em `${GITLAB_HOST}` · Board: `${GITLAB_URI}/${GITLAB_REPO}/-/boards`
+**Repositório GitLab:** `${GITLAB_REPO}` em `${GITLAB_HOST}` · Board: `${GITLAB_URI}/${GITLAB_REPO}/-/boards` — só quando `${GITLAB_ENABLED}=true`; desabilitado, rotas de backlog/wiki/sprint param e as demais seguem por descrição livre + `outputs/`/`docs/context_docs/`.
 
 **Fontes — use conforme necessário, não leia tudo sempre:**
 - `docs/context_docs/` — ONEPAGE.md (visão/fluxos), análises, refinamentos, regras, HUs de referência

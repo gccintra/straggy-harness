@@ -48,6 +48,17 @@ history/discoveries/ — registro das sessões de discovery
 
 ---
 
+## 0. Modo sem GitLab
+
+Verifique `GITLAB_ENABLED` no `.env`. Se não for `true`:
+
+- **Entrada:** pule `glab issue view` / `glab api .../notes`. Peça a demanda por descrição livre do usuário. Sem número de issue, nomeie o history por slug: `history/discoveries/YYYY-MM-DD_discovery_{slug}.md`.
+- **Detecção de fase:** em vez de ler comentários da issue, releia o history local — os headers `## D1a —` / `## D1b —` / `## D2a —` / `## D2b —`, ou o marcador `Última fase` no rodapé de uma sessão parcial.
+- **Postagem:** pule todo bloco `glab issue note create` / `glab api .../notes -X POST` / `glab issue update` (comentário, PRIORIZACAO, label). O registro **"Salvar no history (append)"** de cada fase já é o suficiente — nada se perde, só não duplica na issue.
+- Avise uma vez, na primeira fase: "GitLab desabilitado — registro fica só no history local, não será postado em issue."
+
+---
+
 ## 1. Entrada — Detecção de Fase
 
 ```bash

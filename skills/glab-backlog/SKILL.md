@@ -15,6 +15,18 @@ description: >
 > - `sest2/itl` → `${GITLAB_REPO}`
 > - `sest2%2Fitl` → URL-encoded form of `${GITLAB_REPO}` (replace `/` with `%2F`)
 
+**GATE — GitLab habilitado.** Antes de qualquer operação, verifique:
+
+```bash
+echo $GITLAB_ENABLED
+```
+
+Se não for `true`, **pare** e responda:
+
+> "GitLab não está habilitado neste projeto (`GITLAB_ENABLED` no `.env`). Esta skill depende da API do GitLab e não tem equivalente local. Para ativar, preencha `GITLAB_ENABLED=true` e as credenciais `GITLAB_*` no `.env`."
+
+Não tente contornar com dados de `outputs/` ou `docs/context_docs/` — eles não substituem o estado real do backlog.
+
 ---
 
 ## 1. Authentication and Host Selection

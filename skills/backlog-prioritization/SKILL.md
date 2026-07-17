@@ -15,6 +15,18 @@ description: >
 
 **PRÉ-REQUISITO:** Carregar a skill `glab-backlog` antes de qualquer operação no GitLab.
 
+**GATE — GitLab habilitado.** Antes de qualquer operação, verifique:
+
+```bash
+echo $GITLAB_ENABLED
+```
+
+Se não for `true`, **pare** e responda:
+
+> "GitLab não está habilitado neste projeto (`GITLAB_ENABLED` no `.env`). Esta skill depende da API do GitLab e não tem equivalente local. Para ativar, preencha `GITLAB_ENABLED=true` e as credenciais `GITLAB_*` no `.env`."
+
+Não tente contornar com dados de `outputs/` ou `docs/context_docs/` — eles não substituem o estado real do backlog.
+
 # backlog-prioritization
 
 Exporta issues do GitLab em **uma única chamada à API**, filtra localmente pelas labels de

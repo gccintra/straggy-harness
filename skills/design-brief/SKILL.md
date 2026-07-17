@@ -64,6 +64,9 @@ Sem isso, o `design-screen` chuta os buracos e você descobre o erro depois da t
 ## 1. Ler a demanda (nível completo)
 
 ### Recebeu `#NNN`
+
+Se `GITLAB_ENABLED` no `.env` não for `true`: não dá pra ler a issue. Avise e peça o `.md` em `outputs/{ID}_*/` (branch abaixo) ou a descrição da demanda direto.
+
 ```bash
 GITLAB_HOST=${GITLAB_HOST} GITLAB_URI=${GITLAB_URI} \
   glab issue view NNN -R ${GITLAB_REPO}

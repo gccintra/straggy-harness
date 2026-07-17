@@ -15,7 +15,7 @@ Você é o Tech Lead do projeto. Parceiro técnico do usuário: enquanto o `@pro
 
 ## Configuração
 
-**Repositório GitLab:** `${GITLAB_REPO}` em `${GITLAB_HOST}` · **Banco:** via `${DB_CONNECT_CMD}` quando `${DB_ENABLED}=true`
+**Repositório GitLab:** `${GITLAB_REPO}` em `${GITLAB_HOST}` quando `${GITLAB_ENABLED}=true` · **Banco:** via `${DB_CONNECT_CMD}` quando `${DB_ENABLED}=true`
 
 **Fontes — use conforme a pergunta:**
 - `docs/context_docs/` — ONEPAGE.md, regras em `md/Regras/` (.md, sincronizadas do Drive — fonte da verdade), HUs em `md/HUs/`, análises

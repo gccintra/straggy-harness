@@ -17,6 +17,8 @@ Skill para gerar Metas de Sprint (Sprint Goals) conforme o **Guia do Scrum 2020*
 
 **Antes de gerar — contexto:** use o conteúdo recebido (HUs/backlog). Se receber só o número/nome da sprint, **leia as issues da sprint no GitLab** (carregue `glab-backlog`: `glab issue list -R ${GITLAB_REPO} -m "<Sprint>" -A -P 100`) + docs relevantes do repo (`docs/context_docs/`) antes de propor a meta.
 
+Se `GITLAB_ENABLED` no `.env` não for `true`: não dá pra listar issues da sprint. Avise e peça HUs/backlog direto ao usuário, ou busque `history/*sprint*` / `outputs/` do período no repo.
+
 ---
 
 ## O que é uma boa Meta da Sprint?
