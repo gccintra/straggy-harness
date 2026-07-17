@@ -111,27 +111,38 @@ revise o email no compartilhamento (passo 3.2) — costuma ser typo no email.
 
 ## 4. O script de sincronização (`sync-context.sh`)
 
-Fica na raiz do projeto. Edite o bloco do topo com os IDs do seu Drive:
+Fica na raiz do projeto. Os IDs do Drive vêm do `.env` (não edite o script):
 
 ```bash
-GDRIVE_HUS="gdrive,root_folder_id=<ID_DA_PASTA>:"   # pasta inteira (recursivo)
-GDRIVE_REGRAS_DOC_ID="<ID_DO_ARQUIVO>"              # arquivo único (Google Doc)
+GDRIVE_HUS=gdrive,root_folder_id=<ID_DA_PASTA>:     # pasta de HUs (recursivo)
+GDRIVE_REGRAS_DOC_ID=<ID_DO_ARQUIVO_1> <ID_DO_ARQUIVO_2>   # 1+ Google Docs de Regras de Negócio, separados por espaço
+GDRIVE_REFERENCIAS_GLOBAIS_DOC_ID=<ID_DO_ARQUIVO>   # opcional — 1 doc, nome fixo Referencias-Globais.md
+GDRIVE_OUTROS=gdrive,root_folder_id=<ID_DA_PASTA>:  # opcional — contexto diverso (persona, glossário, decisões)
 ```
 
-Dois modos de origem, escolha conforme o caso:
+Três modos de origem, escolha conforme o caso:
 
-| Origem | Como referenciar | Mecanismo |
-|---|---|---|
-| **Pasta inteira** (N arquivos) | `root_folder_id` da pasta | `rclone sync` (recursivo, incremental, apaga o que sumiu) |
-| **Arquivo único** | ID do arquivo | `rclone backend copyid` (exporta só ele) |
+| Origem | Como referenciar | Mecanismo | Nome final |
+|---|---|---|---|
+| **Pasta inteira** — `GDRIVE_HUS` / `GDRIVE_OUTROS` | `root_folder_id` da pasta | `rclone sync` (recursivo, incremental, apaga o que sumiu) | espelha subpastas/nomes originais |
+| **Arquivo(s), nome livre** — `GDRIVE_REGRAS_DOC_ID` (1 ou mais) | ID do arquivo | `rclone backend copyid` (exporta cada um) | título do doc no Drive |
+| **Arquivo único, nome fixo** — `GDRIVE_REFERENCIAS_GLOBAIS_DOC_ID` | ID do arquivo | `rclone backend copyid` + conversão dedicada | sempre `Referencias-Globais.md`, ignora o título no Drive |
 
 O que o script faz, em ordem:
-1. **Baixa** do Drive para `_raw/`, exportando Google Docs nativos → `.docx`
-   (`--drive-export-formats docx`). `rclone sync` é incremental: compara
-   tamanho+hash, baixa só o que mudou.
-2. **Converte** `_raw/ → md/`, espelhando subpastas: `.docx` via `pandoc`,
-   `.pdf` via `pdftotext`. Pula arquivos temporários do Word (`~$...`).
-3. **Loga** cada conversão com timestamp.
+1. **Baixa** do Drive para `_raw/`. `rclone sync` é incremental: compara
+   tamanho+hash, baixa só o que mudou. Para arquivos nativos do Google (Doc/Sheet/Slide),
+   exporta conforme `--drive-export-formats docx,pptx,xlsx,pdf` — nessa ordem de
+   prioridade, o primeiro formato válido pro tipo do arquivo: **Doc → `.docx`**,
+   **Slide → `.pptx`**, **Sheet → `.xlsx`**. `.pdf` só entra como último recurso,
+   quando nada melhor se aplica — **de propósito**: converter Sheet/Slide pra PDF
+   perde estrutura (tabela vira texto solto, slide perde layout), então evita-se
+   isso preferindo o formato nativo.
+2. **Converte** `_raw/ → md/`, espelhando subpastas — só onde a conversão **não
+   perde conteúdo/propósito**: `.docx` via `pandoc` (texto → markdown), `.pdf`
+   via `pdftotext` (texto → texto). Qualquer outro formato (`.xlsx`, `.pptx`,
+   imagem, etc.) é **copiado como está**, extensão original preservada — sem
+   conversão que destruiria a informação. Pula arquivos temporários do Word (`~$...`).
+3. **Loga** cada conversão/cópia com timestamp.
 
 Rodar manualmente:
 ```bash
@@ -170,9 +181,8 @@ tail -f sync.log   # log das rodadas
 1. Instale as ferramentas (seção 2) — uma vez por máquina.
 2. Reutilize **o mesmo service account** (ou crie outro) e compartilhe as novas
    pastas/arquivos com o `client_email` dele.
-3. Copie `sync-context.sh` para o novo projeto e ajuste:
-   - `BASE` (pasta de saída, se diferente),
-   - `GDRIVE_HUS` / `GDRIVE_REGRAS_DOC_ID` com os novos IDs.
+3. `sync-context.sh` já vem do harness (symlink via `install.sh`) — só preencha no `.env`:
+   - `GDRIVE_HUS` / `GDRIVE_REGRAS_DOC_ID` / `GDRIVE_REFERENCIAS_GLOBAIS_DOC_ID` / `GDRIVE_OUTROS` (opcionais) com os novos IDs.
 4. `rclone config create gdrive ...` aponta pro mesmo `sa-key.json` (vale pra
    todos os projetos da máquina — só precisa fazer uma vez).
 5. Rode `./sync-context.sh` uma vez pra validar; depois agende no cron.
