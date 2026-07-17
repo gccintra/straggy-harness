@@ -9,6 +9,49 @@ veja "Core vs. adapter" no [`README.md`](../README.md).
 
 ---
 
+## 0. Arquitetura em 3 camadas
+
+O harness em si (`.agents/`) tem esta física:
+
+```
+.agents/
+├── ENGAGEMENT.md              regras invariantes (brevidade, write-gate, context-gate,
+│                               personas, delegação seletiva, ortografia)
+├── README.md                   overview + instalação + core vs. adapter
+├── docs/
+│   ├── FLUXO.md                 este arquivo — instalação, config, fluxo por momento
+│   └── CHEAT_SHEET.md           referência rápida (triggers, mapa skill, ICE, MoSCoW)
+├── SYNC_SETUP.md               setup do service account do Drive + rclone
+├── install.sh                  cria os symlinks e semeia project-config.md/.env
+├── sync-context.sh             Drive → docs/context_docs/md/ no projeto consumidor
+├── project-config.template.md  template do project-config.md
+├── .env.example                template do .env
+├── skills/                     física ÚNICA de cada skill: skills/{nome}/SKILL.md
+└── runtime/                     adapter por runtime — como cada um descobre/spawna
+    ├── claude/agents/*.md + commands/*.md    (Claude Code: subagent + slash command)
+    ├── codex/agents/*.toml                   (Codex: agent definition)
+    └── opencode/opencode.json                (OpenCode: agent config)
+```
+
+**Três camadas, para não erodir a portabilidade entre Codex/Claude Code/OpenCode:**
+
+1. **Skill compartilhada** (`skills/`) — a lógica de produto/processo em si. Um único
+   `SKILL.md` por skill, lido pelos três runtimes.
+2. **Regra invariante** (`ENGAGEMENT.md`) — comportamento que vale sempre, independente de
+   runtime ou projeto (write-gate, context-gate, brevidade, delegação, ortografia).
+3. **Adapter de runtime** (`runtime/<runtime>/`) — só "como spawnar/configurar a persona
+   nesse runtime específico". Nunca lógica de produto.
+
+No projeto consumidor (`<raiz-do-projeto>/`), o `install.sh` só cria symlinks e semeia dois
+arquivos de config — ver tabela em [§1](#1-instalar-num-projeto-novo). As skills nunca são
+copiadas: Codex e OpenCode leem `.agents/skills/` direto; Claude Code enxerga o mesmo caminho
+via `runtime/claude/skills`.
+
+**Sinal de que algo está na camada errada:** se você se pegar copiando a mesma skill em 3
+variações por runtime, a diferença devia estar no adapter (`runtime/<runtime>/`), não na skill.
+
+---
+
 ## 1. Instalar num projeto novo
 
 O harness vive em `<projeto>/.agents/`. Ele pode ser um submódulo registrado **ou** um clone
@@ -199,7 +242,68 @@ descartável. Rode antes de trabalhar em documentação, e agende no cron se qui
 
 ---
 
-## 8. O que o harness nunca faz sozinho
+## 8. Catálogo completo de skills
+
+As 24 skills que existem hoje em `.agents/skills/`, física única. Detalhe de cada uma no
+próprio `SKILL.md`.
+
+**Personas** (ativam a thread principal, carregam as demais sob demanda):
+
+| Skill | O que faz |
+|---|---|
+| `product-manager` | Entry point padrão. Produto, backlog, processo. |
+| `tech-lead` | Viabilidade, dados reais (banco), impacto técnico, HT. |
+| `product-designer` | Interface, protótipo, design system, export Figma. |
+
+**Backlog e sprint** (carregadas pelo `@product-manager`, algumas pelo `@tech-lead`):
+
+| Skill | O que faz |
+|---|---|
+| `backlog-issue-creator` | Cria/refina issue: template, MoSCoW, labels. |
+| `backlog-prioritization` | Funil MoSCoW → quadrante I×E → ICE score, detecta anomalias. |
+| `backlog-analysis` | Export via glab+jq → CSV + relatório de métricas/velocidade. |
+| `backlog-health` | Audita issue sem tipo/prioridade/sprint, duplicata, zumbi. |
+| `gitlab-sprint-ops` | Cria/fecha sprint, move issues em lote, documenta milestone. |
+| `sprint-goal-generator` | Escreve a Meta da Sprint focada em outcome, não output. |
+| `gitlab-wiki` | Publica/atualiza página na wiki do GitLab. |
+| `changelog-generator` | Registra entrada no Histórico de Evolução a partir de HU/OS. |
+| `glab-backlog` | Referência de comandos `glab`. Carregada **obrigatoriamente** por toda skill que fala com GitLab — não é gatilho direto do usuário. |
+
+**Discovery e documentação** (`@product-manager` e `@tech-lead`):
+
+| Skill | O que faz |
+|---|---|
+| `discovery` | Double Diamond D1/D2 — comentário por fase, bloco PRIORIZACAO. |
+| `doc-consolidator` | Gera `outputs/{ID}_{Nome}/{ID}.md` — descrição + CA + RN (SBVR) + mensagens + referências + trilha do discovery. Para para revisão humana. |
+| `hu-generator` | `.md` revisado → `.docx` de História de Usuário (9 seções). Só sob pedido explícito. |
+| `ht-generator` | `.md` revisado → `.docx` de História Técnica (6 seções). Só sob pedido explícito. |
+
+**Design** (`@product-designer`):
+
+| Skill | O que faz |
+|---|---|
+| `design-setup` | Uma vez por projeto: extrai tokens de prints, faz o scaffold do `prototype/`. |
+| `design-brief` | Antes de codar: o que a demanda vira em tela, o que reusa, o que falta. |
+| `design-screen` | Cria/ajusta tela como rota React em `prototype/`. |
+| `html-to-figma` | Opt-in, invocada pela `design-screen`/`design-setup`: captura DOM → Figma. |
+| `figma-node-reader` | Subagente: transcreve node do Figma que estoura o limite de token. |
+| `prototype-deploy` | Publica `prototype/` numa VPS: estático, basic auth, HTTPS. |
+
+**Técnico** (`@tech-lead`):
+
+| Skill | O que faz |
+|---|---|
+| `db-query` | Consulta o banco de homologação via cliente CLI do `.env` (qualquer autenticação). |
+
+**Apoio manual** (gatilho explícito, nunca automático):
+
+| Skill | O que faz |
+|---|---|
+| `committer` | Commit convencional + push + PR. Só roda com `@committer` explícito. |
+
+---
+
+## 9. O que o harness nunca faz sozinho
 
 Vale o [`ENGAGEMENT.md`](../ENGAGEMENT.md), e as skills o carregam:
 
