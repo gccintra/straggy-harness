@@ -57,7 +57,7 @@ Before creating or refining issues, understand the project structure:
 2. **Existing issues:** `glab issue list -R {REPO} --search "[keyword]"` — find similar issues and understand project vocabulary.
 3. **Ask the user:** If no documentation is found, ask: "Qual o nome do módulo ou área do sistema?" and "Tem alguma issue relacionada?"
 
-**Module inference:** The module is a **text field** in the template (CONTEXTO & DISCOVERY > Módulo), not a label. Infer from context: docs, existing issue titles, or user input. If cannot infer, ask directly.
+**Module inference:** The module goes into the issue title (`[TITLE] - [MODULO]`), not a label. Infer from context: docs, existing issue titles, or user input. If cannot infer, ask directly.
 
 ## 4. Discover Project Labels
 
@@ -143,10 +143,6 @@ Impacto, Confiança e Facilidade são calculados durante o discovery (Fases D1b 
 ### Template A — Feature / Improvement / Enhancement
 
 ```markdown
-# [TITLE] - [MODULO]
-
----
-
 ## HISTÓRIA DE USUÁRIO
 
 |  |  |
@@ -163,8 +159,6 @@ Impacto, Confiança e Facilidade são calculados durante o discovery (Fases D1b 
 
 **POR QUE:** [Por que isso importa — impacto no negócio, usuário ou sistema. max 2-3 linhas]
 
-> ⚠️ **Problema, não solução.** Proibido mecanismo, formato, tecnologia ou UX nesta seção e na História de Usuário: nada de "PDF", "em lote", "assíncrono", "barra de progresso", "salvar no banco", "criar tela/botão". Isso é saída do `discovery`. Teste: se a frase responde **como** resolver, ela não pertence aqui — reescreva no nível do **problema**.
-
 ---
 
 ## EVIDÊNCIAS DA DEMANDA
@@ -176,37 +170,18 @@ Impacto, Confiança e Facilidade são calculados durante o discovery (Fases D1b 
 
 ---
 
-## Outros
-
-<details>
-<summary>PRIORIZACAO</summary>
+## PRIORIZACAO
 
 | MoSCoW | Impacto | Confiança | Facilidade | ICE | Quadrante |
 |--------|---------|-----------|-----------|-----|-----------|
 | MUST/SHOULD/COULD/WONT | — | — | — | — | — |
 
 > MoSCoW: [justificativa]. Impacto, Confiança e Facilidade calculados durante o discovery.
-
-</details>
-
-<details>
-<summary>CONTEXTO & DISCOVERY</summary>
-
-**Módulo:** [MODULO]
-**Épico / Tema:** [Se identificado]
-**Relacionadas:** [issues relacionadas encontradas, ex: #42, #87]
-**Dependências:** [bloqueadores identificados, se houver]
-
-</details>
 ```
 
 ### Template B — Bug
 
 ```markdown
-# [TITLE] - [MODULO]
-
----
-
 ## DESCRICAO
 
 [Resumo claro e conciso do bug — o que está quebrado]
@@ -265,31 +240,16 @@ Impacto, Confiança e Facilidade são calculados durante o discovery (Fases D1b 
 
 ---
 
-## Outros
-
-<details>
-<summary>PRIORIZACAO</summary>
+## PRIORIZACAO
 
 | MoSCoW | Impacto | Confiança | Facilidade | ICE | Quadrante |
 |--------|---------|-----------|-----------|-----|-----------|
 | MUST/SHOULD/COULD/WONT | — | — | — | — | — |
 
 > MoSCoW: [justificativa]. Impacto, Confiança e Facilidade calculados durante o discovery.
-
-</details>
-
-<details>
-<summary>CONTEXTO & DISCOVERY</summary>
-
-**Módulo:** [MODULO]
-**Épico / Tema:** [Se identificado]
-**Relacionadas:** [issues relacionadas]
-**Dependências:** [bloqueadores identificados, se houver]
-
-</details>
 ```
 
-**Para critical bugs:** dentro de `<details><summary>PRIORIZACAO</summary>`, substituir a tabela por:
+**Para critical bugs:** na seção `PRIORIZACAO`, substituir a tabela por:
 ```
 MoSCoW: MUST
 Classificação: CRITICAL — vai direto para a sprint atual.
@@ -361,8 +321,7 @@ Identificar quais seções estão ausentes ou rasas:
 - História de usuário (Como / Quero / Para)
 - Problema (O QUE / POR QUE)
 - Evidências da demanda (volume, origem, quem pediu, links)
-- Módulo em CONTEXTO & DISCOVERY
-- Issues relacionadas
+- Módulo no título ([TITLE] - [MODULO])
 - MoSCoW inicial em PRIORIZACAO
 
 ### 9c. Entrevista para preencher os gaps
