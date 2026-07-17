@@ -56,6 +56,7 @@ Também ler, se existirem:
 - `history/discoveries/*issue-NNN*` — registro consolidado do discovery (material bruto,
   com marcadores `[→CA]` / `[→RN]` / `[→MSG]` / `[→GL candidato]`).
 - `docs/context_docs/md/Referencias-Globais.md` — doc de Referências Globais (Drive, read-only).
+- `docs/context_docs/md/Outros/` — contexto diverso do produto (persona, glossário, decisões), **se existir**.
 - `docs/context_docs/` — ONEPAGE, metadados de projeto/cliente/OS.
 
 **Se não houver D2b** (nem na issue, nem em `history/discoveries/`): pare e avise

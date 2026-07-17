@@ -206,6 +206,7 @@ Não avance para D2a sem isto. É leitura + listagem; segue direto (sem postar).
      aponte o GL (reúso). Não existe (ou catálogo ausente) → segue como candidato; o consolidator
      decide promoção depois, com prova. Só não trate o conceito como novidade exclusiva da issue.
    - ONEPAGE.md e discoveries anteriores do módulo em `history/discoveries/`.
+   - `docs/context_docs/md/Outros/` — contexto diverso do produto (persona, glossário, decisões), **se existir**.
 2. **Montar a lista de incógnitas técnicas** — o que trava a solução e você não pode responder sozinho lendo docs:
    - existe tabela/campo para isso? quais colunas?
    - o valor é armazenado ou derivado (ex.: valor atual do contrato vem de aditivos)?
