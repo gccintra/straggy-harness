@@ -59,8 +59,9 @@ Também ler, se existirem:
 - `docs/context_docs/md/Outros/` — contexto diverso do produto (persona, glossário, decisões), **se existir**.
 - `docs/context_docs/` — ONEPAGE, metadados de projeto/cliente/OS.
 
-**Se não houver D2b** (nem na issue, nem em `history/discoveries/`): pare e avise
-"Discovery não concluído até D2b — não há material para consolidar. Rode o discovery primeiro."
+**Se não houver D2b** (nem na issue, nem em `history/discoveries/`): pare e **pergunte** ao
+usuário — "Discovery não concluído até D2b. Como quer prosseguir?" Não trate falta de D2b como
+bloqueio automático nem decida sozinho — espera resposta do usuário.
 
 ### Passo 2 — Determinar HU ou HT
 

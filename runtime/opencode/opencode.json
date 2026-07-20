@@ -64,21 +64,5 @@
         }
       }
     }
-  },
-  "mcp": {
-    "figma": {
-      "enabled": true,
-      "type": "remote",
-      "url": "https://mcp.figma.com/mcp"
-    },
-    "firecrawl": {
-      "type": "local",
-      "command": [
-        "/bin/zsh",
-        "-lc",
-        "set -a; source \"$(git rev-parse --show-toplevel)/.env\"; set +a; exec npx -y firecrawl-mcp"
-      ],
-      "enabled": true
-    }
   }
 }
