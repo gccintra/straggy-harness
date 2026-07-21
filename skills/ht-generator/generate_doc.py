@@ -258,11 +258,12 @@ def parse_md(text):
             i += 1
             continue
 
-        # subsecao ### ...
-        m = re.match(r"^### (.+)", line)
+        # subsecao ### (h3) ou #### (h4)
+        m = re.match(r"^(#{3,4}) (.+)", line)
         if m and cur is not None:
             flush_table()
-            cur["blocks"].append(("subheading", m.group(1).strip()))
+            level = len(m.group(1))  # 3 ou 4
+            cur["blocks"].append(("subheading", (level, m.group(2).strip())))
             i += 1
             continue
 
@@ -397,7 +398,8 @@ def build(md_path, out_path, label=None):
             if btype == "paragraph":
                 body_para(doc, payload)
             elif btype == "subheading":
-                doc.add_paragraph(payload, style="Heading 2")
+                level, txt = payload
+                doc.add_paragraph(txt, style="Heading 3" if level == 4 else "Heading 2")
             elif btype == "table":
                 for lbl, val in payload:
                     add_row_table(doc, lbl, val)

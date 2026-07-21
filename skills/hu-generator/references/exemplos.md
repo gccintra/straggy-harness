@@ -75,13 +75,15 @@ Wizard de **2 etapas** no Hub de Aditivos. A Etapa 1 coleta as naturezas da alte
 
 ## 8. Protótipo
 
-[Vazio — inserir as prints das telas do protótipo manualmente.]
+### 8.1. Cadastro do contrato
+
+**Link:** https://<base>/contratos/novo
+
+#### 8.1.1. Formulário de cadastro de contrato
 
 ## 9. Complemento de Documentação
 
 **Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
-
-**Link do Protótipo de Telas Impactadas:** [Vazio — preenchido manualmente pelo usuário.]
 
 ---
 

@@ -111,12 +111,13 @@ Tabela de três linhas: `Como` / `Quero` / `Para`.
 * Nenhuma → um único bullet `N/A`.
 
 ### Seção 8 — Protótipo
-* **Sempre vazia** — placeholder para o usuário colar as **prints das telas** do protótipo
-  (imagens), não links. O link vai na seção 9. Nunca transcrever links/notas aqui.
+* Transcreva os **títulos por fluxo** e os **links** das rotas que a skill `prototype-prints`
+  escreveu no `.md` (subseções de fluxo + link + headings de print). As **imagens** o usuário
+  cola à mão no `.docx`. Nunca auto-preencher com notas do discovery.
 
 ### Seção 9 — Complemento de Documentação
-* **Sempre vazia** — dois placeholders em negrito, fonte normal (não heading): `Documento de
-  Regras de Negócio:` e `Link do Protótipo de Telas Impactadas:`. O usuário preenche.
+* **Sempre vazia** — um placeholder em negrito, fonte normal (não heading): `Documento de
+  Regras de Negócio:`. O usuário preenche.
 
 > **Não existe** seção "Descrição de Interface". O apêndice de discovery e o apêndice "Novas
 > Referências Globais — copiar para o Drive" **não vão** para o `.docx` (o script os corta).

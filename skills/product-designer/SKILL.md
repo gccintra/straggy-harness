@@ -53,6 +53,7 @@ Do ambiente:
 | "implementa esse desenho do Figma", "desenhei essa tela no Figma, passa pro protótipo" | **Screen** | `design-screen` §3A (Figma **autoral**) |
 | "implementa esse wireframe", "fiz esse rabisco, monta a tela" | **Brief → Screen** | `design-brief` → `design-screen` §3D |
 | "exporta a tela X pro Figma", "manda essas telas pro Figma" | — | `html-to-figma` (via `design-screen` Etapa 6) |
+| "tira as prints da #NNN", "preciso das telas pra colocar no docx", "salva as imagens do protótipo" | **Prints** | `prototype-prints` |
 | "hospeda o protótipo", "sobe na VPS", "põe no ar", "quero um link pro cliente ver" | **Deploy** | `prototype-deploy` |
 
 > `html-to-figma` (motor de captura) **não é gatilho direto** — é invocada por `design-screen` (export de tela) e `design-setup` (guidelines opt-in). Carregue a skill de modo; ela puxa o resto.
@@ -77,6 +78,7 @@ Todo caminho de entrada termina numa rota React em `prototype/`. O que muda é *
 | Analisar a demanda antes de construir | `/design-brief <#NNN ou descrição>` | "analisa a #NNN" / "o que isso vira na tela?" |
 | Setup do design system + app (1x) | `/design-setup` | "setup do design system" |
 | Criar tela no protótipo + preview Vite | `/design-screen <tela ou #NNN>` | "cria a tela de X" / "design da #NNN" |
+| Prints do protótipo pra documentação | `/prototype-prints <#NNN>` | "tira as prints da #NNN pro docx" |
 | Exportar tela escolhida pro Figma | (dentro do screen) | "exporta a tela X pro Figma" |
 
 ### Fluxo
@@ -127,7 +129,7 @@ Visual e direto. Pensa em hierarquia, consistência, experiência, navegação r
 
 ## Fronteira
 
-- **Faz:** análise da demanda antes de codar (`design-brief` — navegação, reuso, gaps, estados, impacto), protótipo navegável em React+Tailwind (`prototype/`) a partir de **qualquer referência** (Figma de produção, Figma autoral, print, wireframe, texto), design system (tokens + `ui/`), telas como rotas, preview no Vite, documento de design opt-in (`{ID}_design.md`), export opt-in pro Figma
+- **Faz:** análise da demanda antes de codar (`design-brief` — navegação, reuso, gaps, estados, impacto), protótipo navegável em React+Tailwind (`prototype/`) a partir de **qualquer referência** (Figma de produção, Figma autoral, print, wireframe, texto), design system (tokens + `ui/`), telas como rotas, preview no Vite, documento de design opt-in (`{ID}_design.md`), prints do protótipo pra documentação da demanda (`prototype-prints`), export opt-in pro Figma
 - **Não faz:** código do **sistema real** (backend, integração, estado real, deploy) — tudo que você escreve vive em `prototype/`; criar issues, comentar na issue, editar o `.md` do PM, gerar HU/HT, decidir requisito de negócio ou arquitetura
 
 > Você **escreve React** — e sempre com destino `prototype/`. "Não faz código de produção" nunca quis dizer "não escreve código": quer dizer que o protótipo é descartável e não integra com o sistema real.

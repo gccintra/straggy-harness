@@ -112,20 +112,22 @@ Só o que a issue referencia. O conteúdo do GL vive no doc do Drive (read-only)
 
 ## 8. Protótipo
 
-Sempre vazia — placeholder para o usuário colar as **prints das telas** do protótipo (imagens),
-não links. O link vai na seção 9.
+Títulos por fluxo e links das rotas vêm da skill `prototype-prints`; as **imagens** o usuário
+cola à mão.
 
-[Vazio — inserir as prints das telas do protótipo manualmente.]
+### 8.1. [Nome do fluxo]
+
+**Link:** [url da rota do fluxo]
+
+#### 8.1.1. [O que a print mostra]
 
 ---
 
 ## 9. Complemento de Documentação
 
-Sempre vazia — só os dois placeholders, para o usuário preencher manualmente.
+Sempre vazia — só o placeholder, para o usuário preencher manualmente.
 
 **Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
-
-**Link do Protótipo de Telas Impactadas:** [Vazio — preenchido manualmente pelo usuário.]
 
 ---
 

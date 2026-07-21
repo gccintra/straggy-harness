@@ -272,17 +272,16 @@ verbatim os CAs/regras. **Apenas o que está DENTRO do escopo.** **bold** em 1�
 - **GL_01 — [Título]** — usado em CA03. (ver Referencias-Globais.md — Drive)
 
 ## 8. Protótipo
-<!-- SEMPRE vazia — placeholder para o usuário colar as PRINTS das telas do protótipo (imagens),
-     não links (o link vai na seção 9). Nunca auto-preencher com notas do discovery. -->
+<!-- SEMPRE vazia — placeholder para as PRINTS das telas do protótipo (imagens) e os links das
+     rotas por fluxo. Títulos e links são preenchidos pela skill prototype-prints; as imagens, o
+     usuário cola à mão. Nunca auto-preencher com notas do discovery. -->
 
-[Vazio — inserir as prints das telas do protótipo manualmente.]
+[Vazio — títulos e links preenchidos pela skill prototype-prints; prints coladas manualmente.]
 
 ## 9. Complemento de Documentação
-<!-- SEMPRE vazia — só os dois placeholders, para o usuário preencher. Nunca auto-preencher. -->
+<!-- SEMPRE vazia — só o placeholder, para o usuário preencher. Nunca auto-preencher. -->
 
 **Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
-
-**Link do Protótipo de Telas Impactadas:** [Vazio — preenchido manualmente pelo usuário.]
 
 ---
 
