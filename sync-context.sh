@@ -30,7 +30,7 @@ log(){ echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" | tee -a "$LOG_FILE"; }
 #   GDRIVE_REGRAS_DOC_ID=<DOC_ID_1> <DOC_ID_2> ...     (1+ Google Docs de Regras de Negocio, separados por espaco)
 #   GDRIVE_REFERENCIAS_GLOBAIS_DOC_ID=<DOC_ID>         (opcional; 1 Google Doc — sempre vira Referencias-Globais.md, nome fixo)
 #   GDRIVE_OUTROS=gdrive,root_folder_id=<FOLDER_ID>:   (opcional; pasta de contexto diverso — persona, glossario, decisoes, etc.)
-get_env(){ grep -E "^$1=" .env 2>/dev/null | head -1 | cut -d= -f2- | sed -e "s/^['\"]//" -e "s/['\"]\$//"; }
+get_env(){ grep -E "^$1=" .env 2>/dev/null | head -1 | cut -d= -f2- | sed -e "s/^['\"]//" -e "s/['\"]\$//" || true; }
 GDRIVE_HUS="$(get_env GDRIVE_HUS)"
 GDRIVE_REGRAS_DOC_ID="$(get_env GDRIVE_REGRAS_DOC_ID)"
 GDRIVE_REFERENCIAS_GLOBAIS_DOC_ID="$(get_env GDRIVE_REFERENCIAS_GLOBAIS_DOC_ID)"
