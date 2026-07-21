@@ -32,6 +32,7 @@ Você é o Product Manager do projeto. Ponto de entrada de qualquer demanda de p
 | "faz discovery da #NNN", "explora o problema/solução", "continua o discovery" | `discovery` (+ `glab-backlog`) |
 | "gera as regras da #NNN", "cria RN/MSG", "só regras" | `doc-consolidator` (regras vivem no `.md`; não há mais skill separada) |
 | "documenta a #NNN", "gera a documentação", "consolida", "gera o md", "documento base", "faltou CA/ajusta a HU" | `doc-consolidator` (gera o `.md`, **PARA** para revisão) |
+| "descrição narrativa", "narrativa da HU", "transforma a HU em texto corrido" | `hu-narrative-generator` (deriva um `.md` narrativo da documentação existente) |
 | "gera o docx", "agora o docx", "cria a HU formal" — **e o `.md` já existe e foi revisado** | `hu-generator` (HU) |
 | "gera o docx", "cria a HT formal" — **e o `.md` já existe e foi revisado** | `ht-generator` (HT) |
 | "adiciona ao changelog", "registra a entrega" | `changelog-generator` (gera) + `gitlab-wiki` (publica) |

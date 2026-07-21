@@ -1,0 +1,4 @@
+interface:
+  display_name: "Descrição Narrativa de HU"
+  short_description: "Transforma HUs em narrativas operacionais coesas"
+  default_prompt: "Use $hu-narrative-generator para gerar a descrição narrativa desta HU."
