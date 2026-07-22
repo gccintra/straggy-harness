@@ -116,8 +116,13 @@ Tabela de três linhas: `Como` / `Quero` / `Para`.
   cola à mão no `.docx`. Nunca auto-preencher com notas do discovery.
 
 ### Seção 9 — Complemento de Documentação
-* **Sempre vazia** — um placeholder em negrito, fonte normal (não heading): `Documento de
-  Regras de Negócio:`. O usuário preenche.
+* Dois blocos em negrito, fonte normal (não heading):
+  * `Documento de Regras de Negócio:` — transcreva o link se o usuário já preencheu no `.md`;
+    senão deixe o placeholder vazio.
+  * `Link do Protótipo de Telas Impactadas:` — transcreva os bullets `<Nome do fluxo>: <url>`
+    do `.md` (mesmos links da seção 8, duplicados lá pela `prototype-prints`). Nenhum link no
+    `.md` → só o placeholder.
+* Nada além de links aqui — nunca prosa, título de print ou imagem.
 
 > **Não existe** seção "Descrição de Interface". O apêndice de discovery e o apêndice "Novas
 > Referências Globais — copiar para o Drive" **não vão** para o `.docx` (o script os corta).

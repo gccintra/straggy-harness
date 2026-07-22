@@ -125,9 +125,15 @@ cola à mão.
 
 ## 9. Complemento de Documentação
 
-Sempre vazia — só o placeholder, para o usuário preencher manualmente.
+Só links. O doc de regras o usuário preenche à mão; os links do protótipo vêm da skill
+`prototype-prints` (mesmos links da seção 8 — repetidos aqui porque no `.md` a seção 8 fica só
+com títulos, sem imagem).
 
 **Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+
+**Link do Protótipo de Telas Impactadas:**
+
+- **[Nome do fluxo]:** [url da rota do fluxo]
 
 ---
 

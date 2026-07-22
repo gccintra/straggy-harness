@@ -112,7 +112,8 @@ uma local a global é uma fase **posterior** (Passo 5) — não misture aqui.
 - **Seção 6 — Mensagens:** seção própria, numeração **local** `MSG_01…MSG_N`, tipo + texto
   literal. Nunca inline no CA.
 - **Não há mais RA.** Comportamento de tela virou CA. Não existe seção "Descrição de
-  Interface" nem "Complemento de Documentação".
+  Interface"; a seção 9 (Complemento de Documentação) é só placeholder de links, nunca
+  comportamento.
 
 ### Passo 5 — Revisão de promoção a GL (só DEPOIS do doc completo)
 
@@ -279,9 +280,15 @@ verbatim os CAs/regras. **Apenas o que está DENTRO do escopo.** **bold** em 1�
 [Vazio — títulos e links preenchidos pela skill prototype-prints; prints coladas manualmente.]
 
 ## 9. Complemento de Documentação
-<!-- SEMPRE vazia — só o placeholder, para o usuário preencher. Nunca auto-preencher. -->
+<!-- Só os placeholders. O link do doc de regras o usuário preenche à mão; os links do protótipo
+     são preenchidos pela skill prototype-prints (mesmos links da seção 8, duplicados aqui porque
+     a seção 8 fica vazia no .md — as prints só existem no .docx). Nunca auto-preencher. -->
 
 **Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+
+**Link do Protótipo de Telas Impactadas:**
+
+[Vazio — um bullet por fluxo, preenchido pela skill prototype-prints.]
 
 ---
 
@@ -378,13 +385,15 @@ data: YYYY-MM-DD
    têm o texto completo aqui — não há arquivo de regras separado.
 2. **Numeração local por issue** para RN e MSG (`RN_01…`, `MSG_01…`, reinicia por issue). GL é
    global e vive no Drive (read-only) — a issue só referencia.
-3. **Sem RA, sem "Descrição de Interface", sem "Complemento de Documentação".** Comportamento de
-   tela vira CA.
+3. **Sem RA, sem "Descrição de Interface".** Comportamento de tela vira CA — nunca prosa na
+   seção 9.
 4. **CA coeso e referencia por código** — nunca escreve mensagem/fórmula inline.
 5. **Doc de Referências Globais é read-only** — GL novo vai no apêndice "copiar para o Drive",
    nunca escrito direto no arquivo do Drive.
 6. **Apêndice de discovery é obrigatório** — registro do processo.
 7. **Seção 7 (Referências Globais):** GLs por bullet; nenhuma → um único `- N/A` (sem prosa).
 8. **Seções 8 (Protótipo) e 9 (Complemento de Documentação):** SEMPRE vazias, só os placeholders
-   — o usuário preenche. Nunca colar notas de protótipo/regras do discovery aqui.
+   — o usuário preenche o doc de regras; a skill `prototype-prints` preenche os títulos/links da
+   seção 8 e duplica esses links na seção 9. Nunca colar notas de protótipo/regras do discovery
+   aqui.
 9. Rigor de classificação completo em **`references/regras.md`**.

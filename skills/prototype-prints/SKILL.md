@@ -218,7 +218,7 @@ número lógico e acrescente letras às partes (`10a`, `10b`, `10c`).
 
 ## 7. Escrever os títulos na seção Protótipo do `.md`
 
-Preencha a **seção 8 (Protótipo)** do `.md` da demanda com os títulos das prints — a estrutura de headings onde o usuário vai colar cada imagem à mão.
+Preencha a **seção 8 (Protótipo)** do `.md` da demanda com os títulos das prints — a estrutura de headings onde o usuário vai colar cada imagem à mão — e **duplique os links na seção 9 (Complemento de Documentação)**.
 
 Regras do que escrever:
 
@@ -251,7 +251,32 @@ Exemplo:
 
 Rota com parâmetro (`/<recurso>/<id>`, `/<rota>?<param>`) aponta para registro do mock — confira que o id existe e que os query params necessários para abrir o estado certo estão na URL.
 
-Os links vivem **só na seção 8**, junto das prints do fluxo — não há campo de link em outra seção do documento.
+### 7.1. Duplicar os links na seção 9
+
+A seção 8 vive de imagens, e no `.md` entregue aos devs ela fica vazia (as prints só existem no
+`.docx`). Por isso **todo link da seção 8 é repetido na seção 9 (Complemento de Documentação)** —
+lá o `.md` continua útil sozinho.
+
+Regras:
+
+- Bloco `**Link do Protótipo de Telas Impactadas:**` logo abaixo do `**Documento de Regras de
+  Negócio:**` (que o usuário preenche à mão — não toque nele).
+- **Um bullet por fluxo**, na mesma ordem da seção 8: `- **<Nome do fluxo>:** <url>`.
+- **Mesma URL** da subseção correspondente, literal. Fluxos que compartilham a rota repetem a URL.
+- Só links; nada de títulos de print, imagem ou legenda na seção 9.
+
+Exemplo:
+
+```markdown
+## 9. Complemento de Documentação
+
+**Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+
+**Link do Protótipo de Telas Impactadas:**
+
+- **<Nome do primeiro fluxo>:** https://<base>/<rota-do-fluxo>
+- **<Nome do segundo fluxo>:** https://<base>/<outra-rota>
+```
 
 Escreva **só os títulos e os links**. Não insira a imagem, não gere `.docx`. Colar as prints e transcrever para o `.docx` são passos manuais do usuário (o `.docx` é `hu-generator`/`ht-generator`, à parte).
 
@@ -267,7 +292,7 @@ Encerre o servidor Vite que você subiu.
 
 ## Fronteira
 
-- **Faz:** escolher o recorte a partir da documentação, capturar e nomear as imagens, entregá-las ao lado do `.md` da demanda, e escrever na seção 8 (Protótipo) do `.md` os **títulos** das prints e o **link** da rota por fluxo.
+- **Faz:** escolher o recorte a partir da documentação, capturar e nomear as imagens, entregá-las ao lado do `.md` da demanda, escrever na seção 8 (Protótipo) do `.md` os **títulos** das prints e o **link** da rota por fluxo, e duplicar esses links na seção 9 (Complemento de Documentação).
 - **Não faz:** inserir a imagem no `.md` (o usuário cola à mão sob cada título); gerar o `.docx` (é `hu-generator`/`ht-generator`); ajustar tela do protótipo (é `design-screen`); exportar pro Figma (é `html-to-figma`).
 
 Se durante a captura você notar que a tela está errada em relação à documentação, **reporte** — não corrija de passagem. Corrigir tela é `design-screen`, com plano próprio.
