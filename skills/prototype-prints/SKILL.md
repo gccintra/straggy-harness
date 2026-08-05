@@ -218,7 +218,9 @@ número lógico e acrescente letras às partes (`10a`, `10b`, `10c`).
 
 ## 7. Escrever os títulos na seção Protótipo do `.md`
 
-Preencha a **seção 8 (Protótipo)** do `.md` da demanda com os títulos das prints — a estrutura de headings onde o usuário vai colar cada imagem à mão — e **duplique os links na seção 9 (Complemento de Documentação)**.
+Preencha a **seção 8 (Protótipo)** do `.md` da demanda com os títulos das prints — a estrutura
+de headings usada pelo `hu-generator` para inserir cada imagem — e **duplique os links na seção
+9 (Complemento de Documentação)**.
 
 Regras do que escrever:
 
@@ -226,8 +228,9 @@ Regras do que escrever:
   esse único heading, na ordem, para parecerem uma captura contínua no DOCX.
 - **Subseção por fluxo** (`###`), **um heading por print** dentro dela (`####`). A numeração acompanha a seção — `8.1`, `8.1.1`, `8.1.2`, `8.2`, `8.2.1`...
 - **Link da rota logo abaixo de cada subseção de fluxo** (`###`), antes dos headings de print. Uma linha `**Link:** <url>`, apontando para a tela do protótipo publicado onde aquele fluxo acontece. A base sai de `project-config.md`; a rota, do fluxo. Fluxos que acontecem na mesma tela repetem a mesma URL — não force rotas diferentes só para variar.
-- **Só o título descritivo** nos headings de print. Nada de nome de arquivo, caminho, "Figura NN" ou legenda. O título diz o que a tela mostra; o usuário insere a imagem abaixo dele.
-- **Deixe o espaço em branco** sob cada heading para a imagem.
+- **Só o título descritivo** nos headings de print. Nada de nome de arquivo, caminho, "Figura
+  NN" ou legenda. O título diz o que a tela mostra; o `hu-generator` insere a imagem abaixo dele.
+- **Deixe o espaço em branco** sob cada heading; o `hu-generator` insere a imagem no `.docx`.
 
 Exemplo:
 
@@ -278,7 +281,9 @@ Exemplo:
 - **<Nome do segundo fluxo>:** https://<base>/<outra-rota>
 ```
 
-Escreva **só os títulos e os links**. Não insira a imagem, não gere `.docx`. Colar as prints e transcrever para o `.docx` são passos manuais do usuário (o `.docx` é `hu-generator`/`ht-generator`, à parte).
+Escreva **só os títulos e os links**. Não insira a imagem no `.md` e não gere `.docx`. O
+`hu-generator` usa os títulos e a numeração dos arquivos para inserir automaticamente as prints
+no `.docx`.
 
 ## 8. Entregar
 
@@ -293,6 +298,7 @@ Encerre o servidor Vite que você subiu.
 ## Fronteira
 
 - **Faz:** escolher o recorte a partir da documentação, capturar e nomear as imagens, entregá-las ao lado do `.md` da demanda, escrever na seção 8 (Protótipo) do `.md` os **títulos** das prints e o **link** da rota por fluxo, e duplicar esses links na seção 9 (Complemento de Documentação).
-- **Não faz:** inserir a imagem no `.md` (o usuário cola à mão sob cada título); gerar o `.docx` (é `hu-generator`/`ht-generator`); ajustar tela do protótipo (é `design-screen`); exportar pro Figma (é `html-to-figma`).
+- **Não faz:** inserir a imagem no `.md`; gerar o `.docx` (é `hu-generator`/`ht-generator`);
+  ajustar tela do protótipo (é `design-screen`); exportar pro Figma (é `html-to-figma`).
 
 Se durante a captura você notar que a tela está errada em relação à documentação, **reporte** — não corrija de passagem. Corrigir tela é `design-screen`, com plano próprio.

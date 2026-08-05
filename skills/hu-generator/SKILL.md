@@ -71,6 +71,11 @@ pip install python-docx   # se necessário
 python3 generate_doc.py <md_path> outputs/{ID}_{NomeCurto}/HU{ID}_{TOKEN}_{NomeCurto}.docx
 ```
 
+Se a seção 8 tiver headings de prints, o script exige `prototipo-prints/` ao lado do `.md` e
+insere as imagens automaticamente. A numeração deve ser contínua (`01`, `02`...) e partes da
+mesma print usam letras (`04a`, `04b`...). Divergência entre headings e prints interrompe a
+geração para impedir imagem associada ao título errado.
+
 O rótulo do header (`HISTÓRIA DE USUÁRIO`) é inferido do frontmatter `tipo: HU` do `.md`.
 Validar: `python3 -c "from docx import Document; Document('<arquivo>')"`.
 
@@ -112,8 +117,9 @@ Tabela de três linhas: `Como` / `Quero` / `Para`.
 
 ### Seção 8 — Protótipo
 * Transcreva os **títulos por fluxo** e os **links** das rotas que a skill `prototype-prints`
-  escreveu no `.md` (subseções de fluxo + link + headings de print). As **imagens** o usuário
-  cola à mão no `.docx`. Nunca auto-preencher com notas do discovery.
+  escreveu no `.md` (subseções de fluxo + link + headings de print). O `generate_doc.py`
+  insere automaticamente sob cada heading as imagens correspondentes de `prototipo-prints/`.
+  Nunca auto-preencher com notas do discovery.
 
 ### Seção 9 — Complemento de Documentação
 * Dois blocos em negrito, fonte normal (não heading):
@@ -148,6 +154,8 @@ Resumo do que o script aplica (para conferência visual):
 - **Tabela "2. História de Usuário":** 1 tabela por linha (Como/Quero/Para), bordas single, label 2220 / valor 8246 twips.
 - **CAs:** bullet ●, organizados em subseções (Heading), `CA01:` verde `38761d` bold, `Dado que/Quando/Então` bold cor `1b1c1d`.
 - **Bullets:** ● com recuo pendente (left 465 / hanging 360 twips).
+- **Imagens do protótipo:** PNGs inline, centralizados e ajustados à largura útil da página;
+  partes `a/b/c` são inseridas em sequência sob um único heading.
 - **Seções 5/6/7:** texto completo de RN (SBVR), MSG e GL como bullets. **Apêndices** (discovery, GLs a copiar) cortados do `.docx`.
 
 O conteúdo (texto das seções) vem do `.md` consolidado; o script só aplica formatação.

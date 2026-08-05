@@ -1,6 +1,9 @@
 #!/usr/bin/env python3
 """Gera o .docx de HU/HT no padrao do projeto a partir do .md consolidado.
 
+Quando a secao 8 possui headings de prints, insere automaticamente as imagens de
+`prototipo-prints/`, agrupadas pelo prefixo numerico (04a/04b = uma print logica).
+
 Uso:  python3 generate_doc.py <md_path> <docx_out> [--label "HISTORIA TECNICA"]
 
 A lib e python-docx (leve, pure-python). Layout identico ao gerador antigo em Node/docx.
@@ -22,6 +25,7 @@ TABLE_VAL_W = 8246
 GREEN = RGBColor(0x38, 0x76, 0x1D)
 DARK = RGBColor(0x1B, 0x1C, 0x1D)
 LOGO = Path(__file__).resolve().parent / "assets" / "header_logo.png"
+PROTOTYPE_PRINT_RE = re.compile(r"^(\d+)([a-z]?)_.+\.png$", re.IGNORECASE)
 
 ANCHOR_XML = (
     '<w:drawing xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
@@ -199,6 +203,79 @@ def add_floating_logo(paragraph):
     run._r.append(parse_xml(ANCHOR_XML.format(cx=319 * 9525, cy=26 * 9525, rid=rid)))
 
 
+def collect_prototype_prints(md_path, sections):
+    """Valida e agrupa prints da secao 8 na mesma ordem dos headings H4."""
+    prototype_headings = [
+        payload[1]
+        for section in sections
+        if section["heading"].startswith("8.")
+        for block_type, payload in section["blocks"]
+        if block_type == "subheading" and payload[0] == 4
+    ]
+    prints_dir = Path(md_path).resolve().parent / "prototipo-prints"
+
+    if not prototype_headings:
+        return []
+    if not prints_dir.is_dir():
+        raise ValueError(
+            f"A secao 8 possui {len(prototype_headings)} titulo(s), mas a pasta "
+            f"de prints nao existe: {prints_dir}"
+        )
+
+    groups = {}
+    for image_path in sorted(prints_dir.glob("*.png")):
+        match = PROTOTYPE_PRINT_RE.match(image_path.name)
+        if not match:
+            raise ValueError(
+                f"Nome de print invalido: {image_path.name}. "
+                "Use NN_descricao.png ou NNa_descricao.png."
+            )
+        number = int(match.group(1))
+        suffix = match.group(2).lower()
+        groups.setdefault(number, []).append((suffix, image_path))
+
+    expected_numbers = list(range(1, len(prototype_headings) + 1))
+    if sorted(groups) != expected_numbers:
+        found = ", ".join(f"{number:02d}" for number in sorted(groups)) or "nenhum"
+        expected = ", ".join(f"{number:02d}" for number in expected_numbers)
+        raise ValueError(
+            f"Prints da secao 8 nao correspondem aos headings. "
+            f"Esperado: {expected}. Encontrado: {found}."
+        )
+
+    result = []
+    for number, heading in zip(expected_numbers, prototype_headings):
+        parts = sorted(groups[number], key=lambda item: item[0])
+        suffixes = [suffix for suffix, _ in parts]
+        if "" in suffixes and len(suffixes) > 1:
+            raise ValueError(
+                f"A print {number:02d} mistura arquivo sem sufixo com partes a/b."
+            )
+        if suffixes and suffixes[0] != "":
+            expected_suffixes = [chr(ord("a") + i) for i in range(len(suffixes))]
+            if suffixes != expected_suffixes:
+                raise ValueError(
+                    f"Partes da print {number:02d} devem ser continuas a/b/c. "
+                    f"Encontrado: {', '.join(suffixes)}."
+                )
+        result.append((heading, [path for _, path in parts]))
+    return result
+
+
+def add_prototype_prints(doc, heading, image_paths, max_width):
+    """Insere uma print logica (uma ou mais partes) como imagens inline."""
+    for index, image_path in enumerate(image_paths):
+        paragraph = doc.add_paragraph()
+        paragraph.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        paragraph.paragraph_format.space_before = Pt(0)
+        paragraph.paragraph_format.space_after = Pt(0 if index < len(image_paths) - 1 else 6)
+        run = paragraph.add_run()
+        shape = run.add_picture(str(image_path), width=Emu(max_width))
+        part_label = "" if len(image_paths) == 1 else f" - parte {index + 1}"
+        shape._inline.docPr.set("name", image_path.name)
+        shape._inline.docPr.set("descr", f"{heading}{part_label}")
+
+
 # ---------------- parser do .md ----------------
 def parse_md(text):
     lines = text.split("\n")
@@ -329,6 +406,8 @@ def setup_styles(doc):
 
 def build(md_path, out_path, label=None):
     tipo, metadata, sections = parse_md(Path(md_path).read_text(encoding="utf-8"))
+    prototype_prints = collect_prototype_prints(md_path, sections)
+    prototype_print_index = 0
     if label is None:
         label = "HISTÓRIA TÉCNICA" if (tipo or "").upper() == "HT" else "HISTÓRIA DE USUÁRIO"
 
@@ -341,6 +420,7 @@ def build(md_path, out_path, label=None):
     sec.left_margin = sec.right_margin = sec.top_margin = sec.bottom_margin = Pt(36)  # 720 twips
     sec.header_distance = Pt(35.4)
     sec.footer_distance = Pt(35.4)
+    prototype_max_width = int(sec.page_width - sec.left_margin - sec.right_margin)
 
     # header: logo flutuante (esq) + label (dir) no mesmo paragrafo
     hp = sec.header.paragraphs[0]
@@ -399,7 +479,23 @@ def build(md_path, out_path, label=None):
                 body_para(doc, payload)
             elif btype == "subheading":
                 level, txt = payload
-                doc.add_paragraph(txt, style="Heading 3" if level == 4 else "Heading 2")
+                heading_paragraph = doc.add_paragraph(
+                    txt, style="Heading 3" if level == 4 else "Heading 2"
+                )
+                if (
+                    s["heading"].startswith("8.")
+                    and level == 4
+                    and prototype_prints
+                ):
+                    expected_heading, image_paths = prototype_prints[prototype_print_index]
+                    if txt != expected_heading:
+                        raise ValueError(
+                            f"Titulo da print {prototype_print_index + 1:02d} mudou durante a geracao: "
+                            f"esperado '{expected_heading}', encontrado '{txt}'."
+                        )
+                    heading_paragraph.paragraph_format.keep_with_next = True
+                    add_prototype_prints(doc, txt, image_paths, prototype_max_width)
+                    prototype_print_index += 1
             elif btype == "table":
                 for lbl, val in payload:
                     add_row_table(doc, lbl, val)
@@ -412,7 +508,8 @@ def build(md_path, out_path, label=None):
 
     Path(out_path).parent.mkdir(parents=True, exist_ok=True)
     doc.save(out_path)
-    print(f"Generated: {out_path}")
+    image_count = sum(len(paths) for _, paths in prototype_prints)
+    print(f"Generated: {out_path} ({image_count} prototype image(s))")
 
 
 def main(argv):

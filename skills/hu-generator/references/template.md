@@ -112,8 +112,9 @@ Só o que a issue referencia. O conteúdo do GL vive no doc do Drive (read-only)
 
 ## 8. Protótipo
 
-Títulos por fluxo e links das rotas vêm da skill `prototype-prints`; as **imagens** o usuário
-cola à mão.
+Títulos por fluxo, links das rotas e prints vêm da skill `prototype-prints`; o
+`generate_doc.py` insere automaticamente no `.docx` as imagens de `prototipo-prints/` sob o
+heading correspondente.
 
 ### 8.1. [Nome do fluxo]
 
