@@ -2,7 +2,8 @@
 """Gera o .docx de HU/HT no padrao do projeto a partir do .md consolidado.
 
 Quando a secao 8 possui headings de prints, insere automaticamente as imagens de
-`prototipo-prints/`, agrupadas pelo prefixo numerico (04a/04b = uma print logica).
+`prototipo-prints/<IDENTIFICACAO>/` (ou `prototipo-prints/` no formato legado),
+agrupadas pelo prefixo numerico (04a/04b = uma print logica).
 
 Uso:  python3 generate_doc.py <md_path> <docx_out> [--label "HISTORIA TECNICA"]
 
@@ -26,6 +27,7 @@ GREEN = RGBColor(0x38, 0x76, 0x1D)
 DARK = RGBColor(0x1B, 0x1C, 0x1D)
 LOGO = Path(__file__).resolve().parent / "assets" / "header_logo.png"
 PROTOTYPE_PRINT_RE = re.compile(r"^(\d+)([a-z]?)_.+\.png$", re.IGNORECASE)
+DOCUMENT_ID_RE = re.compile(r"\b(?:HU|HT)\d+(?:\.\d+)*\b", re.IGNORECASE)
 
 ANCHOR_XML = (
     '<w:drawing xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"'
@@ -203,7 +205,26 @@ def add_floating_logo(paragraph):
     run._r.append(parse_xml(ANCHOR_XML.format(cx=319 * 9525, cy=26 * 9525, rid=rid)))
 
 
-def collect_prototype_prints(md_path, sections):
+def prototype_prints_dir(md_path, metadata):
+    """Resolve a pasta de prints da HU/HT, preservando o formato legado."""
+    base_dir = Path(md_path).resolve().parent / "prototipo-prints"
+    document_id = None
+    for label, value in metadata:
+        if label in ("Identificação da HU", "Identificação da HT"):
+            match = DOCUMENT_ID_RE.search(value)
+            if match:
+                document_id = match.group(0).upper()
+                break
+
+    if document_id:
+        document_dir = base_dir / document_id
+        if document_dir.is_dir():
+            return document_dir
+
+    return base_dir
+
+
+def collect_prototype_prints(md_path, metadata, sections):
     """Valida e agrupa prints da secao 8 na mesma ordem dos headings H4."""
     prototype_headings = [
         payload[1]
@@ -212,7 +233,7 @@ def collect_prototype_prints(md_path, sections):
         for block_type, payload in section["blocks"]
         if block_type == "subheading" and payload[0] == 4
     ]
-    prints_dir = Path(md_path).resolve().parent / "prototipo-prints"
+    prints_dir = prototype_prints_dir(md_path, metadata)
 
     if not prototype_headings:
         return []
@@ -406,7 +427,7 @@ def setup_styles(doc):
 
 def build(md_path, out_path, label=None):
     tipo, metadata, sections = parse_md(Path(md_path).read_text(encoding="utf-8"))
-    prototype_prints = collect_prototype_prints(md_path, sections)
+    prototype_prints = collect_prototype_prints(md_path, metadata, sections)
     prototype_print_index = 0
     if label is None:
         label = "HISTÓRIA TÉCNICA" if (tipo or "").upper() == "HT" else "HISTÓRIA DE USUÁRIO"

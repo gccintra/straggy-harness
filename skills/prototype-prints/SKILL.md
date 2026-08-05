@@ -75,7 +75,15 @@ Espere o "pode". Apagar print já entregue também pede confirmação.
 
 ## 4. Capturar
 
-Destino: `outputs/{ID}_{NomeCurto}/prototipo-prints/`, ao lado do `.md` que vira o docx.
+Destino:
+
+- pasta com um único documento formal: `outputs/{ID}_{NomeCurto}/prototipo-prints/`;
+- pasta com várias HUs/HTs: `outputs/{ID}_{NomeCurto}/prototipo-prints/{IDENTIFICACAO}/`
+  (ex.: `prototipo-prints/HU08.02/`).
+
+Em pastas com várias HUs/HTs, a numeração é local a cada documento (`01..NN`). Uma imagem
+reutilizada por mais de uma HU deve existir na subpasta de cada uma, com o número correspondente
+ao heading daquela HU. O `hu-generator` escolhe a subpasta pela identificação nos metadados.
 
 Se a demanda tem número de issue diferente do número no nome da pasta (issue guarda-chuva, tarefas filhas), **pergunte** onde salvar antes de criar diretório. Prints longe do documento se perdem.
 

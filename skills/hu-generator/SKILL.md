@@ -71,10 +71,12 @@ pip install python-docx   # se necessário
 python3 generate_doc.py <md_path> outputs/{ID}_{NomeCurto}/HU{ID}_{TOKEN}_{NomeCurto}.docx
 ```
 
-Se a seção 8 tiver headings de prints, o script exige `prototipo-prints/` ao lado do `.md` e
-insere as imagens automaticamente. A numeração deve ser contínua (`01`, `02`...) e partes da
-mesma print usam letras (`04a`, `04b`...). Divergência entre headings e prints interrompe a
-geração para impedir imagem associada ao título errado.
+Se a seção 8 tiver headings de prints, o script procura primeiro
+`prototipo-prints/{IDENTIFICACAO}/` ao lado do `.md` (ex.: `prototipo-prints/HU08.02/`) e
+mantém `prototipo-prints/` como fallback para pastas legadas com um único documento. Em pastas
+com várias HUs, cada subpasta usa numeração local contínua (`01`, `02`...); partes da mesma
+print usam letras (`04a`, `04b`...). Divergência entre headings e prints interrompe a geração
+para impedir imagem associada ao título errado.
 
 O rótulo do header (`HISTÓRIA DE USUÁRIO`) é inferido do frontmatter `tipo: HU` do `.md`.
 Validar: `python3 -c "from docx import Document; Document('<arquivo>')"`.
@@ -118,7 +120,8 @@ Tabela de três linhas: `Como` / `Quero` / `Para`.
 ### Seção 8 — Protótipo
 * Transcreva os **títulos por fluxo** e os **links** das rotas que a skill `prototype-prints`
   escreveu no `.md` (subseções de fluxo + link + headings de print). O `generate_doc.py`
-  insere automaticamente sob cada heading as imagens correspondentes de `prototipo-prints/`.
+  insere automaticamente sob cada heading as imagens correspondentes de
+  `prototipo-prints/{IDENTIFICACAO}/` (ou da raiz no formato legado).
   Nunca auto-preencher com notas do discovery.
 
 ### Seção 9 — Complemento de Documentação
