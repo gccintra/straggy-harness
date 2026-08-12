@@ -11,6 +11,9 @@ description: >
 
 # Skill: html-to-figma
 
+> **Camada:** implementação de escrita do provider `canvas/` (código → Figma). Procedural
+> por natureza. Write-gate e opt-in: `system/providers/canvas/INTERFACE.md`.
+
 ## Visão Geral
 
 Motor de export do protótipo pro Figma. O protótipo é o app React (`prototype/`); esta skill captura uma **rota renderizada** dele e insere o node no arquivo Figma alvo.

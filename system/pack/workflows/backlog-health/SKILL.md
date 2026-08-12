@@ -1,0 +1,50 @@
+---
+name: backlog-health
+description: >
+  Audita a saúde do backlog detectando issues sem tipo, sem prioridade, sem sprint,
+  sem assignee, possíveis duplicatas por similaridade de título e issues "zumbis"
+  (abertas há mais de 6 meses sem atualização). Exporta os dados do backlog em
+  uma única chamada, salva o CSV no repositório, e gera um relatório de saúde com
+  recomendações e opção de correções em lote. Use quando o usuário pedir para limpar
+  o backlog, encontrar inconsistências, ver duplicatas ou auditar a qualidade das issues.
+  IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de qualquer
+  operação no backlog.
+---
+
+# backlog-health — workflow L2 (pack padrão)
+
+| Camada | Referência |
+|---|---|
+| Restrições | `system/CONSTITUTION.md` (nunca fechar/editar/mesclar issue sem aprovação explícita; cada lote é um portão) |
+| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
+
+Varre o backlog inteiro de uma vez. Correção pontual de uma issue → `backlog-query`.
+
+## Bindings
+
+- **Um export em lote** (só demandas abertas) com timestamps, responsáveis, URL e
+  descrição resumida (100 chars) → `data/health_audit_YYYY-MM-DD.csv`. Verifique `wc -l`.
+- Prefixos de tipo/prioridade: confirme a taxonomia real de labels pelo provider.
+
+## Detecções (uma issue pode cair em vários grupos)
+
+| Grupo | Critério |
+|---|---|
+| Sem tipo / sem prioridade | nenhuma label com o prefixo correspondente |
+| Sem sprint / sem assignee | milestone/assignee vazio |
+| Zumbi | `updated_at` há mais de **180 dias** |
+| Possível duplicata | títulos com 3+ palavras significativas em comum (excluindo artigos e verbos genéricos) — **sugestão**, o usuário valida |
+
+## Contrato de saída
+
+`history/analyses/YYYY-MM-DD_health_audit.md`: resumo executivo (tabela problema × N × %),
+zumbis (IID, título, dias, URL), grupos de duplicatas com sugestão de qual manter,
+amostras (top 15 mais antigas) de sem-tipo e sem-prioridade, e 3 recomendações
+(imediato / esta semana / grooming).
+
+## Correções em lote (opt-in, após o relatório)
+
+Ofereça: [A] fechar zumbis · [B] fechar duplicatas validadas pelo usuário · [C] aplicar
+label de tipo (usuário informa qual) · [D] nada. **Aguarde a escolha.** Execução:
+comandos do provider, sequencial, progresso a cada 10 issues, registro das ações no
+relatório (seção "Ações executadas"). Zumbi pode ter razão de existir — o usuário decide.

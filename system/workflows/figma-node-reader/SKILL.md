@@ -10,6 +10,9 @@ description: >
 
 # figma-node-reader
 
+> **Camada:** implementação de leitura pesada do provider `canvas/` (node que estoura).
+> Restrições: `system/CONSTITUTION.md`.
+
 Subagente **transcritor**. Roda isolado, queima contexto lendo o Figma, e devolve HTML pronto pra colar.
 
 **Razão de existir — e seu único caso:** um node que **estoura** o limite de token. Uma tela inteira = 1453 nodes, ~10 chamadas `get_design_context`, ~80k de dump. Inline, isso ficaria preso no contexto principal para sempre. Aqui, morre com o subagente e volta só o HTML.

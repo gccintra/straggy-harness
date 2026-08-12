@@ -22,9 +22,12 @@ python3 .agents/org/workflows/<gerador>/generate_doc.py <md_path> <saida.docx>
 - Logo do header: `org/workflows/<gerador>/assets/header_logo.png` (~730×61 px) —
   substitua pelo logo do projeto; ausente → header só com texto.
 - Prints (capacidade `image-embed`): se a seção de protótipo do `.md` tem headings de
-  print, o script exige a pasta `prototipo-prints/` ao lado do `.md` e insere as imagens
-  sob cada heading (partes `a/b/c` em sequência). Divergência heading × arquivo interrompe
-  a geração — é proposital: documento com print faltando é pior que geração abortada.
+  print, o script procura primeiro `prototipo-prints/{IDENTIFICACAO}/` ao lado do `.md`
+  (ex.: `prototipo-prints/HU08.02/`, ID extraído do metadado de identificação) e mantém
+  `prototipo-prints/` como fallback para pastas legadas com um único documento. Em pastas
+  com várias HUs/HTs, cada subpasta usa numeração local contínua (partes `a/b/c` em
+  sequência). Divergência heading × arquivo interrompe a geração — é proposital: documento
+  com print faltando é pior que geração abortada.
 - Apêndices (`## Apêndice — …`) são cortados do documento final automaticamente.
 - Validar: `python3 -c "from docx import Document; Document('<arquivo>')"`.
 

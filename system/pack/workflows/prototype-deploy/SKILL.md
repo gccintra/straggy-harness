@@ -1,0 +1,76 @@
+---
+name: prototype-deploy
+description: >
+  Publica o app de protótipo (prototype/) num servidor como site estático, atrás de
+  autenticação e HTTPS. Descobre o "porteiro" HTTP do servidor (nginx no host, Traefik,
+  Caddy, nginx-proxy) antes de assumir qualquer coisa, gera o script de publicação e o
+  bloco de configuração a partir dos valores em project-config.yaml, e produz o passo a
+  passo a ser executado no servidor. Use quando o usuário pedir para hospedar, publicar,
+  subir, colocar no ar ou dar deploy do protótipo — ou pedir uma URL compartilhável dele.
+  Não use para deploy do sistema de produção (backend/banco), que não é escopo deste
+  harness.
+---
+
+# prototype-deploy — workflow L2 (pack padrão)
+
+| Camada | Referência |
+|---|---|
+| Restrições | `system/CONSTITUTION.md` §2 — você mexe em servidor que hospeda coisa de terceiros: **cada** passo de config, comando destrutivo e escrita no `project-config.yaml` é um portão separado |
+| Configuração | `project-config.yaml`, bloco `prototipo_deploy` |
+| Receita | `references/vps-nginx.md` — server block, script de publicação, certificado, permissão, outros porteiros (a organização sobrescreve para outro alvo de hospedagem) |
+
+O protótipo é um SPA que buila para arquivos em disco. **Não tem backend, não precisa de
+processo rodando** — nem Node, nem pm2, nem container. Quem tratar isso como app com
+runtime adiciona peça que não faz nada.
+
+## Contrato do que tem que estar de pé no fim
+
+1. **SPA fallback.** O roteador produz URLs reais (`/modulo/123`); o servidor devolve o
+   `index.html` para qualquer caminho que não seja arquivo. Sem isso, F5 numa rota profunda
+   dá 404 — é a falha nº 1 deste deploy.
+2. **Autenticação antes da primeira requisição.** O protótipo carrega fluxo e dado de
+   cliente. Não é "a gente põe depois". Desligar exige decisão explícita do responsável,
+   registrada no `project-config.yaml`.
+3. **HTTPS** com renovação automática.
+4. **Cache correto**: assets com hash no nome são imutáveis; o arquivo de entrada
+   (`index.html`) **nunca** cacheia — senão deploy novo não aparece no browser.
+5. **Publicação repetível num comando**, buildando local e enviando só o resultado. O
+   servidor nunca faz `git pull` nem precisa de Node.
+6. **Artefato de build fora do Git** (`dist/`, cache de type-check).
+
+## Em qual metade você está — descubra antes de executar
+
+- **Setup** (uma vez na vida do projeto): descobrir o porteiro, criar a configuração,
+  autenticação, DNS, certificado. É a metade com risco: mexe no servidor que hospeda
+  outras coisas.
+- **Publicação** (toda vez): roda o script de publicação e pronto. O certificado renova
+  sozinho; o deploy não encosta nisso.
+
+Já existe script de publicação e o domínio responde → é **republicação**: vá direto ao
+passo de publicar. Refazer o setup numa republicação é mexer em config de servidor à toa.
+
+## Configuração
+
+Leia o bloco `prototipo_deploy` do `project-config.yaml` (domínio, host SSH, web root,
+porteiro, usuário da autenticação). Campo faltando → **pergunte, não invente**: domínio
+errado queima tentativa de certificado no rate limit da autoridade certificadora. Bloco
+vazio → é o primeiro deploy: colete os valores e **proponha escrever o bloco** (write-gate).
+Senha nunca entra no arquivo nem no Git.
+
+## Descubra o porteiro — não assuma
+
+Só **um** processo ocupa as portas 80/443. Ele decide qual domínio vai para qual app, e é
+ele que você configura. Errar aqui = pisar em site que já está no ar. Como identificar e o
+que fazer em cada caso: `references/vps-nginx.md`.
+
+Antes de escrever qualquer configuração, **leia um site estático que já funciona lá** e
+copie o padrão da casa (caminhos de certificado, convenção de web root, nome de arquivo).
+**O padrão local ganha do padrão desta skill.**
+
+## Validar antes de entregar
+
+Sem credencial → resposta de não autorizado. Com credencial → a raiz responde, **e uma rota
+profunda também** (é o que quebra sem SPA fallback). E os sites que já rodavam no servidor
+continuam de pé — você mexeu no servidor que serve todos eles.
+
+Entregue a URL, o usuário da autenticação e o comando de republicação.

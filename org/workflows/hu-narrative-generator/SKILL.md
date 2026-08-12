@@ -13,8 +13,9 @@ description: >
 Transformar uma HU já documentada em uma narrativa funcional autocontida, compreensível para
 produto, design, desenvolvimento, QA e negócio.
 
-> Seguir `.agents/ENGAGEMENT.md`: ser breve; pedir contexto quando uma lacuna mudar o resultado;
-> obter aprovação explícita antes de salvar qualquer arquivo.
+> Seguir `system/CONSTITUTION.md`: ser breve; pedir contexto quando uma lacuna mudar o
+> resultado; aprovação explícita antes de salvar (write-gate). Base de escrita de requisito:
+> `system/professions/product-specialist/methods/user-story.md`.
 
 ## Contrato
 
