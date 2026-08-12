@@ -35,7 +35,7 @@ link_path ".agents/runtime/codex" "$PROJECT_DIR/.codex"
 link_path ".agents/runtime/opencode" "$PROJECT_DIR/.opencode"
 link_path ".agents/sync-context.sh" "$PROJECT_DIR/sync-context.sh"
 
-# Cópia, não symlink: os valores são do projeto. O project-config.md vai pro Git
+# Cópia, não symlink: os valores são do projeto. O project-config.yaml vai pro Git
 # do projeto; o .env, não (tem segredo). Arquivo já existente nunca é sobrescrito.
 seed_file() {
   local src="$1" dest="$2" label="$3"
@@ -48,9 +48,42 @@ seed_file() {
   fi
 }
 
-seed_file "$HARNESS_DIR/project-config.template.md" "$PROJECT_DIR/project-config.md" "project-config.md"
+seed_file "$HARNESS_DIR/project-config.template.yaml" "$PROJECT_DIR/project-config.yaml" "project-config.yaml"
 seed_file "$HARNESS_DIR/.env.example" "$PROJECT_DIR/.env" ".env"
 
-echo "Regras invariantes do harness vivem em .agents/ENGAGEMENT.md (versionadas, carregadas pelas skills/personas)."
-echo "AGENTS.md/CLAUDE.md na raiz são override LOCAL opcional do projeto — crie se precisar; não substituem o ENGAGEMENT.md."
+# Camada da organização: POSSE do cliente, fora do Git do harness (.gitignore). O harness
+# ships só o scaffold; aqui ele é semeado arquivo a arquivo, nunca sobrescrevendo.
+seed_org_layer() {
+  local scaffold="$HARNESS_DIR/system/pack/org-scaffold"
+  local created=0 rel
+
+  while IFS= read -r rel; do
+    local dest="$HARNESS_DIR/org/$rel"
+    [[ -f "$dest" ]] && continue
+    mkdir -p "$(dirname "$dest")"
+    cp "$scaffold/$rel" "$dest"
+    created=$((created + 1))
+  done < <(cd "$scaffold" && find . -type f | sed 's|^\./||')
+
+  mkdir -p "$HARNESS_DIR/org/workflows"
+
+  if (( created > 0 )); then
+    echo "org/: $created arquivo(s) semeado(s) do scaffold — PREENCHA org/ORG.md (língua, nomenclatura, papéis, funil)."
+  else
+    echo "org/: já existe, nada semeado — camada da organização preservada."
+  fi
+}
+
+seed_org_layer
+
+if [[ -f "$PROJECT_DIR/project-config.md" ]]; then
+  echo "AVISO: project-config.md (formato antigo) ainda existe. A config agora é project-config.yaml — migre os valores e remova o .md."
+fi
+
+# Workflows resolvidos (system ∪ pack ∪ org) — pasta gerada, fora do Git.
+"$HARNESS_DIR/runtime/build.sh"
+
+echo "Camadas: system/ (imutável: CONSTITUTION + professions + providers + pack padrão) e org/ (sua: ORG.md + workflows/professions/providers, fora do Git do harness). Ver .agents/README.md."
+echo "Criou/renomeou/desabilitou workflow? Rode .agents/runtime/build.sh de novo."
+echo "AGENTS.md/CLAUDE.md na raiz são override LOCAL opcional do projeto — complementam, não substituem a CONSTITUTION."
 echo "Harness instalado em $PROJECT_DIR"

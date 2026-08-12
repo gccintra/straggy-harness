@@ -11,3 +11,21 @@ node_modules/
 # Regras de engajamento — cada dev cria/personaliza o próprio, não versionar no harness
 AGENTS.md
 CLAUDE.md
+
+# Camada da organização — POSSE do cliente, nunca do harness. O harness ships o scaffold
+# em system/pack/org-scaffold/; o install.sh semeia org/ a partir dele. Cada organização
+# versiona a própria camada onde quiser (repo próprio, backup) — aqui, nunca.
+#
+# DESLIGADO por ora: org/ segue versionada junto para não travar o trabalho nos projetos.
+# Religar quando a camada tiver destino próprio — e aí é preciso rodar
+# `git rm -r --cached org/` para tirá-la do índice.
+# org/
+
+# Visão resolvida dos workflows — gerada por runtime/build.sh (symlinks absolutos)
+runtime/skills/
+
+# Adapters de runtime — gerados por runtime/build.sh a partir das personas resolvidas
+runtime/claude/agents/
+runtime/claude/commands/
+runtime/codex/agents/
+runtime/opencode/opencode.json
