@@ -75,6 +75,10 @@ done
 
 count=$(ls -1 "$OUT_DIR" | wc -l | tr -d ' ')
 
+# Ponto de descoberta de skills do Codex: <projeto>/.agents/skills/<nome>/SKILL.md.
+# É symlink versionado no repo; recriado aqui caso alguém apague.
+ln -sfn runtime/skills "$HARNESS_DIR/skills"
+
 # ── Adapters de runtime, gerados a partir dos PERSONA.md resolvidos ────────────
 if ! command -v python3 >/dev/null 2>&1; then
   echo "ERRO: python3 é necessário para gerar os adapters de runtime." >&2

@@ -42,6 +42,7 @@ Os dois rodam **as mesmas skills, sem fork**. É isso que a seção 3 protege.
 │   │   ├── workflows/              override por arquivo + workflows próprios
 │   │   ├── professions/            método/profissão próprios
 │   │   └── providers/              implementação de ferramenta interna
+│   ├── skills →                ⚙ symlink p/ runtime/skills — descoberta de skills
 │   ├── runtime/
 │   │   ├── adapters/               ▣ fonte dos adapters (base, aliases, render)
 │   │   ├── build.sh                ▣ resolvedor

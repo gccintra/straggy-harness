@@ -67,6 +67,7 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 │   ├── pack/                L2 PADRÃO — workflows genéricos + org-scaffold/
 │   └── workflows/           máquina do harness (skill-creator, motores) — não-forkável
 ├── org/                 ✎ SUA — ORG.md, workflows/, professions/, providers/ (fora do Git)
+├── skills →             symlink para runtime/skills — ponto de descoberta de skills
 ├── runtime/             build.sh + adapters/ (fonte dos adapters gerados)
 │   ├── skills/          GERADO — visão resolvida que os runtimes leem
 │   └── claude|codex|opencode/  GERADO — a partir dos PERSONA.md resolvidos
