@@ -1,7 +1,11 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "instructions": ["../.agents/ENGAGEMENT.md", "../AGENTS.md"],
-  "default_agent": "product-manager",
+  "instructions": [
+    "../.agents/system/CONSTITUTION.md",
+    "../.agents/org/ORG.md",
+    "../AGENTS.md"
+  ],
+  "default_agent": "product-specialist",
   "permission": {
     "skill": {
       "*": "allow"
@@ -12,23 +16,10 @@
     }
   },
   "agent": {
-    "product-manager": {
-      "description": "Product Manager para produto, backlog, discovery, documentação, sprint, changelog e wiki.",
-      "mode": "primary",
-      "prompt": "{file:../.agents/skills/product-manager/SKILL.md}",
-      "permission": {
-        "bash": "allow",
-        "read": "allow",
-        "edit": "allow",
-        "skill": {
-          "*": "allow"
-        }
-      }
-    },
-    "tech-lead": {
-      "description": "Tech Lead para viabilidade, dados reais, arquitetura, riscos e Histórias Técnicas.",
-      "mode": "primary",
-      "prompt": "{file:../.agents/skills/tech-lead/SKILL.md}",
+    "figma-node-reader": {
+      "description": "Transcritor de nodes do Figma para HTML — subagente, acionado pela design-screen",
+      "mode": "subagent",
+      "prompt": "{file:../.agents/runtime/skills/figma-node-reader/SKILL.md}",
       "permission": {
         "bash": "allow",
         "read": "allow",
@@ -39,9 +30,9 @@
       }
     },
     "product-designer": {
-      "description": "Product Designer para telas, design system, protótipos e Figma.",
+      "description": "Ativa a persona Product Designer na thread principal (telas, design system, protótipo, export para o canvas)",
       "mode": "primary",
-      "prompt": "{file:../.agents/skills/product-designer/SKILL.md}",
+      "prompt": "{file:../.agents/runtime/skills/product-designer/SKILL.md}",
       "permission": {
         "bash": "allow",
         "read": "allow",
@@ -51,10 +42,23 @@
         }
       }
     },
-    "figma-node-reader": {
-      "description": "Transcritor de nodes do Figma para HTML — lê, fatia o que estoura, transcreve a árvore em fragmentos HTML fiéis; devolve caminho, índice e chutes. Usado só quando o node estoura, para manter o dump (80k+) fora do contexto principal.",
-      "mode": "subagent",
-      "prompt": "{file:../.agents/skills/figma-node-reader/SKILL.md}",
+    "product-specialist": {
+      "description": "Ativa a persona Product Specialist na thread principal (produto, backlog, discovery, docs, sprint, métricas, lançamento)",
+      "mode": "primary",
+      "prompt": "{file:../.agents/runtime/skills/product-specialist/SKILL.md}",
+      "permission": {
+        "bash": "allow",
+        "read": "allow",
+        "edit": "allow",
+        "skill": {
+          "*": "allow"
+        }
+      }
+    },
+    "tech-lead": {
+      "description": "Ativa a persona Tech Lead na thread principal (viabilidade, dados reais, arquitetura, risco e impacto)",
+      "mode": "primary",
+      "prompt": "{file:../.agents/runtime/skills/tech-lead/SKILL.md}",
       "permission": {
         "bash": "allow",
         "read": "allow",
