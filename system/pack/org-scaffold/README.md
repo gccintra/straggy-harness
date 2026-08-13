@@ -3,7 +3,7 @@
 > ## ⚠️ Este repositório não funciona sozinho
 >
 > Aqui não há agente, skill executável nem programa. É a **camada L2** de um harness de
-> agentes: um conjunto de arquivos que **sobrescreve** o comportamento padrão do harness
+> agentes: um conjunto de arquivos que **preenche os encaixes** do harness
 > para esta organização. Sem o harness montado por cima, é só texto.
 
 ## Como usar
@@ -17,27 +17,29 @@ git clone <url-deste-repo>  .agents/org      # esta camada, aqui dentro
 
 Depois de qualquer mudança aqui: **`./.agents/runtime/build.sh`** — é ele que mescla pack +
 organização e gera a visão que os agentes leem. `--list` mostra a origem resolvida de cada
-workflow (`pack`, `org`, `org+pack`, `sistema`).
+workflow (`pack`, `pack+encaixes`, `org`, `sistema`).
 
 Sem esse passo, o que você editou aqui não existe para nenhum agente.
 
-## Como a sobrescrita funciona
+## Como a customização funciona
 
-A resolução é **por arquivo**, não por pasta. Você sobrescreve o menor arquivo que resolve
-e herda todo o resto do pack:
+Cada **ação** do harness declara os **encaixes** que aceitam conteúdo desta organização —
+catálogo em `system/ACOES.md`. Você escreve o encaixe; a moldura (ação, métodos, providers,
+portões humanos e contrato de saída) continua sendo do sistema e não é alcançável daqui.
+É isso que garante o piso de qualidade: o pior encaixe possível ainda para no portão humano.
 
 | Você quer | Crie |
 |---|---|
-| Trocar só o formato de um documento | `workflows/<nome>/references/<arquivo>.md` |
-| Trocar o procedimento inteiro de um workflow | `workflows/<nome>/SKILL.md` |
-| Um workflow que só existe aqui | `workflows/<nome>/SKILL.md` |
+| Trocar o formato de um documento | `workflows/<nome>/<caminho do encaixe de formato>` |
+| Trocar o **procedimento** de uma ação | `workflows/<nome>/references/procedimento.md` |
+| Uma ação que o harness **não** faz | `workflows/<nome>/SKILL.md` com `acao:` nova |
 | Desligar um workflow do pack | `workflows/<nome>/DISABLED` (arquivo vazio) |
 | Método ou profissão própria | `professions/<profissão>/…` |
 | Implementação de ferramenta interna | `providers/<domínio>/<nome>.md` |
 | Convenção que vale para tudo | `ORG.md` |
 
-Copiar um `SKILL.md` inteiro **congela esta organização na versão antiga do pack** — o
-workflow para de receber melhorias. Faça só quando o procedimento em si for outro.
+**Não existe substituir um workflow do pack.** `SKILL.md` aqui só para ação que o pack não
+atende — o build avisa quando você escreve um para ação que ele já cobre.
 
 ## O que NUNCA mora aqui
 
@@ -46,8 +48,8 @@ workflow para de receber melhorias. Faça só quando o procedimento em si for ou
 - **Valor de projeto** — domínio, host, repositório, caminho, nome de tabela. Isso é `L3`:
   `project-config.yaml` na raiz do projeto.
 - **Arquivo de sistema** — constituição, profissões, providers oficiais, workflows do pack.
-  São imutáveis e chegam pelo release do harness. Editar aqui não sobrescreve o que é
-  não-forkável; sobrescrever o resto por cópia quebra a atualização.
+  São imutáveis e chegam pelo release do harness. Editar aqui não os alcança —
+  customização é encaixe, nunca cópia.
 
 ## Como alterar
 

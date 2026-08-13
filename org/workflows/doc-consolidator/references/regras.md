@@ -116,7 +116,7 @@ Antes de escrever, leia o catálogo com **um** objetivo: existe GL que dá pra r
 
 - **Existe e cobre um conceito da issue** → referencie `[GL_0X]` nas seções 4/7. Não reescreva local.
 - **Catálogo não existe no caminho** → global **vazio**; nada a reusar; **tudo nasce local**.
-  **Proibido** usar exemplo de `outputs/` (ex.: `EXEMPLO_referencias-globais.md`) como catálogo —
+  **Proibido** usar exemplo de `{caminhos.entregaveis}` (ex.: `EXEMPLO_referencias-globais.md`) como catálogo —
   exemplo não é fonte de verdade.
 
 ### 4.2 Promover — depois do doc completo, com PROVA real

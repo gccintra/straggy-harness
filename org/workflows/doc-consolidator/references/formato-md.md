@@ -131,9 +131,9 @@ verbatim os CAs/regras. **Apenas o que está DENTRO do escopo.** **bold** em 1�
 ## 8. Protótipo
 <!-- SEMPRE vazia — placeholder para as PRINTS das telas do protótipo (imagens) e os links das
      rotas por fluxo. Títulos e links são preenchidos pela skill prototype-prints; as imagens são
-     inseridas no DOCX pelo hu-generator. Nunca auto-preencher com notas do discovery. -->
+     inseridas no DOCX pela ação `gerar-documento-final`. Nunca auto-preencher com notas do discovery. -->
 
-[Vazio — títulos e links preenchidos pela skill prototype-prints; prints inseridas no DOCX pelo hu-generator.]
+[Vazio — títulos e links preenchidos pela skill prototype-prints; prints inseridas no DOCX pela ação `gerar-documento-final`.]
 
 ## 9. Complemento de Documentação
 <!-- Só os placeholders. O link do doc de regras o usuário preenche à mão; os links do protótipo

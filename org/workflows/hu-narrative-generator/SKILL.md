@@ -6,6 +6,7 @@ description: >
   em texto corrido e coeso. Use quando o usuário pedir "descrição narrativa", "narrativa da HU",
   "transformar a HU em texto corrido", "explicar o comportamento da HU" ou um documento no padrão
   `HU{ID}_Descricao_Narrativa.md`. Não cria requisitos nem substitui o documento consolidado.
+acao: gerar-narrativa-de-requisito
 ---
 
 # Descrição narrativa de HU
@@ -22,7 +23,7 @@ produto, design, desenvolvimento, QA e negócio.
 - **Entrada:** documentação de uma HU em arquivo, conteúdo fornecido pelo usuário ou conjunto de
   fontes explicitamente indicado.
 - **Saída:** somente Markdown narrativo; não gerar `.docx`.
-- **Caminho padrão:** `outputs/{ID}_{NomeCurto}/HU{ID}_Descricao_Narrativa.md`.
+- **Caminho padrão:** `{caminhos.pasta_por_demanda}HU{ID}_Descricao_Narrativa.md`.
 - **Fonte de verdade:** a documentação recebida. Não transformar inferências em requisitos.
 - **Padrão editorial:** ler integralmente `references/padrao-narrativo.md` antes de redigir.
 
@@ -41,8 +42,8 @@ silenciosamente uma versão.
 ### 1. Localizar e ler as fontes
 
 - Se o usuário fornecer um caminho, ler o arquivo integralmente.
-- Se fornecer apenas o ID, procurar primeiro em `outputs/{ID}_*/` e depois em
-  `history/` e `docs/context_docs/`.
+- Se fornecer apenas o ID, procurar primeiro em `{caminhos.pasta_por_demanda}` e depois em
+  `{caminhos.historico}` e `docs/context_docs/`.
 - Se a documentação essencial não existir, pedir o arquivo ou conteúdo da HU.
 - Ler somente fontes relevantes e documentos referenciados por elas.
 
@@ -104,5 +105,5 @@ Esperar aprovação explícita. Depois, salvar em UTF-8 e devolver o caminho do 
 ## Limites
 
 - Pedido para consolidar a documentação da HU: usar `doc-consolidator`.
-- Pedido explícito de HU formal em `.docx`, após revisão do consolidado: usar `hu-generator`.
+- Pedido explícito de HU formal em `.docx`, após revisão do consolidado: usar a ação `gerar-documento-final`.
 - Pedido para alterar requisitos: voltar à documentação fonte; não corrigir somente a narrativa.

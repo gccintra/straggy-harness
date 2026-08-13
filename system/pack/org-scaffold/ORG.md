@@ -2,7 +2,8 @@
 
 Semeado pelo `install.sh` a partir de `system/pack/org-scaffold/ORG.md`. Edite: é a camada
 que a organização possui. Não altera `system/CONSTITUTION.md` (L0) nem as profissões (L1):
-overlay adiciona e substitui procedimento, nunca afrouxa portão (`docs/ARCHITECTURE.md` §3).
+a organização escreve encaixes; workflow próprio só para ação nova; nunca
+afrouxa portão (`docs/ARCHITECTURE.md` §3 e §7, catálogo em `system/ACOES.md`).
 
 Campo `[definir]` não preenchido = o pack decide sozinho pelo default dele. Nada quebra;
 só não há convenção da casa.
@@ -24,11 +25,11 @@ depois de um `git pull` do harness. É o que denuncia overlay que ficou para tr�
 
 | Artefato | Padrão de nome | Onde |
 |---|---|---|
-| Documento consolidado de demanda | `[definir]` (default do pack: `{ID}_{NomeCurto}.md`) | `outputs/{ID}_{NomeCurto}/` |
+| Documento consolidado de demanda | `[definir]` (default do pack: `{ID}_{NomeCurto}.md`) | `{caminhos.pasta_por_demanda}` |
 | Documento em formato final | mesmo nome, outra extensão | mesma pasta |
-| Registro de discovery | `YYYY-MM-DD_discovery_<ref>.md` | `history/discoveries/` |
-| Análise/priorização | `YYYY-MM-DD_<tipo>_<escopo>.md` | `history/analyses/` |
-| Export de dados | `<tipo>_YYYY-MM-DD.csv` (nunca sobrescrever) | `data/` |
+| Registro de discovery | `YYYY-MM-DD_discovery_<ref>.md` | `{caminhos.historico}discoveries/` |
+| Análise/priorização | `YYYY-MM-DD_<tipo>_<escopo>.md` | `{caminhos.historico}analyses/` |
+| Export de dados | `<tipo>_YYYY-MM-DD.csv` (nunca sobrescrever) | `{caminhos.dados}` |
 
 Valores de identidade (cliente, sigla, logo) vêm de `project-config.yaml`; campo vazio lá →
 placeholder no documento, a skill não inventa valor.
@@ -44,8 +45,10 @@ placeholder no documento, a skill não inventa valor.
   (default do pack: `product-specialist` como entrada, mais `tech-lead` e
   `product-designer`).
 - Uma profissão não aciona outra por baixo dos panos — responde e aponta.
-- Pipeline de documentação com portão humano: discovery → consolidado `.md` (**para para
-  revisão**) → formato final só sob pedido explícito.
+- A esteira de documentação e seus portões humanos são **do sistema**, não desta camada:
+  cada ação declara o artefato que produz e o que exige antes (`docs/ARCHITECTURE.md` §7).
+  Demanda sem interface pula o protótipo — é a condição `demanda-tem-interface`, avaliada
+  pela natureza da demanda, nunca por configuração.
 
 ## 5. Funil de priorização
 

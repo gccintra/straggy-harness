@@ -99,7 +99,7 @@ Não avance para D2a sem isto. É leitura + listagem; segue direto (sem postar).
      status/estados, papéis ou catálogos → marque `[→GL candidato]`. Já existe no catálogo →
      aponte o GL (reúso). Não existe (ou catálogo ausente) → segue como candidato; o consolidator
      decide promoção depois, com prova. Só não trate o conceito como novidade exclusiva da issue.
-   - ONEPAGE.md e discoveries anteriores do módulo em `history/discoveries/`.
+   - ONEPAGE.md e discoveries anteriores do módulo em `{caminhos.historico}discoveries/`.
    - contexto diverso do produto (persona, glossário, decisões), **se existir**.
 2. **Montar a lista de incógnitas técnicas** — o que trava a solução e você não pode responder sozinho lendo docs:
    - existe tabela/campo para isso? quais colunas?
@@ -238,7 +238,7 @@ Quadrantes: QUICK WIN = I≥7 e F≥5 | PLAN = I≥7 e F≤4 | LATER = I≤6 e F
 
 ---
 Status: completo ✓
-Próximos passos: `doc-consolidator` — "documenta a #NNN" (gera o `.md` autocontido com CA/RN/MSG/GL); depois, só sob pedido explícito, `hu-generator` gera o `.docx`
+Próximos passos: `doc-consolidator` — "documenta a #NNN" (gera o `.md` autocontido com CA/RN/MSG/GL); depois, só sob pedido explícito, a ação `gerar-documento-final` gera o `.docx`
 ```
 
 Se sessão encerrar sem D2b completo, adicionar ao final do history:
