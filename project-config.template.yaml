@@ -18,8 +18,15 @@ recursos:
   service_account_sync: ""       # e-mail do robô do Drive (papel Leitor nas pastas)
                                  # setup: .agents/system/providers/knowledge/drive-rclone.md
 
+# Toda skill escreve nos caminhos declarados aqui — nenhuma carrega pasta literal.
+# É o que permite os artefatos migrarem para o armazenamento de outro modo de entrega
+# sem tocar em skill nenhuma (docs/MODOS.md §2).
 caminhos:
+  entregaveis: "outputs/"                          # raiz dos artefatos entregáveis
   pasta_por_demanda: "outputs/{ID}_{NomeCurto}/"   # documento consolidado, formato final e prints da demanda
+                                                   # fica SOB entregaveis — mudou uma, mude a outra
+  historico: "history/"                            # memória do projeto: discovery, análise, registro de operação
+  dados: "data/"                                   # export bruto (CSV, JSON) — nunca sobrescreve o dia anterior
   contexto: "docs/context_docs/md/"                # raiz do conhecimento do produto (regras, HUs, visão)
                                                    # layout interno é do provider knowledge/, não daqui
   documento_priorizacao: ""                        # documento com funil, fórmula e thresholds | vazio → as skills

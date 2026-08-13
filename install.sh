@@ -3,6 +3,10 @@ set -euo pipefail
 
 HARNESS_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Onde mora a camada da organização. Default: dentro do harness. Repositório próprio
+# montado noutro lugar (ou materializado pelo produto) → aponte HARNESS_ORG_DIR.
+ORG_ROOT="${HARNESS_ORG_DIR:-$HARNESS_DIR/org}"
+
 # O harness mora em <projeto>/.agents/ — como submódulo registrado ou como clone
 # local (o projeto pode ignorar .agents/ no Git). Nos dois casos, a raiz do projeto
 # é o diretório pai; não dá pra depender de --show-superproject-working-tree, que
@@ -58,19 +62,19 @@ seed_org_layer() {
   local created=0 rel
 
   while IFS= read -r rel; do
-    local dest="$HARNESS_DIR/org/$rel"
+    local dest="$ORG_ROOT/$rel"
     [[ -f "$dest" ]] && continue
     mkdir -p "$(dirname "$dest")"
     cp "$scaffold/$rel" "$dest"
     created=$((created + 1))
   done < <(cd "$scaffold" && find . -type f | sed 's|^\./||')
 
-  mkdir -p "$HARNESS_DIR/org/workflows"
+  mkdir -p "$ORG_ROOT/workflows"
 
   if (( created > 0 )); then
-    echo "org/: $created arquivo(s) semeado(s) do scaffold — PREENCHA org/ORG.md (língua, nomenclatura, papéis, funil)."
+    echo "$ORG_ROOT: $created arquivo(s) semeado(s) do scaffold — PREENCHA ORG.md (língua, nomenclatura, papéis, funil)."
   else
-    echo "org/: já existe, nada semeado — camada da organização preservada."
+    echo "$ORG_ROOT: já existe, nada semeado — camada da organização preservada."
   fi
 }
 
@@ -81,7 +85,7 @@ if [[ -f "$PROJECT_DIR/project-config.md" ]]; then
 fi
 
 # Workflows resolvidos (system ∪ pack ∪ org) — pasta gerada, fora do Git.
-"$HARNESS_DIR/runtime/build.sh"
+"$HARNESS_DIR/runtime/build.sh" --org "$ORG_ROOT"
 
 echo "Camadas: system/ (imutável: CONSTITUTION + professions + providers + pack padrão) e org/ (sua: ORG.md + workflows/professions/providers, fora do Git do harness). Ver .agents/README.md."
 echo "Criou/renomeou/desabilitou workflow? Rode .agents/runtime/build.sh de novo."

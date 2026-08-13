@@ -7,7 +7,8 @@ sobre uma arquitetura de camadas, com pack padrão que funciona sem nenhuma cust
 **Este é o único documento de leitura humana no dia a dia.** O resto do harness é
 referência que os agentes carregam: comportamento em `system/CONSTITUTION.md`, camadas em
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), modos de operação e fluxos de manipulação
-em [`docs/MODOS.md`](docs/MODOS.md), procedimento em cada `SKILL.md`.
+em [`docs/MODOS.md`](docs/MODOS.md), fluxos de interface do Hub em
+[`docs/HUB.md`](docs/HUB.md), procedimento em cada `SKILL.md`.
 
 ---
 
@@ -64,6 +65,7 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 │   ├── CONSTITUTION.md      L0 — write-gate, autonomia, honestidade, portões, delegação
 │   ├── professions/         L1 — PROFESSION.md + reasoning.md + methods/ por profissão
 │   ├── providers/           contrato (INTERFACE.md) + implementações + recipes/
+│   ├── ACOES.md             catálogo público: ações e encaixes (o que a organização escreve)
 │   ├── pack/                L2 PADRÃO — workflows genéricos + org-scaffold/
 │   └── workflows/           máquina do harness (skill-creator, motores) — não-forkável
 ├── org/                 ✎ SUA — ORG.md, workflows/, professions/, providers/ (fora do Git)
@@ -74,10 +76,22 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 └── docs/ARCHITECTURE.md referência normativa das camadas
 ```
 
-Resolução: máquina vence sempre · a organização sobrescreve o pack **arquivo a arquivo**
-(trocar só um `references/template.md` herda o resto) · `org/workflows/<nome>/DISABLED`
-desliga um workflow do pack. **Criou, renomeou ou desabilitou workflow? Rode
-`./.agents/runtime/build.sh`** (`--list` mostra a origem de cada um).
+Resolução: máquina vence sempre · workflow resolvido = **moldura do pack + conteúdo da
+organização nos encaixes declarados** (`docs/ARCHITECTURE.md` §7, catálogo em
+`system/ACOES.md`) · `SKILL.md` em `org/` só para ação que o pack não atende ·
+`org/workflows/<nome>/DISABLED` desliga um workflow do pack. **Criou, renomeou ou preencheu
+encaixe? Rode `./.agents/runtime/build.sh`** — ele resolve as camadas, valida o contrato e
+escreve `runtime/manifest.json` (o catálogo como dado, `docs/ARCHITECTURE.md` §8).
+
+| Flag | Para quê |
+|---|---|
+| `--list` | origem, ação e quantos encaixes estão preenchidos, por workflow |
+| `--fix` | regenera a tabela derivada do `system/ACOES.md` (sem a flag, o build só verifica e reprova se divergiu) |
+| `--strict` | aviso vira reprovação, código de saída 3 — modo de CI |
+| `--org DIR` · `--out DIR` | camada da organização e saída gerada fora dos caminhos padrão |
+
+Portão humano, contrato de saída e método ficam **fora** de qualquer encaixe: a organização
+não os alcança, então não consegue degradar a qualidade da resposta configurando errado.
 
 | Quero mudar… | Vai em |
 |---|---|
@@ -86,7 +100,8 @@ desliga um workflow do pack. **Criou, renomeou ou desabilitou workflow? Rode
 | como a profissão pensa / método | `system/professions/` (ou `org/professions/`) |
 | convenção da empresa (língua, nomes, papéis) | `org/ORG.md` |
 | workflow que serve a qualquer empresa | `system/pack/workflows/<nome>/` |
-| workflow ou formato **desta** empresa | `org/workflows/<nome>/` |
+| formato, template ou **procedimento** desta empresa | encaixe em `org/workflows/<nome>/` (`system/ACOES.md`) |
+| ação que o harness não faz | `org/workflows/<nome>/SKILL.md` com `acao:` nova |
 | sintaxe de ferramenta | `system/providers/<domínio>/` (ou `org/providers/`) |
 | valor do projeto | `project-config.yaml` / `.env` |
 
@@ -112,9 +127,16 @@ skill. Não existe tabela de roteamento para manter.
 demanda no backlog
   ├─ backlog-issue-creator   cria/refina a demanda (template, MoSCoW, labels)
   ├─ discovery               Double Diamond D1→D2, um registro por fase
+  ├─ [só demanda com tela]   design-brief → design-screen → protótipo validado
   ├─ doc-consolidator        gera o .md consolidado  ⏸ PARA para revisão humana
   └─ doc-final-generator     .md revisado → formato final (transcrição mecânica)
 ```
+
+**Demanda com interface documenta depois do protótipo validado** — é ali que a solução
+converge, e escrever requisito antes gera retrabalho. O `{ID}_design.md` nasce plano na
+`design-brief` e termina registro na `design-screen`; é a entrada do `doc-consolidator`.
+Divergência: o protótipo manda em fluxo, estado, rótulo e mensagem; o discovery manda em
+regra e escopo. Demanda sem tela vai direto ao consolidado.
 
 O **`.md` é a fonte de verdade; o formato final é transcrição**: "documenta a #NNN" gera só
 o `.md` e para; o documento final só sob pedido explícito, após revisão; documento errado →
@@ -136,7 +158,7 @@ prototype-deploy  publica o prototype/ numa VPS (estático, basic auth, HTTPS)
 
 Fonte de verdade do design é **o código** (arquivo de tokens + componentes base). A stack do
 protótipo é do projeto — o pack traz Vite + React + TS + Tailwind como default, em
-`design-setup/references/stack-react-vite.md`; outra stack sobrescreve essa referência.
+`design-setup/references/stack-react-vite.md`; outra stack preenche o encaixe `stack-prototipo`.
 Export pro Figma é opt-in (`html-to-figma`, invocada pela `design-screen`).
 
 ## Fluxo técnico
@@ -205,7 +227,7 @@ Declarado de propósito, para ninguém descobrir no meio do trabalho:
   precisar cria em `org/professions/`.
 - **Língua do pack é PT-BR.** Descrições de skill (que fazem o roteamento), formatos e
   prosa. Organização que trabalha noutro idioma declara em `org/ORG.md` §1 e sobrescreve
-  os `references/` de formato — o corpo das skills continua em PT-BR.
+  os encaixes de formato — a moldura das skills continua em PT-BR.
 - **Providers com implementação hoje:** backlog (`gh`, `glab`), documento final (`pandoc`),
   conhecimento (Drive + rclone), banco (qualquer cliente CLI), canvas (Figma). Outra
   ferramenta = implementação nova em `org/providers/`, sob a mesma `INTERFACE.md` — nunca
