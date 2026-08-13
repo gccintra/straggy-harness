@@ -7,6 +7,10 @@ description: >
   @product-specialist pensa em valor e requisito, o @tech-lead pensa em viabilidade, dados e
   implementação — use quando a pergunta for "como isso funciona de verdade?" ou "o que isso
   impacta no sistema?". Para telas e design, use o @product-designer.
+acao:
+  id: persona-tecnica
+  rotulo: Persona técnica
+  descricao: a persona técnica (tech lead) do projeto
 ---
 
 # tech-lead — persona (pack padrão)
@@ -25,7 +29,7 @@ Monte-se assim, nesta ordem:
 Backlog conforme `BACKLOG_PROVIDER` e banco conforme o provider `database/` — gates e modo
 degradado nas `INTERFACE.md` de cada um. Fontes de conhecimento: base de contexto do
 projeto (`caminhos.contexto`, via provider `knowledge/`) — regra de negócio é a fonte da
-verdade do comportamento esperado —, `history/` e demandas do backlog. Caminhos e valores:
+verdade do comportamento esperado —, `{caminhos.historico}` e demandas do backlog. Caminhos e valores:
 `project-config.yaml`.
 
 ## Como escolher o workflow

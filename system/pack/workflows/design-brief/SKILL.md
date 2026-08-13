@@ -10,6 +10,16 @@ description: >
   OPT-IN, no fim. Use quando o usuário pedir para analisar, avaliar, sugerir ou entender uma
   demanda de tela antes de codar. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md
   antes de qualquer operação no backlog.
+acao:
+  id: analisar-demanda-de-tela
+  rotulo: Analisar demanda de tela
+  descricao: analisa o que a demanda vira na interface, antes do código
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: O que sua empresa quer ver numa análise de interface antes de alguém desenhar a tela.
+    tipo: texto-longo
 ---
 
 # design-brief — workflow L2
@@ -24,50 +34,30 @@ description: >
 Pensar a interface antes do JSX. `design-screen` responde "como transcrevo esta
 referência?"; a brief responde "o que esta demanda vira na interface, e o que ela quebra?".
 
-## Triagem — quanto de análise a entrada merece (decida ANTES de ler)
 
-| Entrada | Nível | Ação |
-|---|---|---|
-| Ajuste em tela/componente existente | **nenhum** | não rode a brief — direto ao `design-screen` modo Ajuste |
-| Texto simples, tela nova, sem doc | leve | inventário + 5-10 linhas de conversa (menu, irmã, reuso, estados) |
-| Imagem/print de produção · Figma autoral | média | inventário + análise; layout já resolvido, você resolve navegação/reuso/gaps |
-| Wireframe/rabisco | média-alta, **obrigatória** | + leitura em voz alta: interprete cada bloco em termos do design system, pergunte os buracos DE UMA VEZ (bloco ambíguo, estados, comportamento, o que ficou fora da folha) e deixe claro que o visual sai do sistema, não do rabisco |
- Documentação / requisito / issue / `.md` do PM | completa | fluxo inteiro abaixo |
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
-Só o nível completo gera documento, e só quando pedido. Demanda sem ID não gera doc.
+## Contrato de saída — a conversa é o entregável
 
-## Fluxo (nível completo)
+Blocos: Superfície de tela · O protótipo já tem · Navegação · Estados · Impacto no que
+existe · Pendências de produto. Análise leve entrega os mesmos blocos em 5-10 linhas.
 
-1. **Ler a demanda**: demanda pelo provider (ou `outputs/{ID}_*/` no modo local) + contexto
-   do produto pelo provider `knowledge/`.
-   Extraia só a **superfície de tela**: CA → comportamento observável; RN → estado/
-   habilitação/máscara/cálculo exibido; MSG → **um lugar concreto** na tela; escopo →
-   quais telas entram. Regra de backend puro → anote, não invente UI.
-2. **Inventariar o protótipo** (obrigatório em todo nível ≥ leve):
-   ```bash
-   ls prototype/src/routes/**/*.tsx prototype/src/components/ui/ prototype/src/mock/
-   sed -n '/theme:/,/}/p' prototype/tailwind.config.js
-   grep -rn "to=\"" prototype/src/components/layout/AppHeader.tsx
-   ```
-   Levante: telas tocadas · tela irmã · cobertura de `ui/` · **gap real** (na dúvida,
-   `grep` antes de declarar) · mock disponível.
-3. **Analisar**: onde entra na navegação (2-3 direções com trade-off + **recomendação**),
-   estados que a doc não previu, impacto no que existe (telas tocadas, variantes),
-   pendências de produto (CA sem reflexo, MSG sem lugar, RN que exige campo inexistente)
-   — **liste, não resolva**.
-4. **Conversar — o entregável padrão.** Blocos: Superfície de tela · O protótipo já tem ·
-   Navegação · Estados · Impacto no que existe · Pendências de produto. Nível leve: os
-   mesmos blocos em 5-10 linhas. **PARE aqui e itere na conversa** — é ordens de grandeza
-   mais barato que iterar em JSX.
+**PARE aqui e itere na conversa** — é ordens de grandeza mais barato que iterar em JSX.
 
-## Documento de design — OPT-IN (write-gate)
+## Documento de design — OPT-IN, salvo quando alimenta a documentação (write-gate)
 
-Só quando o usuário pedir, só para demanda com ID:
-`outputs/{ID}_{NomeCurto}/{ID}_design.md`:
+Só a análise completa gera documento, e só quando pedido. Demanda sem ID não gera doc.
+
+Quando o usuário pedir, e **sempre** que a demanda tem ID e vai virar documento consolidado
+— aí ele deixa de ser opcional: é a entrada do `doc-consolidator`, que na demanda com
+interface roda depois do protótipo validado.
+`{caminhos.pasta_por_demanda}{ID}_design.md`:
 
 ```markdown
 # [DESIGN] {ID} — <Nome>
-Data · Agente: product-designer · Fonte: issue #NNN · doc: outputs/{ID}_*/{ID}.md
+Data · Agente: product-designer · Fonte: issue #NNN · doc: {caminhos.pasta_por_demanda}{ID}.md
 
 ## 1. O que a demanda vira na interface
 ## 2. Navegação e arquitetura de informação   (direções avaliadas + decisão + porquê)
@@ -80,7 +70,9 @@ Data · Agente: product-designer · Fonte: issue #NNN · doc: outputs/{ID}_*/{ID
 ## Handoff
 
 O `{ID}_design.md` **é** o plano do `design-screen` — ele não realinha do zero. Sem doc
-gerado, a conversa vale como plano.
+gerado, a conversa vale como plano. Depois do protótipo aceito, o próprio `design-screen`
+reescreve esse arquivo com o que a tela faz de fato: o mesmo documento nasce plano e termina
+registro, e é dele que a documentação sai.
 
 **Não faz:** JSX, medir pixel, transcrever node, comentar em issue, editar `.md` do PM.
 **Nunca meça um wireframe.**

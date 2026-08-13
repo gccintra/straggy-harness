@@ -8,6 +8,24 @@ description: >
   tarefa). Acione também para refinar/enriquecer demanda existente com pouca informação
   ("refina a #NNN", "completa", "a issue só tem título"). IMPORTANTE: leia
   .agents/system/providers/backlog/INTERFACE.md antes de qualquer operação no backlog.
+acao:
+  id: registrar-demanda
+  rotulo: Registrar demanda
+  descricao: registra e refina uma demanda no backlog
+produz:
+  id: demanda-registrada
+  rotulo: Demanda registrada
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: O passo a passo com que sua empresa registra e refina uma demanda — o que perguntar antes de abrir e como classificar.
+    tipo: texto-longo
+  template-demanda:
+    caminho: references/templates.md
+    rotulo: Modelo de demanda
+    ajuda: O corpo que toda demanda registrada pela sua empresa deve ter — seções, campos obrigatórios e rótulos.
+    tipo: texto-longo
 ---
 
 # backlog-issue-creator — workflow L2 (pack padrão)
@@ -15,9 +33,17 @@ description: >
 | Camada | Referência |
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (criar/atualizar demanda = escrita → preview completo + aprovação) |
-| Métodos | `system/professions/product-specialist/methods/moscow.md` (criticidade na entrada) |
+| Métodos | `system/professions/product-specialist/methods/moscow.md` (criticidade na entrada) · `user-story.md` · gatilho "pedido chega como solução" em `reasoning.md` |
 | Provider | `backlog/` — **sem fallback local**. Capacidade exigida: `core` |
-| Formatos | `references/templates.md` — template da descrição (a organização sobrescreve) |
+| Formatos | encaixe `template-demanda` — template da descrição |
+
+Portões, nesta ordem: apresentar a demanda documentada e iterar → pedir aprovação explícita
+para criar/atualizar no backlog → só então escrever. Nenhum é pulável pelo procedimento.
+
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
 ## Bindings padrão
 

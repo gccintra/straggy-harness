@@ -1,3 +1,10 @@
+---
+capacidades: [node-read, screenshot, design-write]
+requisitos:
+  variaveis: [FIGMA_FILE_KEY]
+  servicos: [figma-mcp]
+---
+
 # Provider: canvas — leitura Figma via MCP
 
 Mecânica de leitura de nodes do Figma. Procedural por natureza — sintaxe de ferramenta.

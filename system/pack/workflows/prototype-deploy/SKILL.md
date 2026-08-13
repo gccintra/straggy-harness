@@ -9,6 +9,21 @@ description: >
   subir, colocar no ar ou dar deploy do protótipo — ou pedir uma URL compartilhável dele.
   Não use para deploy do sistema de produção (backend/banco), que não é escopo deste
   harness.
+acao:
+  id: publicar-prototipo
+  rotulo: Publicar protótipo
+  descricao: publica o protótipo num servidor, com HTTPS e autenticação
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: Como sua empresa publica um protótipo — quem aprova, que ambiente usa e o que precisa estar protegido.
+    tipo: texto-longo
+  receita-servidor:
+    caminho: references/vps-nginx.md
+    rotulo: Receita do servidor
+    ajuda: Os comandos e a configuração do servidor da sua empresa. Vazio → receita padrão de VPS com nginx.
+    tipo: texto-longo
 ---
 
 # prototype-deploy — workflow L2 (pack padrão)
@@ -22,6 +37,11 @@ description: >
 O protótipo é um SPA que buila para arquivos em disco. **Não tem backend, não precisa de
 processo rodando** — nem Node, nem pm2, nem container. Quem tratar isso como app com
 runtime adiciona peça que não faz nada.
+
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
 ## Contrato do que tem que estar de pé no fim
 
@@ -38,17 +58,6 @@ runtime adiciona peça que não faz nada.
    servidor nunca faz `git pull` nem precisa de Node.
 6. **Artefato de build fora do Git** (`dist/`, cache de type-check).
 
-## Em qual metade você está — descubra antes de executar
-
-- **Setup** (uma vez na vida do projeto): descobrir o porteiro, criar a configuração,
-  autenticação, DNS, certificado. É a metade com risco: mexe no servidor que hospeda
-  outras coisas.
-- **Publicação** (toda vez): roda o script de publicação e pronto. O certificado renova
-  sozinho; o deploy não encosta nisso.
-
-Já existe script de publicação e o domínio responde → é **republicação**: vá direto ao
-passo de publicar. Refazer o setup numa republicação é mexer em config de servidor à toa.
-
 ## Configuração
 
 Leia o bloco `prototipo_deploy` do `project-config.yaml` (domínio, host SSH, web root,
@@ -56,16 +65,6 @@ porteiro, usuário da autenticação). Campo faltando → **pergunte, não inven
 errado queima tentativa de certificado no rate limit da autoridade certificadora. Bloco
 vazio → é o primeiro deploy: colete os valores e **proponha escrever o bloco** (write-gate).
 Senha nunca entra no arquivo nem no Git.
-
-## Descubra o porteiro — não assuma
-
-Só **um** processo ocupa as portas 80/443. Ele decide qual domínio vai para qual app, e é
-ele que você configura. Errar aqui = pisar em site que já está no ar. Como identificar e o
-que fazer em cada caso: `references/vps-nginx.md`.
-
-Antes de escrever qualquer configuração, **leia um site estático que já funciona lá** e
-copie o padrão da casa (caminhos de certificado, convenção de web root, nome de arquivo).
-**O padrão local ganha do padrão desta skill.**
 
 ## Validar antes de entregar
 

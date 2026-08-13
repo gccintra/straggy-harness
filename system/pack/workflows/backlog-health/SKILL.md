@@ -9,6 +9,16 @@ description: >
   o backlog, encontrar inconsistências, ver duplicatas ou auditar a qualidade das issues.
   IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de qualquer
   operação no backlog.
+acao:
+  id: auditar-backlog
+  rotulo: Auditar backlog
+  descricao: saúde do backlog — inconsistências, duplicatas, zumbis
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: O que sua empresa considera uma demanda malformada, e o que fazer com as que aparecerem.
+    tipo: texto-longo
 ---
 
 # backlog-health — workflow L2 (pack padrão)
@@ -20,10 +30,15 @@ description: >
 
 Varre o backlog inteiro de uma vez. Correção pontual de uma issue → `backlog-query`.
 
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
+
 ## Bindings
 
 - **Um export em lote** (só demandas abertas) com timestamps, responsáveis, URL e
-  descrição resumida (100 chars) → `data/health_audit_YYYY-MM-DD.csv`. Verifique `wc -l`.
+  descrição resumida (100 chars) → `{caminhos.dados}health_audit_YYYY-MM-DD.csv`. Verifique `wc -l`.
 - Prefixos de tipo/prioridade: confirme a taxonomia real de labels pelo provider.
 
 ## Detecções (uma issue pode cair em vários grupos)
@@ -37,7 +52,7 @@ Varre o backlog inteiro de uma vez. Correção pontual de uma issue → `backlog
 
 ## Contrato de saída
 
-`history/analyses/YYYY-MM-DD_health_audit.md`: resumo executivo (tabela problema × N × %),
+`{caminhos.historico}analyses/YYYY-MM-DD_health_audit.md`: resumo executivo (tabela problema × N × %),
 zumbis (IID, título, dias, URL), grupos de duplicatas com sugestão de qual manter,
 amostras (top 15 mais antigas) de sem-tipo e sem-prioridade, e 3 recomendações
 (imediato / esta semana / grooming).

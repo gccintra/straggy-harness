@@ -8,6 +8,21 @@ description: >
   Push dos guidelines para a ferramenta de canvas é opt-in. Use na primeira vez que o
   designer for acionado — antes de criar qualquer tela — e para atualizar o design system
   quando ele evoluir.
+acao:
+  id: configurar-design-system
+  rotulo: Configurar design system
+  descricao: extrai tokens e faz o scaffold do protótipo
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: De onde sua empresa tira os tokens (prints, sistema no ar, biblioteca existente) e o que o design system precisa cobrir.
+    tipo: texto-longo
+  stack-prototipo:
+    caminho: references/stack-react-vite.md
+    rotulo: Stack do protótipo
+    ajuda: A tecnologia em que o app de protótipo da sua empresa é construído. Vazio → React + Tailwind + Vite.
+    tipo: texto-longo
 ---
 
 # design-setup — workflow L2 (pack padrão)
@@ -22,18 +37,12 @@ description: >
 Uma vez por projeto. Re-execução **não recria** o protótipo — edita tokens e componentes.
 Fonte de verdade do design system = **o código**, não a ferramenta de desenho.
 
-## 1. Fontes de input (peça ao menos uma)
 
-Screenshots do sistema atual · URL de protótipo · PDF de spec visual · descrição textual.
-Mais evidência = design system mais preciso.
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
-## 2. Extrair tokens
-
-Cores (primária, surface, border, textos, status/badges) · tipografia (família, escala
-xs→3xl, pesos) · espaçamento (grid 4/8, padding, radius, sombra) · componentes recorrentes
-(botões, inputs, tabela, modal, badge, stepper, card, toast, navegação).
-
-## 3. Scaffold do protótipo — contrato
+## 1. Scaffold do protótipo — contrato
 
 A stack concreta está em `references/stack-react-vite.md`. Independente dela, o resultado
 tem que cumprir:
@@ -51,13 +60,13 @@ tem que cumprir:
 
 Verifique no browser: a raiz abre a tela default, o menu navega.
 
-## 4. Guidelines no canvas — OPT-IN
+## 2. Guidelines no canvas — OPT-IN
 
 Só com pedido explícito: rota de showcase do design system + captura via `html-to-figma`;
 registre o id do node gerado no `.env`.
 
-## 5. Registro
+## 3. Registro
 
-`history/YYYY-MM-DD_design-setup.md`: fontes usadas, tokens extraídos, componentes
+`{caminhos.historico}YYYY-MM-DD_design-setup.md`: fontes usadas, tokens extraídos, componentes
 criados, guidelines publicados (ou não). Deploy compartilhável → `prototype-deploy`
 (passo separado).

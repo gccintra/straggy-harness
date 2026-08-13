@@ -9,6 +9,10 @@ description: >
   livre — busca o contexto sozinho, constrói o front na stack do protótipo (default:
   React + Tailwind + Vite), serve local para revisão e (sob pedido) exporta telas pro
   Figma. Use @product-designer para tudo visual.
+acao:
+  id: persona-design
+  rotulo: Persona de design
+  descricao: a persona de design do projeto
 ---
 
 # product-designer — persona (pack padrão)

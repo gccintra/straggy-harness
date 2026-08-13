@@ -1,3 +1,9 @@
+---
+capacidades: [render]
+requisitos:
+  binarios: [pandoc]
+---
+
 # Provider: docs-output — implementação pandoc CLI (default do pack)
 
 Conversão direta do `.md` consolidado para o formato final, sem código próprio. É o default
@@ -12,8 +18,8 @@ disso usa `pandoc-docx.md` ou uma implementação própria.
 ## Uso
 
 ```bash
-pandoc "outputs/{ID}_{NomeCurto}/{ID}_{NomeCurto}.md" \
-  -o "outputs/{ID}_{NomeCurto}/{ID}_{NomeCurto}.docx" \
+pandoc "{caminhos.pasta_por_demanda}{ID}_{NomeCurto}.md" \
+  -o "{caminhos.pasta_por_demanda}{ID}_{NomeCurto}.docx" \
   --toc --toc-depth=2
 ```
 

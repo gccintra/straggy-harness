@@ -1,3 +1,10 @@
+---
+capacidades: [render, layout-custom, image-embed]
+requisitos:
+  binarios: [python3]
+  pacotes: [python-docx]
+---
+
 # Provider: docs-output — implementação generate_doc.py (python-docx)
 
 Layout sob medida via script. Use quando o documento final precisa de identidade visual

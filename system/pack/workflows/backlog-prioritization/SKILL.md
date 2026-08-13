@@ -4,13 +4,23 @@ description: >
   Prioriza as demandas do backlog pelo funil MoSCoW → quadrante I×E → ICE score.
   Exporta os dados em lote, extrai ICE da descrição, ranqueia por MUST/
   SHOULD/COULD/WONT e por QUICK WIN/PLAN/LATER/DROP, detecta anomalias (label errada,
-  ICE inconsistente, tipo errado na fila) e gera markdown em history/analyses/.
+  ICE inconsistente, tipo errado na fila) e gera o markdown da análise no histórico.
   Acione SEMPRE que o usuário mencionar: priorização, priorizar, ranking, lista ranqueada,
   ordem de prioridade, backlog priorizado, funil MoSCoW, ice score, quadrante I×E, quais
   issues entram primeiro, anomalia de prioridade, inconsistência de label, ou qualquer
   pedido que combine backlog + MoSCoW + ICE + ordenar + analisar.
   IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de qualquer
   operação no backlog.
+acao:
+  id: priorizar-backlog
+  rotulo: Priorizar backlog
+  descricao: ranqueia o backlog pelo funil de priorização
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: O funil de priorização da sua empresa — critérios, fórmula, faixas de corte e ordem de desempate.
+    tipo: texto-longo
 ---
 
 # backlog-prioritization — workflow L2 (pack padrão)
@@ -21,6 +31,11 @@ description: >
 | Métodos | `system/professions/product-specialist/methods/moscow.md` · `ice.md` |
 | Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
 | Código | receita de export e parsing da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-analysis.md`) |
+
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
 ## Bindings
 
@@ -35,7 +50,7 @@ description: >
   fila separada); nesse caso ele manda. Pedido diferente ("só a sprint X") ajusta o filtro
   — ambíguo → pergunte. Nunca decore nome de label: confirme a taxonomia real pelo
   provider (operação **listar labels**).
-- **Um export em lote** pela receita do provider → CSV em `data/issues_YYYY-MM-DD.csv`;
+- **Um export em lote** pela receita do provider → CSV em `{caminhos.dados}issues_YYYY-MM-DD.csv`;
   toda a análise roda no arquivo local. Verifique o export (`wc -l` > 1) antes de seguir.
 - **Detecção de anomalias é aberta**: as categorias da receita são ponto de partida;
   aplique todas as regras que o documento do projeto declarar como inconsistência.
@@ -43,7 +58,7 @@ description: >
 
 ## Contrato de saída
 
-`history/analyses/YYYY-MM-DD_priorizacao_backlog.md`, com:
+`{caminhos.historico}analyses/YYYY-MM-DD_priorizacao_backlog.md`, com:
 
 - Cabeçalho: data, nº de issues (com/sem ICE), funil, fonte CSV, referência ao doc do
   projeto.
@@ -53,6 +68,6 @@ description: >
   `✅`.
 - Seção **Anomalias** (uma subseção por categoria com ocorrência ≥1: IID, detalhe, ação).
 - **Resumo de Ações Prioritárias** por severidade (alta 🔴 / média 🟠 / baixa 🟡 / info ℹ️).
-- Referência canônica de formato/tom: a análise mais recente em `history/analyses/`.
+- Referência canônica de formato/tom: a análise mais recente em `{caminhos.historico}analyses/`.
 
 CSV com data no nome — nunca sobrescrever o de dia anterior.

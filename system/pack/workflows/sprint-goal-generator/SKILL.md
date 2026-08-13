@@ -7,6 +7,16 @@ description: >
   Sprint Goal, objetivo da sprint, ou enviar HUs/backlog pedindo para definir a meta.
   Tambem quando perguntar qual seria a meta mesmo sem usar o termo exato. Trigger
   agressivo: qualquer combinacao de meta + sprint + contexto de desenvolvimento de software.
+acao:
+  id: definir-meta-de-sprint
+  rotulo: Definir meta da sprint
+  descricao: escreve a meta da sprint orientada a resultado
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: Como sua empresa escreve a meta da sprint — quem participa, que evidência sustenta a meta e como ela é validada.
+    tipo: texto-longo
 ---
 
 # sprint-goal-generator — workflow L2 (pack padrão)
@@ -17,11 +27,16 @@ description: >
 | Método | `system/professions/product-specialist/methods/sprint-goal.md` — **é ele que define o que é meta boa, os anti-padrões e o contrato de saída.** Leia antes de gerar. |
 | Provider | `system/providers/backlog/` — **com fallback local** (regime "modo local" da INTERFACE) |
 
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
+
 ## Bindings
 
 - **Contexto**: use o conteúdo recebido (HUs/backlog). Recebeu só o número/nome da
   sprint → liste as demandas da sprint pelo provider + docs relevantes do projeto.
-  Sem backlog configurado → peça HUs/backlog direto ou busque `history/*sprint*`/`outputs/`.
+  Sem backlog configurado → peça HUs/backlog direto ou busque `{caminhos.historico}*sprint*`/`{caminhos.entregaveis}`.
 - **Input vago demais** ("metas pra sprint de login") → UMA pergunta antes de gerar:
   "qual é o principal ganho que o usuário ou negócio terá ao final desta Sprint?"
 - **Saída**: o contrato do método (2-3 opções com por-que-é-outcome + como verificar +

@@ -12,62 +12,20 @@ import re
 import shutil
 import sys
 
-HARNESS = pathlib.Path(os.environ["HARNESS_DIR"])
+from harness import descobrir_personas
+
 ADAPTERS = pathlib.Path(os.environ["ADAPTERS_DIR"])
 SKILLS = pathlib.Path(os.environ["OUT_DIR"])
+RUNTIME = pathlib.Path(os.environ["RUNTIME_DIR"])
 
-CLAUDE_AGENTS = HARNESS / "runtime/claude/agents"
-CLAUDE_COMMANDS = HARNESS / "runtime/claude/commands"
-CODEX_AGENTS = HARNESS / "runtime/codex/agents"
-OPENCODE_JSON = HARNESS / "runtime/opencode/opencode.json"
+# Como o runtime se refere às skills resolvidas dentro do projeto. Configurável porque
+# no sandbox do produto a visão resolvida não mora em `.agents/`.
+SKILLS_REF = os.environ.get("SKILLS_REF", ".agents/runtime/skills")
 
-
-def frontmatter(path):
-    """Devolve (dict de campos escalares, corpo). Suporta valores em bloco com '>'."""
-    texto = path.read_text(encoding="utf-8")
-    m = re.match(r"^---\n(.*?)\n---\n?(.*)$", texto, re.S)
-    if not m:
-        return {}, texto.strip()
-
-    campos, corpo = {}, m.group(2).strip()
-    chave, buffer = None, []
-    for linha in m.group(1).split("\n"):
-        cabecalho = re.match(r"^([A-Za-z_][\w-]*):\s*(.*)$", linha)
-        if cabecalho and not linha.startswith((" ", "\t")):
-            if chave:
-                campos[chave] = " ".join(buffer).strip()
-            chave, valor = cabecalho.group(1), cabecalho.group(2).strip()
-            buffer = [] if valor in (">", "|", ">-", "|-") else [valor]
-        elif chave:
-            buffer.append(linha.strip())
-    if chave:
-        campos[chave] = " ".join(buffer).strip()
-    return campos, corpo
-
-
-def descobrir():
-    personas = []
-    for persona_path in sorted(SKILLS.glob("*/PERSONA.md")):
-        nome = persona_path.parent.name
-        skill_path = persona_path.parent / "SKILL.md"
-        if not skill_path.exists():
-            print(f"aviso: '{nome}' tem PERSONA.md sem SKILL.md — ignorado.", file=sys.stderr)
-            continue
-        meta, corpo = frontmatter(persona_path)
-        skill_meta, _ = frontmatter(skill_path)
-        descricao = skill_meta.get("description", "").strip()
-        if not descricao:
-            print(f"aviso: '{nome}' sem description no SKILL.md.", file=sys.stderr)
-        personas.append({
-            "name": nome,
-            "description": descricao,
-            "summary": meta.get("summary", descricao.split(".")[0]),
-            "mode": meta.get("mode", "primary"),
-            "tools": meta.get("tools", ""),
-            "model": meta.get("model", ""),
-            "body": corpo,
-        })
-    return personas
+CLAUDE_AGENTS = RUNTIME / "claude/agents"
+CLAUDE_COMMANDS = RUNTIME / "claude/commands"
+CODEX_AGENTS = RUNTIME / "codex/agents"
+OPENCODE_JSON = RUNTIME / "opencode/opencode.json"
 
 
 def bloco_yaml(valor, indent="  "):
@@ -131,7 +89,7 @@ def render_codex(personas, modelo_default):
         modelo = p["model"] or modelo_default
         instrucoes = (
             p["body"]
-            + "\n\nFonte de verdade do comportamento: `.agents/runtime/skills/"
+            + f"\n\nFonte de verdade do comportamento: `{SKILLS_REF}/"
             + f"{p['name']}/SKILL.md`. Não duplique regra aqui."
         )
         (CODEX_AGENTS / f"{p['name']}.toml").write_text(
@@ -151,7 +109,7 @@ def render_opencode(personas):
         p["name"]: {
             "description": p["summary"],
             "mode": p["mode"],
-            "prompt": f"{{file:../.agents/runtime/skills/{p['name']}/SKILL.md}}",
+            "prompt": f"{{file:../{SKILLS_REF}/{p['name']}/SKILL.md}}",
             "permission": permissao,
         }
         for p in personas
@@ -168,7 +126,7 @@ def render_opencode(personas):
 
 
 def main():
-    personas = descobrir()
+    personas = descobrir_personas(SKILLS)
     if not personas:
         print("nenhuma persona encontrada (nenhum PERSONA.md em runtime/skills/).",
               file=sys.stderr)

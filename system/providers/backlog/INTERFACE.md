@@ -36,9 +36,13 @@ conteúdo/alvo, esperar aprovação. Sem exceção, por operação.
 
 ## Capacidades
 
-Cada implementação declara, no topo do seu arquivo, quais capacidades suporta. O workflow
-declara a que exige. Capacidade ausente = **indisponibilidade explícita**, informada ao
+Cada implementação declara, no frontmatter do seu arquivo, quais capacidades suporta e de
+que precisa para rodar (`docs/ARCHITECTURE.md` §4). O workflow declara a que exige. Capacidade ausente = **indisponibilidade explícita**, informada ao
 usuário — nunca tentativa de comando que vai falhar, nunca contorno silencioso.
+
+**Falha da ferramenta**: reporte o erro **verbatim**, aponte o passo de autenticação da
+implementação ativa e ofereça repetir. Nunca contorne autenticação, nunca resuma o erro a
+"deu problema".
 
 | Capacidade | `github-gh` | `gitlab-glab` |
 |---|---|---|
@@ -61,15 +65,15 @@ análise, saúde, sprint-ops, wiki, criação de demanda) → **pare** e respond
 > operação depende do backlog e não tem equivalente local. Para ativar, defina
 > `BACKLOG_PROVIDER` e as credenciais da ferramenta escolhida."
 
-Não contorne com dados de `outputs/`/`docs/context_docs/` — não substituem o estado real.
+Não contorne com dados de `{caminhos.entregaveis}`/`docs/context_docs/` — não substituem o estado real.
 
 **Workflows COM fallback local** (usam a demanda só como contexto: discovery,
 doc-consolidator, sprint-goal, design-brief, design-screen) → **modo local**:
 
 - Entrada: pule leitura de demanda/comentários; peça a demanda por descrição livre do
-  usuário ou busque `outputs/{ID}_*/` e `history/`.
-- Detecção de estado: releia o registro local (`history/`) em vez de comentários.
-- Toda operação de Escrita é pulada — o registro local (`history/`, `outputs/`) basta;
+  usuário ou busque `{caminhos.pasta_por_demanda}` e `{caminhos.historico}`.
+- Detecção de estado: releia o registro local (`{caminhos.historico}`) em vez de comentários.
+- Toda operação de Escrita é pulada — o registro local (`{caminhos.historico}`, `{caminhos.entregaveis}`) basta;
   nada se perde, só não é publicado.
 - Avise uma vez: "Sem backlog configurado — registro fica só no repositório local."
 

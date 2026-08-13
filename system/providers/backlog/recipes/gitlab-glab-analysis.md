@@ -4,6 +4,9 @@ Procedural (jq/python). O contrato do que produzir está no SKILL.md.
 
 ## 2. Exportar — uma única chamada à API
 
+> **`DADOS`** é o diretório de export do projeto — `caminhos.dados` do `project-config.yaml`.
+> Exporte antes de rodar os blocos abaixo: `export DADOS="$(...)"`. Nunca escreva o caminho literal.
+
 **Princípio:** toda a análise roda sobre o CSV local. Zero chamadas adicionais à API.
 
 ```bash
@@ -69,13 +72,13 @@ glab api --paginate \
       (if .weight then .weight else "" end),
       (.labels | join("|"))
     ]) | @csv
-  ' > "data/issues_$(date +%Y-%m-%d).csv"
+  ' > "${DADOS}issues_$(date +%Y-%m-%d).csv"
 ```
 
 Verificar antes de prosseguir:
 ```bash
-wc -l "data/issues_$(date +%Y-%m-%d).csv"   # deve ser > 1
-head -2 "data/issues_$(date +%Y-%m-%d).csv"
+wc -l "${DADOS}issues_$(date +%Y-%m-%d).csv"   # deve ser > 1
+head -2 "${DADOS}issues_$(date +%Y-%m-%d).csv"
 ```
 
 ---
@@ -85,10 +88,11 @@ head -2 "data/issues_$(date +%Y-%m-%d).csv"
 Use Python para ler o CSV — evita quebra por vírgulas em títulos.
 
 ```python
-import csv, re
+import csv, os, re
 from datetime import datetime, timezone
 
-CSV_PATH = f"data/issues_{datetime.now().strftime('%Y-%m-%d')}.csv"
+DADOS = os.environ["DADOS"]          # caminhos.dados do project-config.yaml
+CSV_PATH = f"{DADOS}issues_{datetime.now().strftime('%Y-%m-%d')}.csv"
 
 # --- Filtros de escopo (ajustar conforme o pedido do usuário) ---
 LABEL_FILTERS = ["BACKLOG", "BACKLOG (PRIORIZADO)"]   # padrão
@@ -226,7 +230,7 @@ ranked = sorted(issues, key=sort_key)
 
 ## 6. Gerar o markdown
 
-Salve em `history/analyses/YYYY-MM-DD_priorizacao_backlog.md`.
+Salve em `{caminhos.historico}analyses/YYYY-MM-DD_priorizacao_backlog.md`.
 
 ### Estrutura obrigatória
 
@@ -235,7 +239,7 @@ Salve em `history/analyses/YYYY-MM-DD_priorizacao_backlog.md`.
 
 **Data:** DD/MM/YYYY | **Issues:** N (labels `X` + `Y`) | **Com ICE:** N | **Sem ICE:** N
 **Funil:** MoSCoW → Quadrante (I×E) → ICE Score
-**Fonte:** `data/issues_YYYY-MM-DD.csv`
+**Fonte:** `{caminhos.dados}issues_YYYY-MM-DD.csv`
 **Ref.:** documento de priorização do projeto (`caminhos.documento_priorizacao`)
 
 ---
@@ -282,7 +286,7 @@ Salve em `history/analyses/YYYY-MM-DD_priorizacao_backlog.md`.
 
 ---
 
-> 📊 Dados brutos: `data/issues_YYYY-MM-DD.csv`
+> 📊 Dados brutos: `{caminhos.dados}issues_YYYY-MM-DD.csv`
 ```
 
 ### Regras de formatação

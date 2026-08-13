@@ -2,7 +2,8 @@
 
 Referência normativa: define **quem manipula o quê, por onde, com que portão**, nos dois
 modos de entrega do mesmo harness. Camadas e precedência: [`ARCHITECTURE.md`](ARCHITECTURE.md).
-Uso e instalação no dia a dia: [`../README.md`](../README.md).
+Uso e instalação no dia a dia: [`../README.md`](../README.md). A **forma das telas** do modo
+aplicativo — papéis, fluxos, portão como estado, ordem de construção: [`HUB.md`](HUB.md).
 
 > **Estado.** O **modo repositório existe e é o que roda hoje**. O **modo aplicativo é
 > desenho** — nada dele está implementado. Cada seção marca o que vale para cada um; onde
@@ -39,7 +40,7 @@ Os dois rodam **as mesmas skills, sem fork**. É isso que a seção 3 protege.
 │   │   └── workflows/              máquina (skill-creator, motores) — não-forkável
 │   ├── org/                    ◐ ORGANIZAÇÃO — fora do Git do harness
 │   │   ├── ORG.md                  convenções transversais
-│   │   ├── workflows/              override por arquivo + workflows próprios
+│   │   ├── workflows/              registros nos encaixes + workflows de ação nova
 │   │   ├── professions/            método/profissão próprios
 │   │   └── providers/              implementação de ferramenta interna
 │   ├── skills →                ⚙ symlink p/ runtime/skills — descoberta de skills
@@ -47,6 +48,7 @@ Os dois rodam **as mesmas skills, sem fork**. É isso que a seção 3 protege.
 │   │   ├── adapters/               ▣ fonte dos adapters (base, aliases, render)
 │   │   ├── build.sh                ▣ resolvedor
 │   │   ├── skills/                 ⚙ GERADO — visão resolvida que os runtimes leem
+│   │   ├── manifest.json           ⚙ GERADO — catálogo como dado (ARCHITECTURE §8)
 │   │   └── claude|codex|opencode/  ⚙ GERADO — a partir dos PERSONA.md resolvidos
 │   └── docs/                   ▣ ARCHITECTURE.md · MODOS.md (este)
 ├── project-config.yaml         ○ PROJETO — valores da instância (L3), no Git do projeto
@@ -76,8 +78,10 @@ organização mora em `system/`. O teste do pack (`ARCHITECTURE.md` §3) é o qu
 Quebrar qualquer um destes cinco itens obriga a manter duas versões das skills. É o
 principal risco arquitetural dos dois modos coexistirem.
 
-1. **Resolução idêntica.** Máquina vence sempre; a organização sobrescreve o pack **arquivo
-   a arquivo**; `DISABLED` desliga um workflow do pack. Igual nos dois modos.
+1. **Resolução idêntica.** Máquina vence sempre; workflow resolvido = moldura do pack +
+   conteúdo da organização nos encaixes declarados (`ARCHITECTURE.md` §7); workflow próprio
+   só para ação que o pack não atende; `DISABLED` desliga um workflow do pack. Igual nos
+   dois modos. O nome da pasta é endereço físico nos dois, nunca contrato.
 2. **Saída é uma visão plana resolvida.** O runtime nunca navega camadas: lê
    `runtime/skills/`, já resolvido.
 3. **Skill não sabe de onde veio o conteúdo.** Sem API de runtime, sem caminho de banco,
@@ -98,8 +102,9 @@ principal risco arquitetural dos dois modos coexistirem.
 | Método/profissão só desta empresa | L1 org | `org/professions/` | revisão | `skill-creator` + revisão | editor do produto + aprovação |
 | Convenção da empresa (língua, nomes, papéis, funil) | L2 | `org/ORG.md` | revisão | edição + revisão | formulário + aprovação |
 | Workflow que serve a qualquer empresa | L2 pack | `system/pack/workflows/` | — | release do sistema | idem |
-| Formato de documento desta empresa | L2 org | `org/workflows/<n>/references/<arq>.md` | revisão | override do menor arquivo | editor do produto |
-| Workflow só desta empresa | L2 org | `org/workflows/<n>/SKILL.md` | revisão | `skill-creator` | editor do produto |
+| Formato, template, vocabulário, **procedimento** de uma ação existente | L2 org | registro no encaixe `(ação, encaixe)` | revisão | arquivo no encaixe declarado | escreve o texto e escolhe a ação; nunca vê o workflow |
+| Ação que o harness **não** faz | L2 org | workflow próprio + ação nova | revisão | `skill-creator` | editor de workflow |
+| Portão, contrato de saída, método, L0 | — | área fechada (`ARCHITECTURE.md` §7) | — | **não alcançável** | não exposto |
 | Desligar workflow do pack | L2 org | `org/workflows/<n>/DISABLED` | revisão | arquivo vazio | interruptor na UI |
 | Implementação de ferramenta interna | provider | `org/providers/<domínio>/` | revisão | sob a mesma `INTERFACE.md` | idem |
 | Como a persona se apresenta | persona | `<workflow>/PERSONA.md` + build | revisão (se override) | 1 arquivo, 3 runtimes | 1 registro, N canais |
@@ -136,10 +141,14 @@ workflow — é o comando para responder "de onde veio esse comportamento?".
 > armazenamento, nomes de configuração, contrato do materializador e comportamento de
 > falha são projeto a fazer.
 
-Hoje o `build.sh` lê `org/` do disco. Para o modo aplicativo existir sem tocar em nenhuma
-skill, **"de onde vem a camada da organização" precisa virar um ponto de troca** — hoje
-disco, amanhã também o dado do produto. Quem consome esse ponto é o `build.sh`, não uma
-skill: é máquina do harness, não provider de agente.
+**O ponto de troca já existe.** `build.sh --org DIR` (ou `HARNESS_ORG_DIR`) decide de onde
+vem a camada da organização, e `--out DIR` decide para onde vai a visão resolvida — no
+produto o `system/` chega read-only por release, então a saída não pode cair dentro dele
+(`ARCHITECTURE.md` §8). Quem consome esses pontos é o `build.sh`, não uma skill: é máquina
+do harness, não provider de agente.
+
+O que falta é do outro lado da troca: **quem materializa** um `org/` a partir do dado do
+produto. Daí para frente o pipeline é idêntico nos dois modos.
 
 ### O que a direção assume
 
@@ -153,6 +162,11 @@ skill: é máquina do harness, não provider de agente.
   frente o pipeline é idêntico nos dois modos.
 - **O core não é materializado.** `system/` chega por release; Git é como o harness é
   desenvolvido e versionado, não como o app o consome.
+- **A visão resolvida é materializada no sandbox de execução, nunca no que a organização
+  enxerga ou baixa.** `runtime/skills/` resolvido contém o pack inteiro em texto — se
+  chegar à organização, a superfície pública da §7 do `ARCHITECTURE.md` vira decoração.
+  Requisito de propriedade intelectual, não de arrumação. No modo repositório essa
+  fronteira não existe por construção: o `system/` está no disco de quem usa.
 
 ### Decisões em aberto
 
@@ -162,6 +176,10 @@ skill: é máquina do harness, não provider de agente.
 - Contrato do materializador: atomicidade, integridade, o que acontece sem rede, o que
   acontece quando o usuário edita o que foi materializado.
 - Como rastrear contra qual release do harness uma camada foi validada.
+- Quem mantém a taxonomia de **ações** e **encaixes** (`ARCHITECTURE.md` §7), e o que
+  acontece com as organizações quando uma ação é renomeada ou aposentada.
+- Até onde o encaixe `procedimento` pode ir sem virar substituição disfarçada — e como o
+  produto sinaliza que um procedimento escrito pela organização conflita com a moldura.
 - Se existe saída para Git (auditoria, exportação) e em que direção.
 - **Fora de escopo desta costura:** artefatos de trabalho (`outputs/`, `history/`, `data/`)
   têm escrita dos dois lados e são um problema diferente — não resolva junto.
@@ -172,9 +190,11 @@ skill: é máquina do harness, não provider de agente.
 
 | Risco | Sintoma | Mitigação |
 |---|---|---|
-| **Overlay órfão** | organização sobrescreveu `references/x.md`; o pack evoluiu; ninguém percebeu que a empresa congelou | build avisa quando o arquivo do pack sobrescrito mudou desde o override |
+| **Overlay órfão** | organização preencheu um encaixe; o pack evoluiu; ninguém percebeu que a empresa congelou | só o conteúdo do encaixe congela — moldura, portões e contrato de saída acompanham o pack por construção |
+| **Qualidade terceirizada** | organização configura mal e a resposta piora sem rede | portão, contrato de saída e método ficam fora de qualquer encaixe (`ARCHITECTURE.md` §7); o pior encaixe possível ainda para no portão humano |
+| **Core exposto** | organização deduz a estrutura interna do pack pela interface (nomes de workflow, divisão, procedimento) | superfície pública é **ação + encaixe** (`ARCHITECTURE.md` §7); resolvido materializado só no sandbox de execução |
 | **Duas fontes de verdade** | alguém edita o arquivo materializado no modo aplicativo e o backend lê de volta | arquivo renderizado é efêmero e read-only; toda escrita passa pela UI |
-| **Fork do harness inteiro** | cada release vira merge | overlay por arquivo; fork de `SKILL.md` só quando o **procedimento** é outro |
+| **Fork do harness inteiro** | cada release vira merge | não existe substituir workflow do pack: customização é encaixe, e workflow próprio só para ação nova |
 | **Vazamento de camada** | valor de projeto (domínio, repo, tabela) dentro do pack ou do `ORG.md` | teste do pack (`ARCHITECTURE.md` §3); valor vem de `project-config.yaml` |
 | **Segredo na camada compartilhada** | token no `ORG.md`, que é multiusuário e versionado | `org/` é prosa; credencial só em `.env`/cofre |
 | **Portão colapsado no app** | UI "adianta" etapas para parecer fluida | portão do pipeline vira estado do artefato — não pode ser pulado, só aprovado |

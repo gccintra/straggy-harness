@@ -9,6 +9,19 @@ description: >
   pro Figma é opt-in. Use sempre que o usuário pedir criar OU ajustar uma tela, protótipo,
   componente ou fluxo. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de
   qualquer operação no backlog.
+acao:
+  id: construir-tela
+  rotulo: Construir tela
+  descricao: cria e ajusta telas no app de protótipo
+produz:
+  id: prototipo-validado
+  rotulo: Protótipo validado
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: Como sua empresa constrói uma tela — o que reusar antes de criar componente novo e como a tela é revisada.
+    tipo: texto-longo
 ---
 
 # design-screen — workflow L2
@@ -25,36 +38,12 @@ e declare o que assumiu.
 **Transcrever, não re-autorar**: todo elemento da referência aparece, mesma ordem, nada
 omitido nem "melhorado"; visual conforme a autoridade da referência.
 
-## 1. Modo — decida ANTES de pedir qualquer coisa
 
-Olhe o protótipo primeiro: a tela/componente já existe em `prototype/src/`?
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
-- **AJUSTE** (existe): a referência é o próprio protótipo — ache o componente (`grep`),
-  compare com tela irmã e tokens, edite pro padrão do sistema, verifique no Vite.
-  **Sem pedir print/node, sem gate** — alinhamento prévio só se o "certo" for ambíguo.
-- **NOVO** (não existe): carregue o contexto (demanda pelo provider / `outputs/{ID}_*/` /
-  descrição). Existe node/imagem disponível? Peça **uma vez**, junto de tudo mais que
-  precisar. Não existe? Derive de tela irmã + design system e siga — a fidelidade sobe
-  depois, com a referência em mãos:
-  > "Quais nodes do Figma eu uso? 1) Tela de referência (link ou nodeId); 2) componentes
-  > específicos; 3) design system (opcional, já temos em `ui/`)."
-  Nunca invente nodeId. Leitura e conversão do node: provider `canvas/figma-mcp.md`.
-  Imagem → **meça com Pillow** (cor por pixel, medida por transição; retina ÷2; pergunte
-  estados e fonte). Wireframe → passe pela `design-brief` antes (obrigatória).
-
-## 2. Plano — proporcional, não obrigatório
-
-- Já existe `outputs/{ID}_*/{ID}_design.md`? **Ele é o plano** — confirme em 2-3 linhas e
-  construa. Demanda com documentação sem design doc → rode a `design-brief` antes.
-- **Vai direto ao código** (sem gate): ajuste, tela com irmã óbvia, componente pequeno,
-  estado faltando.
-- **Alinha 3-5 linhas antes**: tela nova sem precedente, mudança de fluxo ou de navegação,
-  algo que conflita com a doc. Rota, tela irmã, seções em ordem, componentes reusados,
-  estados, dados de mock — e siga sem esperar aprovação item a item.
-- Construa de ponta a ponta. Decisão pequena é sua; só pare se descobrir que o **resultado**
-  pedido era outro.
-
-## 3. Construir — regras de arquivo (contrato)
+## 1. Construir — regras de arquivo (contrato)
 
 ```
 prototype/src/routes/<modulo>/<tela>.tsx   ← 1 arquivo por tela
@@ -77,7 +66,7 @@ mock/<dominio>.ts                          ← dados de exemplo
 Precedência de reúso e tokens: `design-system-first.md`. Acessibilidade: checklist AA
 antes de entregar.
 
-## 4. Verificar e entregar (PARE aqui por padrão)
+## 2. Verificar e entregar (PARE aqui por padrão)
 
 `cd prototype && npm run dev` → dê a URL direta da tela + estados, confirme alcançável
 pelo menu. **Rode a verificação visual** (`visual-verification.md`): diff contra a
@@ -87,16 +76,24 @@ Reporte o que restou divergente.
 Entregue junto a lista curta do que **assumiu** (dado, regra, estado, rótulo) — é isso que
 substitui as perguntas do início.
 
+**Demanda com ID que vai virar documentação — registre o protótipo (write-gate).** Depois
+do aceite visual, atualize `{caminhos.pasta_por_demanda}{ID}_design.md` com o que o protótipo
+**faz de fato**, no nível de comportamento (nunca pixel): rotas e estados · comportamento
+por ação · rótulos e mensagens **literais** · campos e dados exibidos · o que divergiu da
+solução definida no discovery e por quê · pendências de produto. É a entrada do
+`doc-consolidator` — sem ele, alguém vai reconstruir isso lendo JSX. Ajuste solto, sem ID,
+não gera registro.
+
 **Custo de token:** ao iterar, `Edit` cirúrgico, nunca `Write` (17k vs 0.3k); nunca releia
 arquivo que acabou de escrever — verificação é visual, não textual.
 
-## 5. Export pro Figma — opt-in, por tela (write-gate)
+## 3. Export pro Figma — opt-in, por tela (write-gate)
 
 Só sob pedido explícito, só as telas escolhidas. Motor: skill `html-to-figma`
 (`?export=1`, uma captura por tela/estado, nunca o chrome do app). Reporte a URL de cada
 node.
 
-## 6. Registro
+## 4. Registro
 
-`history/YYYY-MM-DD_design_<nome>.md`: rota + estados, referência usada, componentes
+`{caminhos.historico}YYYY-MM-DD_design_<nome>.md`: rota + estados, referência usada, componentes
 reusados/criados, nodes exportados (se houver), decisões de design.

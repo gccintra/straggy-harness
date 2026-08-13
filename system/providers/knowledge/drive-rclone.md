@@ -1,3 +1,11 @@
+---
+capacidades: [corpus-read, sync-incremental]
+requisitos:
+  binarios: [rclone]
+  variaveis: [GDRIVE_HUS, GDRIVE_REGRAS_DOC_ID]
+  servicos: [google-drive]
+---
+
 # Provider: knowledge — implementação Google Drive + rclone
 
 O Drive é a **fonte de verdade**; `docs/context_docs/` é cache derivado e descartável.

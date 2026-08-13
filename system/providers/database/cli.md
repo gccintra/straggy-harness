@@ -1,3 +1,11 @@
+---
+capacidades: [query-read-only]
+requisitos:
+  # O binário do cliente não é fixo: quem o define é DB_CONNECT_CMD (sqlcmd, psql,
+  # mysql, sqlite3…). Declarar um aqui seria inventar.
+  variaveis: [DB_ENABLED, DB_CONNECT_CMD]
+---
+
 # Provider: database — implementação CLI genérica
 
 Implementação da interface sobre qualquer cliente CLI (`sqlcmd`, `psql`, `mysql`,

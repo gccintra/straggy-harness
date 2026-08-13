@@ -34,4 +34,4 @@ garantida: pastas, nomes e vocabulário são convenção da organização e do p
   que faltou (`system/CONSTITUTION.md` §4).
 - Documento que a organização trata como fonte de verdade (regra de negócio, catálogo
   próprio, funil de priorização) é declarado em `org/ORG.md` — não aqui.
-- **Proibido** tratar exemplo de `outputs/` como catálogo: exemplo não é fonte de verdade.
+- **Proibido** tratar exemplo de `{caminhos.entregaveis}` como catálogo: exemplo não é fonte de verdade.

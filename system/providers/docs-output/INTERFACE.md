@@ -35,7 +35,7 @@ silencioso:
 avise. Não existe fallback: o `.md` consolidado já é o entregável válido.
 
 > "Nenhum gerador de documento final configurado (`DOCS_OUTPUT_PROVIDER` no `.env`). O
-> `.md` em `outputs/` continua sendo a fonte de verdade e pode ser entregue como está."
+> `.md` em `{caminhos.entregaveis}` continua sendo a fonte de verdade e pode ser entregue como está."
 
 ## Contrato transversal
 

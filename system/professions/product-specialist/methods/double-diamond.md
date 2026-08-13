@@ -21,6 +21,10 @@ problema (converge), **D2a** explora soluções (diverge), **D2b** define a solu
   existe na área e listar as incógnitas que travam a solução.
 - **Sem espantalho**: não inventar "Solução B" fraca para simular comparação. Caminho
   único → declarar único e por quê.
+- **Solução com interface converge no protótipo, não em prosa**: quando a demanda tem
+  superfície de tela, o D2b só fecha com protótipo navegável validado. Requisito escrito
+  antes disso é retrabalho previsível — fluxo, estado, rótulo e mensagem se revelam ao ver,
+  não ao descrever. Demanda sem interface fecha no próprio D2b.
 - **Toda afirmação tem origem**: existente (lida em fonte), confirmada (validada em
   dado/dev) ou suposição declarada a confirmar.
 - **Pendências não somem**: pergunta aberta em D1 é reaberta e resolvida (ou adiada com

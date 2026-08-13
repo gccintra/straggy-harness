@@ -19,8 +19,10 @@ aqui para nascer na camada certa e no estilo certo.
 **LEITURA OBRIGATÓRIA antes de qualquer proposta** (nesta ordem, sempre nesta sessão):
 
 1. `.agents/docs/ARCHITECTURE.md` — camadas, teste de linha (§2), pack + overlay (§3),
-   providers (§4), anti-padrões (§6).
+   providers (§4), anti-padrões (§6), **ações e encaixes (§7)**.
 2. `.agents/system/CONSTITUTION.md` — write-gate, autonomia (§3), brevidade (+ `org/ORG.md`).
+3. `.agents/system/ACOES.md` — catálogo de ações e encaixes. Toda skill declara uma ação;
+   customização da organização entra por encaixe antes de virar workflow próprio.
 
 Este arquivo não repete o conteúdo deles — só o aplica. Se este SKILL.md e o
 `ARCHITECTURE.md` divergirem, **o `ARCHITECTURE.md` vence** (é a fonte de verdade da
@@ -38,7 +40,8 @@ Primeira pergunta de toda demanda. Errar a camada aqui é o que erode a arquitet
 | Conhecimento de PM/Designer/Tech Lead válido em qualquer empresa (método, critério de seleção, barra de qualidade) | L1 | `system/professions/<profissão>/methods/` ou `reasoning.md` |
 | Convenção transversal da organização (língua, nomenclatura, papéis) | L2 | `org/ORG.md` (scaffold em `system/pack/org-scaffold/`) |
 | Procedimento que serve a **qualquer** empresa (gatilho, binding, portão, formato genérico) | L2 pack | `system/pack/workflows/{nome}/SKILL.md` |
-| Procedimento desta empresa, ou formato que substitui o do pack | L2 org | `org/workflows/{nome}/` — arquivo a arquivo (override) |
+| Qualquer customização de ação **existente** — formato, template, vocabulário, **procedimento** | L2 org | **encaixe** declarado pelo pack: `org/workflows/{nome}/{caminho do encaixe}`. Nunca substitui o workflow |
+| Ação que o harness **não faz** | L2 org | `org/workflows/{nome}/SKILL.md` com `acao:` nova + entrada em `system/ACOES.md` |
 | Máquina do harness (governança, motor procedural, tooling de repo) | system | `system/workflows/{nome}/` (não-forkável, sem symlink) |
 | Método/profissão própria da organização | L1 org | `org/professions/<profissão>/` |
 | Sintaxe/uso de ferramenta (glab, pandoc, Figma MCP, banco) | provider | `system/providers/<domínio>/` (INTERFACE + implementação) ou `org/providers/` quando a ferramenta é interna |
@@ -89,6 +92,25 @@ existe para cadência de aprovação do usuário, é restrição e fica.
 - `name` em kebab-case; `description` com **gatilhos agressivos** — frases literais que o
   usuário diria, sinônimos, variações PT/EN. É a description que faz o runtime acionar a
   skill; description vaga = skill morta.
+- `acao` — obrigatória, do catálogo `system/ACOES.md`. Ação nova = entrada nova no catálogo,
+  aprovada junto. Workflow do pack que aceita conteúdo da organização declara também
+  `encaixes:`. Ambos aceitam forma curta (só o identificador) e forma longa; **workflow do
+  pack usa a longa** — sem `rotulo`, `ajuda` e `tipo` a interface não tem como desenhar o
+  campo, e o build avisa. Schema completo, incluindo `essencial` e o `padrao` derivado:
+  `docs/ARCHITECTURE.md` §7.
+- `produz` / `requer` — só para workflow que participa da esteira de artefatos. Declara o
+  que o trabalho entrega e o que precisa estar aprovado antes (`docs/ARCHITECTURE.md` §7).
+  O build reprova requisito sem produtor e ciclo.
+- **Separe moldura de encaixe ao escrever a skill.** Fica na moldura (do sistema, fora de
+  qualquer encaixe): portões, write-gate, contrato de saída, métodos e providers carregados.
+  Vai para encaixe: formato, template, vocabulário e o **procedimento**. Skill em que o
+  portão está embutido no meio do procedimento não pode expor o encaixe `procedimento` —
+  separe primeiro (§7: o piso de qualidade é estrutura, não regra escrita).
+- **Encaixe não-essencial declarado = arquivo padrão escrito no mesmo commit.** Declarar sem
+  shippar o default é defeito do pack: a organização que não customiza recebe a ação rodando
+  só com a moldura. O build denuncia e reprova em `--strict`. Encaixe `essencial: true` é a
+  exceção — sem padrão possível (marca da empresa, gerador proprietário), a ação nasce
+  indisponível e isso é estado, não defeito.
 - Se usa provider: a description termina apontando a `INTERFACE.md` do domínio (ex.:
   `system/providers/backlog/INTERFACE.md`) — nunca a implementação nem o nome da
   ferramenta.
@@ -116,6 +138,31 @@ existe para cadência de aprovação do usuário, é restrição e fica.
 (material longo carregado sob demanda), `assets/`, `evals/evals.json` (casos de gatilho:
 frases que DEVEM acionar e frases que NÃO devem).
 
+### Contrato do registro de encaixe (o arquivo que preenche um encaixe)
+
+Vale para o padrão do pack e para o registro da organização — o encaixe é o mesmo objeto.
+
+**Nunca entra:**
+
+- Portão humano, write-gate, contrato de saída, chamada de método, provider. É moldura, e o
+  encaixe não a alcança — escrever um portão aqui faz a organização apagá-lo ao customizar.
+- Vocabulário da organização (sigla de tipo de documento, nome de label, catálogo interno) e
+  valor de instância (domínio, repositório, tabela, caminho literal) — no pack, use as
+  chaves de `project-config.yaml`.
+- Script cognitivo (§2).
+
+**Entra:** o mínimo genérico que a moldura não diz — a forma do trabalho que qualquer
+empresa reconheceria. Alvo **15-40 linhas**; curto e vazio é melhor que longo e prescritivo.
+Não passa no teste do pack → não escreva o padrão: proponha remover a declaração do encaixe,
+com o custo explícito (a organização perde aquele ponto de customização).
+
+**Frase canônica da moldura** — a skill nunca nomeia a camada de origem do arquivo nem a
+precedência entre camadas (é o build que resolve, `ARCHITECTURE.md` §3 e §7). Copie literal:
+
+> **Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+> seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+> sempre e não é substituível.
+
 ## 4. Contrato de edição de skill existente
 
 - **Ler o SKILL.md inteiro antes de propor** — nunca editar por trecho isolado.
@@ -126,6 +173,13 @@ frases que DEVEM acionar e frases que NÃO devem).
   na mesma passada (item separado da proposta, para o usuário aprovar em separado).
 - Mudança de comportamento invariante (gate, portão) NÃO se faz numa skill — se a demanda
   pede isso, o alvo é `system/CONSTITUTION.md`/`ARCHITECTURE.md` e a discussão sobe de nível.
+- **Mover bloco entre arquivos exige conferência de perda.** Extrair procedimento para um
+  encaixe, ou mecânica para uma referência, é o tipo de edição que apaga conteúdo calibrado
+  sem dar erro. Compare linha a linha o arquivo original contra a **união** dos arquivos
+  resultantes e declare, um a um, cada delta que não é movimentação pura.
+- **Mover procedimento para o encaixe não pode piorar a skill.** Enquanto o passo a passo
+  vive dentro do `SKILL.md`, um padrão de pack mais fino que ele é regressão: o texto da
+  moldura manda seguir o arquivo do encaixe. Separe primeiro, shippe o padrão depois.
 
 ## 5. Processo (portões desta skill)
 
@@ -145,8 +199,8 @@ frases que DEVEM acionar e frases que NÃO devem).
 A skill não existe isolada — o harness a referencia em 4 lugares. Verificar e propor
 atualização de cada um que se aplique:
 
-- [ ] **Build** — `./runtime/build.sh` (regenera `runtime/skills/`). Sem isso a skill nova
-      não existe para nenhum runtime.
+- [ ] **Build** — `./.agents/runtime/build.sh` da raiz do projeto (regenera
+      `runtime/skills/`). Sem isso a skill nova não existe para nenhum runtime.
 - [ ] **Persona** — só se a mudança cria **ambiguidade de escolha**: o desempate entra em
       `.../workflows/product-specialist|tech-lead|product-designer`. Gatilho normal vive na
       `description` da própria skill; não há tabela de roteamento para manter.
@@ -156,13 +210,29 @@ atualização de cada um que se aplique:
       `<workflow>/PERSONA.md` (fonte única) e rode o build. **Nunca edite
       `runtime/claude|codex|opencode/` à mão** — são gerados e sobrescritos a cada build.
       Contrato do `PERSONA.md`: `runtime/adapters/README.md`. Skill comum não tem persona.
+- [ ] **`system/ACOES.md`** — ação **do sistema** nova, encaixe novo, ação renomeada ou
+      aposentada. É contrato público: renomear quebra as organizações que reivindicaram a
+      ação — trate como mudança de API. Encaixe novo é aditivo e não quebra ninguém. Ação
+      criada pela organização **não** entra no catálogo do sistema.
 - [ ] **`docs/ARCHITECTURE.md`** — só se a mudança altera a arquitetura (camada nova,
       regra de resolução, contrato de provider). Aí ele é atualizado PRIMEIRO (é a fonte
       de verdade) e esta skill depois.
 
+### Aceite — o que precisa passar antes de entregar
+
+| Checagem | Critério |
+|---|---|
+| `./.agents/runtime/build.sh --strict` | sai **0**; aviso é reprovação neste modo |
+| `--org <diretório vazio> --out <temporário>` | nenhum aviso de "sem padrão no pack" — é o teste da organização recém-criada |
+| `--fix` | não muda `system/ACOES.md` quando nenhuma ação ou encaixe mudou |
+| `org/` | nenhum arquivo novo, salvo quando a demanda era escrever registro da organização |
+
+Reprovou → conserte antes de entregar. Aceite que não vale nesta demanda se declara com o
+motivo, nunca se omite.
+
 ## 7. Fora do escopo
 
 - `project-config.yaml` / `.env` — config de instância, não é artefato do harness.
-- Documentos de produto do projeto (`outputs/`, `history/`, wiki) — são das skills de
+- Documentos de produto do projeto (`{caminhos.entregaveis}`, `{caminhos.historico}`, wiki) — são das skills de
   produto, não desta.
 - Commit/push — `@committer`.

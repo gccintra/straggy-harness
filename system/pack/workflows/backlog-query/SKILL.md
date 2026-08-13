@@ -8,6 +8,16 @@ description: >
   "fecha a #NNN", "quais labels existem", e também quando o usuário citar a ferramenta
   direto (glab, GitLab, Jira). Para varredura do backlog inteiro use backlog-analysis,
   backlog-health ou backlog-prioritization.
+acao:
+  id: consultar-backlog
+  rotulo: Consultar backlog
+  descricao: consulta e operação pontual numa demanda
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: Convenções da sua empresa ao mexer numa demanda — o que sempre conferir antes de alterar ou fechar.
+    tipo: texto-longo
 ---
 
 # backlog-query — shim do provider (pack padrão)
@@ -22,3 +32,7 @@ operação da interface. Leia, nesta ordem:
 
 Toda operação de **escrita** (criar/atualizar/comentar/fechar) passa pelo write-gate —
 `system/CONSTITUTION.md` §2: mostre o alvo e o conteúdo, espere aprovação.
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.

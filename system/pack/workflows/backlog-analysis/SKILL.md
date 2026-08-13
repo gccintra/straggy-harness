@@ -8,6 +8,16 @@ description: >
   prioridade, burndown, ou qualquer visão quantitativa do backlog — com ou sem filtro
   de sprint. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de
   qualquer operação no backlog.
+acao:
+  id: analisar-backlog
+  rotulo: Analisar backlog
+  descricao: métricas, distribuição e status do backlog
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: O passo a passo com que sua empresa analisa o backlog — que recortes olhar e o que cada relatório precisa mostrar.
+    tipo: texto-longo
 ---
 
 # backlog-analysis — workflow L2 (pack padrão)
@@ -22,6 +32,11 @@ description: >
 Análise quantitativa de 10+ issues de uma vez. Consulta pontual (ver uma issue, buscar
 texto) → `backlog-query`, não esta skill.
 
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
+
 ## Bindings
 
 - **Funil primeiro**: para qualquer análise de prioridade/score, use o documento em
@@ -30,17 +45,17 @@ texto) → `backlog-query`, não esta skill.
   nunca de memória.
 - **Escopo pelo pedido**: backlog completo (abertas) · sprint específica (milestone) ·
   fechadas do período · tudo. Ambíguo → pergunte.
-- **Um export em lote** pela receita do provider → CSV em `data/` (com data no nome, nunca
+- **Um export em lote** pela receita do provider → CSV em `{caminhos.dados}` (com data no nome, nunca
   sobrescrever). Análise 100% sobre o arquivo local. Export de sprint inclui a data de
   fechamento (burndown). Prefixos de label (`TIPO::`, `PRIORIDADE::`) — confirme a
   taxonomia real pelo provider se não souber.
 - **Burndown** só para escopo de sprint: HTML auto-contido em
-  `data/burndown_<sprint>_YYYY-MM-DD.html` (template na receita do provider), linha ideal ×
+  `{caminhos.dados}burndown_<sprint>_YYYY-MM-DD.html` (template na receita do provider), linha ideal ×
   real por `closed_at`, real cortada no dia atual.
 
 ## Contrato de saída
 
-`history/analyses/YYYY-MM-DD_analysis_[escopo].md`, com:
+`{caminhos.historico}analyses/YYYY-MM-DD_analysis_[escopo].md`, com:
 
 - Cabeçalho (data, fonte CSV, link do burndown se houver, nº de issues).
 - **Score de saúde 0–100**: penalizações por issue — sem tipo −2 · sem prioridade −2 ·

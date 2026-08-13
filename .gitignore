@@ -24,6 +24,9 @@ CLAUDE.md
 # Visão resolvida dos workflows — gerada por runtime/build.sh (symlinks absolutos)
 runtime/skills/
 
+# Catálogo como dado — gerado por runtime/build.sh a partir do frontmatter das skills
+runtime/manifest.json
+
 # Adapters de runtime — gerados por runtime/build.sh a partir das personas resolvidas
 runtime/claude/agents/
 runtime/claude/commands/

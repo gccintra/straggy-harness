@@ -9,6 +9,43 @@ description: >
   ("documenta a #NNN") — isso gera o `.md` primeiro, via doc-consolidator, com parada para
   revisão humana. Só transcreve o `.md`; não relê discovery nem cria conteúdo. IMPORTANTE:
   leia .agents/system/providers/docs-output/INTERFACE.md antes de gerar.
+acao:
+  id: gerar-documento-final
+  rotulo: Gerar documento final
+  descricao: transcreve o documento revisado para o formato entregável
+produz:
+  id: documento-final
+  rotulo: Documento final
+requer:
+  - documento-consolidado
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: Como sua empresa transcreve o documento revisado para o formato entregável, e o que conferir antes de enviar.
+    tipo: texto-longo
+  estrutura-final:
+    caminho: references/template.md
+    rotulo: Modelo do entregável
+    ajuda: O leiaute do documento que sua empresa entrega ao cliente — capa, cabeçalho, ordem das seções.
+    tipo: texto-longo
+  exemplos:
+    caminho: references/exemplos.md
+    rotulo: Exemplos de referência
+    ajuda: Trechos de documentos já entregues que servem de referência de tom e detalhe.
+    tipo: texto-longo
+  gerador:
+    caminho: generate_doc.py
+    rotulo: Gerador do entregável
+    ajuda: O script que monta o arquivo final no leiaute da sua empresa. Sem ele não há como produzir o entregável.
+    tipo: script
+    essencial: true
+  marca:
+    caminho: assets/header_logo.png
+    rotulo: Marca no cabeçalho
+    ajuda: A imagem que vai no cabeçalho do documento entregue.
+    tipo: imagem
+    essencial: true
 ---
 
 # doc-final-generator — workflow L2 (pack padrão)
@@ -21,6 +58,11 @@ description: >
 
 Último passo do pipeline. O `.md` consolidado é a **fonte de verdade**; este workflow só o
 transcreve.
+
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
 ## Bindings padrão
 

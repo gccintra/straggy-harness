@@ -4,6 +4,9 @@ Procedural (jq / HTML do burndown). O contrato do relatório está no SKILL.md.
 
 ### Passo 2 — Exportar com glab + jq
 
+> **`DADOS`** é o diretório de export do projeto — `caminhos.dados` do `project-config.yaml`.
+> Exporte antes de rodar os blocos abaixo: `export DADOS="$(...)"`. Nunca escreva o caminho literal.
+
 **Para backlog completo (todas as issues, sem limite de paginação):**
 
 ```bash
@@ -29,7 +32,7 @@ glab api --paginate \
       (if .closed_at then .closed_at else "" end),
       (if .weight then .weight else "" end)
     ]) | @csv
-  ' > data/issues_$(date +%Y-%m-%d).csv
+  ' > ${DADOS}issues_$(date +%Y-%m-%d).csv
 ```
 
 **Para uma sprint específica (filtro de milestone):**
@@ -57,7 +60,7 @@ glab api --paginate \
       (if .closed_at then .closed_at else "" end),
       (if .weight then .weight else "" end)
     ]) | @csv
-  ' > data/sprint_${MILESTONE_NAME// /_}_$(date +%Y-%m-%d).csv
+  ' > ${DADOS}sprint_${MILESTONE_NAME// /_}_$(date +%Y-%m-%d).csv
 ```
 
 > **Nota sobre labels:** o campo `Labels` contém todas as labels separadas por `|`. A coluna `Prioridade` extrai especificamente as labels com prefixo `PRIORIDADE::`. Adapte o prefixo conforme a taxonomia do projeto — identifique os prefixos de tipo e prioridade consultando `glab label list -R ${GITLAB_REPO}` antes de exportar se não souber.
@@ -65,8 +68,8 @@ glab api --paginate \
 ### Passo 3 — Verificar o export
 
 ```bash
-wc -l data/issues_$(date +%Y-%m-%d).csv
-head -3 data/issues_$(date +%Y-%m-%d).csv
+wc -l ${DADOS}issues_$(date +%Y-%m-%d).csv
+head -3 ${DADOS}issues_$(date +%Y-%m-%d).csv
 ```
 
 Se o arquivo tiver 0 ou 1 linha (só cabeçalho), o export falhou — verificar autenticação e variáveis de ambiente.
@@ -174,7 +177,7 @@ Se `start_date` for nulo, use a data de criação da issue mais antiga da sprint
 
 ### Gerar o arquivo HTML do burndown
 
-Gere `data/burndown_${MILESTONE_NAME// /_}_$(date +%Y-%m-%d).html`.
+Gere `{caminhos.dados}burndown_${MILESTONE_NAME// /_}_$(date +%Y-%m-%d).html`.
 
 O arquivo deve ser **auto-contido** — funciona com duplo-clique, sem servidor.
 
@@ -318,7 +321,7 @@ Substitua também os placeholders `[TOTAL]`, `[DONE]`, `[REMAINING]`, `[PROGRESS
 ### Onde salvar
 
 ```
-data/burndown_[SPRINT_NAME]_YYYY-MM-DD.html
+{caminhos.dados}burndown_[SPRINT_NAME]_YYYY-MM-DD.html
 ```
 
 ---

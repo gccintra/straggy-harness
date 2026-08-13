@@ -9,6 +9,21 @@ description: >
   o que está numa sprint, ou "documentar a sprint", "preencher a milestone", "atualizar a
   descrição da sprint". IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes
   de qualquer operação no backlog.
+acao:
+  id: gerenciar-sprint
+  rotulo: Gerenciar sprint
+  descricao: cria, fecha, move e documenta sprints
+encaixes:
+  procedimento:
+    caminho: references/procedimento.md
+    rotulo: Como fazer
+    ajuda: A cadência de sprint da sua empresa — duração, quando abre e fecha, e o que precisa acontecer no fechamento.
+    tipo: texto-longo
+  template-sprint:
+    caminho: references/milestone-doc.md
+    rotulo: Modelo de sprint
+    ajuda: O que a descrição de uma sprint da sua empresa carrega — meta, prazos e escopo.
+    tipo: texto-longo
 ---
 
 # sprint-ops — workflow L2 (pack padrão)
@@ -21,6 +36,11 @@ description: >
 | Formatos | `references/milestone-doc.md` — template da descrição de sprint (a organização sobrescreve este arquivo para impor o formato dela) |
 
 Sprint = milestone; termos intercambiáveis.
+
+
+**Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
+seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale
+sempre e não é substituível.
 
 ## Operações e bindings
 
@@ -41,5 +61,5 @@ Sprint = milestone; termos intercambiáveis.
 
 ## Registro
 
-Documentação de sprint gera `history/YYYY-MM-DD_sprint_doc_[SPRINT].md`: operação, URL,
+Documentação de sprint gera `{caminhos.historico}YYYY-MM-DD_sprint_doc_[SPRINT].md`: operação, URL,
 concluídas/não concluídas, meta.

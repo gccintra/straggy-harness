@@ -1,3 +1,11 @@
+---
+capacidades: [core, comments, description-block, sprints, labels, bulk-export]
+requisitos:
+  binarios: [gh]
+  variaveis: [GITHUB_REPO, GITHUB_TOKEN]
+  hosts: [api.github.com]
+---
+
 # Provider: backlog — implementação GitHub via gh CLI
 
 Implementação da interface (`INTERFACE.md`) sobre o `gh` CLI. Conteúdo procedural é
@@ -117,26 +125,29 @@ Consulte a taxonomia real antes de sugerir label — nunca invente sem aprovaç�
 
 ## 6. Export em lote (capacidade `bulk-export`)
 
+> **`DADOS`** é o diretório de export do projeto — `caminhos.dados` do `project-config.yaml`.
+> Exporte antes de rodar os blocos abaixo: `export DADOS="$(...)"`. Nunca escreva o caminho literal.
+
 Uma chamada paginada → arquivo local; toda a análise roda sobre o arquivo, nunca sobre
 chamadas repetidas.
 
 ```bash
 gh issue list -R "$GITHUB_REPO" --state open --limit 1000 \
   --json number,title,state,labels,milestone,assignees,createdAt,updatedAt,closedAt,url,body \
-  > data/issues_$(date +%F).json
+  > ${DADOS}issues_$(date +%F).json
 ```
 
 `--limit` acima de 1000 pagina sozinho, mas confirme o total antes de concluir:
 
 ```bash
 gh api "repos/$GITHUB_REPO" -q .open_issues_count
-python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]))))" data/issues_$(date +%F).json
+python3 -c "import json,sys; print(len(json.load(open(sys.argv[1]))))" ${DADOS}issues_$(date +%F).json
 ```
 
 CSV para as skills de análise (descrição truncada, labels achatadas):
 
 ```bash
-python3 - data/issues_$(date +%F).json data/issues_$(date +%F).csv <<'PY'
+python3 - ${DADOS}issues_$(date +%F).json ${DADOS}issues_$(date +%F).csv <<'PY'
 import csv, json, sys
 issues = json.load(open(sys.argv[1]))
 with open(sys.argv[2], "w", newline="", encoding="utf-8") as fh:

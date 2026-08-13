@@ -1,3 +1,10 @@
+---
+capacidades: [core, comments, description-block, sprints, labels, wiki, bulk-export]
+requisitos:
+  binarios: [glab]
+  variaveis: [GITLAB_HOST, GITLAB_URI, GITLAB_REPO, GITLAB_TOKEN]
+---
+
 # Provider: backlog — implementação GitLab via glab CLI
 
 Implementação da interface (`INTERFACE.md`) sobre o `glab` CLI. Referência completa de
