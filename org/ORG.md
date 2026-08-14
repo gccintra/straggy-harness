@@ -59,17 +59,22 @@ placeholder `[ASSIM]` no documento (a skill não inventa valor).
 
 ## 5. Funil de priorização
 
-Não existe documento de priorização separado neste projeto (`caminhos.documento_priorizacao`
-vazio). **O funil desta organização é este** — as skills leem daqui:
+O funil **não mora neste arquivo**: é o encaixe estruturado `funil` da ação
+`priorizar-backlog`, declarado em
+`org/workflows/backlog-prioritization/references/funil.yaml` (schema
+`system/schemas/funil-priorizacao.yaml`). De lá saem etapas, escalas, rubrica de cada faixa
+de nota, fórmula do score, cortes das faixas, ordenação e o mapa de rótulos do backlog — e
+é de lá que **todas** as skills leem.
 
-- **Criticidade (MoSCoW)** na entrada da demanda: MUST · SHOULD · COULD · WONT.
-- **ICE** só depois de solução definida: `I × C × F`, escalas de 1 a 10.
-- **Quadrante I×F**: `QUICK WIN` = I≥7 e F≥5 · `PLAN` = I≥7 e F≤4 · `LATER` = I≤6 e F≥5 ·
-  `DROP` = I≤6 e F≤4.
-- **Ordenação**: criticidade → quadrante → ICE decrescente.
-- Cada dimensão é negociada com o usuário, uma por vez, com justificativa (nunca em bloco).
+Autoridade do conteúdo: `docs/context_docs/sistema_priorizacao_funcionamento.md`
+(`caminhos.documento_priorizacao`). O `funil.yaml` é a projeção de máquina desse documento e
+carimba a versão dele; mudou o documento, o `funil.yaml` é reescrito.
 
-Mudou o funil? Muda aqui, não dentro das skills.
+O julgamento que o funil não calcula — via expressa de bug crítico, caixas de capacidade,
+itens incomparáveis — está no encaixe `procedimento` do mesmo workflow.
+
+Vale em qualquer skill: **cada dimensão é negociada com o usuário, uma por vez, com
+justificativa** — nunca em bloco.
 
 ## 6. Vocabulário próprio
 

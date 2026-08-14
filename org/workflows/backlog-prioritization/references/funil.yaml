@@ -1,0 +1,207 @@
+# Funil de priorização desta organização — instância de `funil-priorizacao`.
+#
+# Projeção de máquina do documento declarado em `fonte`. O DOCUMENTO É A AUTORIDADE: mudou
+# lá, este arquivo é reescrito e `versao` sobe. Divergência entre os dois é defeito a
+# corrigir, nunca decisão a tomar durante uma execução.
+#
+# O que fica só no documento, porque não é ranqueamento de fila: o fatiamento de capacidade
+# 60/25/15 (§6), a conversão Facilidade → Unidades de Dev (§7) e a rotina semanal (§9).
+# São insumo de planejamento de sprint, e o funil não os calcula.
+schema: funil-priorizacao
+nome: Funil OBRASIM — MoSCoW › ICE › Matriz Esforço × Valor
+versao: 1
+fonte:
+  documento: docs/context_docs/sistema_priorizacao_funcionamento.md
+  versao: "2.3"
+
+etapas:
+
+  # ── Camada 1 — MoSCoW ───────────────────────────────────────────────────────
+  # A trava: faixa superior vence faixa inferior independentemente do ICE. Um COULD com
+  # ICE 300 nunca entra antes de um MUST com ICE 150.
+  - tipo: triagem
+    id: moscow
+    rotulo: MoSCoW
+    faixas:
+      - id: MUST
+        rotulo: MUST
+        criterio: inegociável — sem isso a sprint/entrega não faz sentido
+      - id: SHOULD
+        rotulo: SHOULD
+        criterio: importante, mas o produto sobrevive sem isso por um tempo
+      - id: COULD
+        rotulo: COULD
+        criterio: nice to have, agrega valor marginal
+      - id: WONT
+        rotulo: WONT
+        criterio: ideia válida, fora de cogitação para este ciclo
+        descartada: true
+
+  # ── Camada 2 — as três dimensões do ICE ─────────────────────────────────────
+  # As dimensões avaliam frentes amplas: Impacto não é só alcance, Confiança não é feeling,
+  # Facilidade não é só tempo.
+  - tipo: escala
+    id: I
+    rotulo: Impacto
+    minimo: 1
+    maximo: 10
+    direcao: maior-melhor
+    avalia: alcance, receita e risco — não apenas quantos usuários são atingidos
+    rubrica:
+      - de: 9
+        ate: 10
+        rotulo: Zona Ideal — Muito Alto
+        criterio: gera receita direta ou previne risco crítico/compliance (ex.: LGPD)
+      - de: 7
+        ate: 8
+        rotulo: Zona Média — Alto
+        criterio: afeta >50% dos usuários ou mitiga fricção média de processo
+      - de: 1
+        ate: 6
+        rotulo: Zona Crítica — Baixo
+        criterio: >
+          afeta <50% da base, sem ganho financeiro direto e sem risco operacional
+          ou legal se não for feito
+
+  - tipo: escala
+    id: C
+    rotulo: Confiança
+    minimo: 1
+    maximo: 10
+    direcao: maior-melhor
+    avalia: a força da evidência por trás da demanda — dados, não opinião
+    rubrica:
+      - de: 7
+        ate: 10
+        rotulo: Certeza
+        criterio: dados do analytics comprovam a dor, contrato assinado, PoC técnica finalizada
+      - de: 4
+        ate: 6
+        rotulo: Sinais
+        criterio: feedback qualitativo do suporte, protótipo validado parcialmente ou PoC inicial
+      - de: 1
+        ate: 3
+        rotulo: Achismo
+        criterio: opinião da equipe, sem dados, sem pesquisa e sem validação técnica
+
+  - tipo: escala
+    id: F
+    rotulo: Facilidade
+    minimo: 1
+    maximo: 10
+    direcao: maior-melhor
+    avalia: fricção, arquitetura e horas por sprint — quanto atrito a execução encontra
+    rubrica:
+      - de: 8
+        ate: 10
+        rotulo: Baixa Fricção
+        criterio: >
+          < 16 horas/sprint (trivial, resolve em até 2 dias), um único sistema, zero risco
+      - de: 5
+        ate: 7
+        rotulo: Média Fricção
+        criterio: >
+          16h a 80 horas/sprint (de alguns dias até a capacidade total de 1 dev),
+          1-2 sistemas impactados
+      - de: 1
+        ate: 4
+        rotulo: Alta Fricção
+        criterio: >
+          > 80 horas/sprint (não cabe na sprint de 1 dev, exige fatiamento), múltiplos
+          sistemas, refatoração pesada ou dependências externas
+
+  - tipo: score
+    id: ICE
+    rotulo: ICE Score
+    operador: produto
+    entradas: [I, C, F]
+
+  # ── Camada 3 — Matriz Esforço × Valor ───────────────────────────────────────
+  # Split: I em 6/7, F em 4/5. Cobertura total, sem gaps.
+  - tipo: faixa
+    id: matriz
+    rotulo: Matriz Esforço × Valor
+    dimensoes: [I, F]
+    bandas:
+      - id: QUICK WIN
+        rotulo: QUICK WIN
+        cortes: { I: { min: 7 }, F: { min: 5 } }
+        acao: prioridade máxima — entra na sprint atual ou próxima
+      - id: PLAN
+        rotulo: PLAN
+        cortes: { I: { min: 7 }, F: { max: 4 } }
+        acao: fatiar em 2-4 demandas menores até a Facilidade subir para ≥ 5
+      - id: LATER
+        rotulo: LATER
+        cortes: { I: { max: 6 }, F: { min: 5 } }
+        acao: fill-in — só entra se sobrar capacidade após MUST + SHOULD
+      - id: DROP
+        rotulo: DROP
+        cortes: { I: { max: 6 }, F: { max: 4 } }
+        acao: descartar, a menos que seja anomalia (ver `must-no-drop`)
+
+  - tipo: ordenacao
+    id: fila
+    por:
+      - { etapa: moscow }
+      - { etapa: matriz }
+      - { etapa: ICE, sentido: desc }
+    desempate: nenhum
+
+# ── Binding — onde isto mora no backlog ───────────────────────────────────────
+binding:
+  rotulos:
+    MUST: "MSCW::MUST"
+    SHOULD: "MSCW::SHOULD"
+    COULD: "MSCW::COULD"
+    WONT: "MSCW::WONT"
+    QUICK WIN: "PRIORIDADE::QUICK WIN"
+    PLAN: "PRIORIDADE::PLAN"
+    LATER: "PRIORIDADE::LATER"
+    DROP: "PRIORIDADE::DROP"
+  dimensoes:
+    modo: bloco-na-descricao
+    referencia: PRIORIZACAO      # tabela | MoSCoW | Impacto | Confiança | Facilidade | ICE | Quadrante |
+  fila:
+    - BACKLOG
+    - BACKLOG (PRIORIZADO)
+
+# ── Anomalias próprias ────────────────────────────────────────────────────────
+# As derivadas do schema já valem e não se repetem aqui: ICE registrado ≠ recalculado,
+# rótulo ≠ banda calculada, nota fora do intervalo, MUST/SHOULD caindo em banda de
+# descarte, demanda na fila sem MoSCoW.
+anomalias_extras:
+  - id: falso-quick-win
+    quando: caiu em QUICK WIN com Confiança ≤ 3 (achismo)
+    severidade: alta
+    acao: não desenvolver — mover para descoberta e fazer PoC ou levantar dados primeiro
+
+  - id: backlog-sem-promover
+    quando: ICE já definido, mas a demanda continua com o rótulo de fila não priorizada
+    severidade: alta
+    acao: promover para a fila priorizada
+
+  - id: priorizado-sem-ice
+    quando: demanda na fila priorizada, MoSCoW MUST ou SHOULD, sem ICE calculado
+    severidade: media
+    acao: calcular ICE (PO + Tech Lead)
+
+  - id: bug-sem-classificacao
+    quando: demanda do tipo BUG sem MoSCoW, sem ICE ou sem rótulo de prioridade
+    severidade: alta
+    acao: aplicar a via expressa de bug crítico ou o funil normal
+
+  - id: fila-errada
+    quando: tipo com esteira própria (PRODUCT, REFINAMENTO) disputando a fila de desenvolvimento
+    severidade: media
+    acao: mover para a fila do PO/PM
+
+  - id: could-em-quick-win
+    quando: MoSCoW COULD ou WONT caindo em QUICK WIN
+    severidade: info
+    acao: a trava do MoSCoW já garante a ordem — apenas sinalizar
+
+  - id: plan-com-ice-baixo
+    quando: banda PLAN com ICE puxado para baixo por Facilidade 1 ou 2
+    severidade: media
+    acao: não descartar — quebrar em partes independentes até virarem quick wins menores
