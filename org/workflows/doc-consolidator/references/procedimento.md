@@ -15,7 +15,8 @@ Formatos: `references/formato-md.md` (estrutura do documento) e `references/regr
 2. **HU ou HT**: persona de usuário final impactada → HU (9 seções); demanda técnica sem
    persona → HT (6 seções). Em dúvida → pergunte.
 3. **Metadados** de `project-config.yaml` (`identidade.cliente`, `identidade.projeto`,
-   `identidade.ordem_servico_padrao`, `identidade.responsavel_padrao`), Épico e data.
+   `identidade.ordem_servico_padrao`, `identidade.responsavel_padrao`,
+   `recursos.url_documento_regras_global` → seção 9), Épico e data.
 4. **Ler o catálogo global UMA vez, só para REUSAR**: conceito da issue já é GL →
    referencie `[GL_0X]`. Catálogo ausente → tudo nasce local; **proibido** usar exemplo de
    `{caminhos.entregaveis}` como catálogo.
@@ -34,6 +35,9 @@ Formatos: `references/formato-md.md` (estrutura do documento) e `references/regr
 
 ## Regras desta organização
 
-- Seções 8 (Protótipo) e 9 (Complemento) ficam **vazias** com placeholders — quem preenche
-  títulos/links é a `prototype-prints`; o doc de regras, o usuário.
+- Seção 8 (Protótipo) sai **`N/A`**; na seção 9 (Complemento), "Link do Protótipo" sai **`N/A`**
+  — quem substitui por títulos/links é a `prototype-prints`.
+- "Documento de Regras Global" (seção 9) sai com a URL literal de
+  `recursos.url_documento_regras_global` do `project-config.yaml`; campo vazio → **`N/A`**.
+  Nunca inventar nem buscar o link em outro lugar.
 - Apêndice de trilha de discovery é obrigatório.

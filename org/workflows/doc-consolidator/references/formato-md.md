@@ -129,22 +129,21 @@ verbatim os CAs/regras. **Apenas o que está DENTRO do escopo.** **bold** em 1�
 - **GL_01 — [Título]** — usado em CA03. (ver Referencias-Globais.md — Drive)
 
 ## 8. Protótipo
-<!-- SEMPRE vazia — placeholder para as PRINTS das telas do protótipo (imagens) e os links das
-     rotas por fluxo. Títulos e links são preenchidos pela skill prototype-prints; as imagens são
-     inseridas no DOCX pela ação `gerar-documento-final`. Nunca auto-preencher com notas do discovery. -->
+<!-- SEMPRE `N/A` na geração inicial. Títulos e links das rotas por fluxo são preenchidos depois
+     pela skill prototype-prints; as imagens são inseridas no DOCX pela ação `gerar-documento-final`.
+     Nunca auto-preencher com notas do discovery. -->
 
-[Vazio — títulos e links preenchidos pela skill prototype-prints; prints inseridas no DOCX pela ação `gerar-documento-final`.]
+N/A
 
 ## 9. Complemento de Documentação
-<!-- Só os placeholders. O link do doc de regras o usuário preenche à mão; os links do protótipo
-     são preenchidos pela skill prototype-prints (mesmos links da seção 8, duplicados aqui porque
-     a seção 8 fica vazia no .md — as prints só existem no .docx). Nunca auto-preencher. -->
+<!-- Regras Global: valor literal de `recursos.url_documento_regras_global` do project-config.yaml;
+     campo vazio no config → `N/A`. Link do Protótipo: SEMPRE `N/A` na geração inicial — a skill
+     prototype-prints substitui pelos bullets por fluxo (mesmos links da seção 8, duplicados aqui
+     porque no .md a seção 8 não tem imagem). Nunca auto-preencher nenhum dos dois. -->
 
-**Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+**Documento de Regras Global:** {recursos.url_documento_regras_global | N/A}
 
-**Link do Protótipo de Telas Impactadas:**
-
-[Vazio — um bullet por fluxo, preenchido pela skill prototype-prints.]
+**Link do Protótipo de Telas Impactadas:** N/A
 
 ---
 

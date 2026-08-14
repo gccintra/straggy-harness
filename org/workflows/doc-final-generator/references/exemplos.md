@@ -89,7 +89,7 @@ Wizard de **2 etapas** no Hub de Aditivos. A Etapa 1 coleta as naturezas da alte
 
 ## 9. Complemento de Documentação
 
-**Documento de Regras de Negócio:** https://docs.google.com/document/d/<id>/edit
+**Documento de Regras Global:** https://docs.google.com/document/d/<id>/edit
 
 **Link do Protótipo de Telas Impactadas:**
 

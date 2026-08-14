@@ -126,11 +126,11 @@ heading correspondente.
 
 ## 9. Complemento de Documentação
 
-Só links. O doc de regras o usuário preenche à mão; os links do protótipo vêm da skill
-`prototype-prints` (mesmos links da seção 8 — repetidos aqui porque no `.md` a seção 8 fica só
-com títulos, sem imagem).
+Só links. O doc de regras global vem de `recursos.url_documento_regras_global`
+(`project-config.yaml`); os links do protótipo vêm da skill `prototype-prints` (mesmos links da
+seção 8 — repetidos aqui porque no `.md` a seção 8 fica só com títulos, sem imagem).
 
-**Documento de Regras de Negócio:** [Vazio — preenchido manualmente pelo usuário.]
+**Documento de Regras Global:** [url de `recursos.url_documento_regras_global` | N/A]
 
 **Link do Protótipo de Telas Impactadas:**
 
