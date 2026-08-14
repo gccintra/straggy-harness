@@ -68,6 +68,7 @@ system/          imutável pela organização (no produto: shipped read-only)
 ├── CONSTITUTION.md          L0
 ├── professions/             L1
 ├── providers/               contrato + implementações oficiais
+├── schemas/                 vocabulário dos encaixes estruturados (§7)
 ├── pack/                    L2 PADRÃO — workflows genéricos + org-scaffold/
 └── workflows/               máquina do harness (não-forkável)
 org/             POSSE da organização — FORA do Git do harness, semeada pelo install.sh
@@ -290,13 +291,33 @@ encaixes:
     caminho: references/procedimento.md
     rotulo:  Como fazer
     ajuda:   O passo a passo com que sua empresa faz este trabalho.
-    tipo:    texto-longo          # texto-longo | arquivo | imagem | script
+    tipo:    texto-longo          # texto-longo | arquivo | imagem | script | estrutura
   estrutura-documento:
     caminho: references/formato-md.md
     rotulo:  Estrutura do documento
     ajuda:   As seções e a ordem em que sua empresa escreve o requisito.
     tipo:    texto-longo
 ```
+
+### Encaixe estruturado
+
+`tipo: estrutura` exige `schema: <id>`, e o schema — o vocabulário fechado daquele encaixe —
+é do sistema (`system/schemas/<id>.yaml`); a organização preenche uma **instância** dele.
+
+Existe porque encaixe de texto livre é relido pelo modelo a cada execução, e parte do
+conteúdo da organização alimenta **cálculo determinístico** (o funil de priorização, um mapa
+de campos). Aí texto livre não é flexibilidade, é fragilidade: não valida, não pré-visualiza
+impacto, não versiona.
+
+| Regra | Consequência |
+|---|---|
+| **Vocabulário fechado** — o schema enumera os elementos aceitos e a forma de cada um | elemento novo é release do sistema, nunca conteúdo da organização. É o que permite à interface desenhar um construtor em vez de uma textarea, e ao motor calcular sem interpretar prosa |
+| **Prosa continua ao lado**, em encaixe separado | estrutura dirige cálculo, prosa dirige julgamento — a exceção que nenhum schema segura |
+| **Padrão do pack vale igual** | `padrao` é derivado do mesmo caminho; instância vazia cai no preset do sistema |
+| **Instância declara a fonte** quando deriva de um documento humano | o documento continua sendo a autoridade; a instância é a projeção que a máquina lê, carimbada com a versão de onde saiu |
+
+No repositório a instância é o arquivo declarado em `caminho`; no aplicativo é o construtor,
+e o caminho é gerado. Forma da tela e trilhos de edição: `HUB.md` §3.4.
 
 ```yaml
 # workflow próprio da organização — só para ação que o pack não atende

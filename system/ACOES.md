@@ -44,7 +44,7 @@ mudar é a declaração `acao:` do workflow.
 | `persona-design` | a persona de design do projeto | — |
 | `persona-produto` | a persona de produto (PM/PO) do projeto | — |
 | `persona-tecnica` | a persona técnica (tech lead) do projeto | — |
-| `priorizar-backlog` | ranqueia o backlog pelo funil de priorização | — |
+| `priorizar-backlog` | ranqueia o backlog pelo funil de priorização | `funil` |
 | `publicar-na-wiki` | publica e atualiza páginas na wiki do projeto | `nomenclatura-pagina` |
 | `publicar-prototipo` | publica o protótipo num servidor, com HTTPS e autenticação | `receita-servidor` |
 | `registrar-demanda` | registra e refina uma demanda no backlog | `template-demanda` |

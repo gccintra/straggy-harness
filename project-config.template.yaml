@@ -30,8 +30,10 @@ caminhos:
   dados: "data/"                                   # export bruto (CSV, JSON) — nunca sobrescreve o dia anterior
   contexto: "docs/context_docs/md/"                # raiz do conhecimento do produto (regras, HUs, visão)
                                                    # layout interno é do provider knowledge/, não daqui
-  documento_priorizacao: ""                        # documento com funil, fórmula e thresholds | vazio → as skills
-                                                   # de priorização param e pedem, nunca decoram valores
+  documento_priorizacao: ""                        # documento humano do funil, quando existe — a autoridade do
+                                                   # conteúdo. O que as skills leem é o encaixe `funil`
+                                                   # (org/workflows/backlog-prioritization/references/funil.yaml),
+                                                   # que declara este caminho em `fonte:`. Vazio → só o funil.
 
 prototipo_deploy:                # lido por prototype-deploy; vazio → a skill pergunta
   dominio: ""                    # ex.: projeto.suaempresa.tech (registro A apontando pra VPS antes do certbot)

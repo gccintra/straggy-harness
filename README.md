@@ -44,9 +44,11 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
   documento gerado; a skill não inventa valor. YAML enquanto a edição é na mão; migra para
   JSON + schema quando existir interface.
 - **`org/ORG.md`** — convenções da **sua** organização: língua, nomenclatura, papéis,
-  funil de priorização, vocabulário. Nasce do scaffold com campos `[definir]`; campo não
+  vocabulário. Nasce do scaffold com campos `[definir]`; campo não
   preenchido = o pack decide pelo default dele, nada quebra. `org/` inteira é sua e fica
-  fora do Git do harness — versione onde fizer sentido.
+  fora do Git do harness — versione onde fizer sentido. O **funil de priorização** não mora
+  aqui: é o encaixe estruturado `funil` (`org/workflows/backlog-prioritization/references/funil.yaml`),
+  validado contra `system/schemas/funil-priorizacao.yaml`.
 - **`.env`** — credenciais e IDs + seleção de provider (`BACKLOG_PROVIDER`,
   `DOCS_OUTPUT_PROVIDER`, `DB_ENABLED`).
   Sem backlog configurado o harness continua funcionando: workflows que dependem do estado

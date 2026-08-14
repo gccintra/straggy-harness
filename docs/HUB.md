@@ -87,6 +87,94 @@ Como fazer:      [texto longo]
 "Quando acionar" é o gatilho de roteamento — no modo repositório, a `description` do
 `SKILL.md`. Gatilho fraco = ação morta; a tela deve exigir frases literais, não um resumo.
 
+### 3.4 Encaixe estruturado — o construtor de funil
+
+Encaixe de texto longo (3.2) serve para procedimento: o modelo lê e julga. Não serve quando
+o conteúdo da organização vira **conta** — funil de priorização é o caso. Fórmula em campo
+livre exige parser, aceita lixo, não pré-visualiza impacto e não versiona; regex de extração
+nenhum administrador escreve. `tipo: estrutura` (`ARCHITECTURE.md` §7) existe para isso.
+
+#### Vocabulário fechado de etapas
+
+Um funil é uma lista ordenada de etapas. Cada etapa tem um tipo do conjunto fechado abaixo —
+a organização **compõe e nomeia**, nunca inventa tipo. Schema: `funil-priorizacao`.
+
+| Tipo | O que a organização configura | Widget |
+|---|---|---|
+| `triagem` | N faixas nomeadas, em ordem de precedência | lista reordenável |
+| `escala` | nome, mínimo, máximo, direção, rubrica por faixa de nota | 3 campos + tabela de rubrica |
+| `score` | operador ∈ `produto · soma · media · soma-ponderada · razao` e quais escalas entram | dropdown + seleção |
+| `faixa` | bandas nomeadas por corte sobre uma escala ou sobre o score; 1-D ou 2-D | sliders com pré-visualização |
+| `ordenacao` | etapas em ordem, cada uma ↑ ou ↓ | lista reordenável |
+
+Cobertura sem nenhum tipo novo: MoSCoW+ICE (`triagem` + 3 `escala` + `score:produto` +
+`faixa` 2-D) · RICE (`score:razao`) · WSJF (`score:razao`) · Value/Effort (`faixa` 2-D) ·
+Kano (só `triagem`). Modelo que não couber nos cinco é **release do sistema**, não
+configuração — mesma fronteira da ação nova (§3.3).
+
+#### A tela
+
+```
+Funil de priorização                      Preset: [MoSCoW + ICE ▾]   v3 · ativo
+
+1  Triagem     MUST › SHOULD › COULD › WONT                    [editar faixas]
+2  Escalas     Impacto 1–10 · Confiança 1–10 · Facilidade 1–10  [rubricas]
+3  Score       produto( Impacto, Confiança, Facilidade )        [operador ▾]
+4  Faixas      2-D  Impacto × Facilidade → 4 bandas             [ajustar cortes]
+5  Ordenação   Triagem → Faixa → Score ↓
+
+Nuances (texto)  ─────────────────────────────────────────────────────────
+Criticidade real bypassa a fila…                    ← encaixe `procedimento`
+```
+
+Presets são obrigatórios na tela. Funil em branco é o modo de falha conhecido — ninguém
+monta um do zero, e o resultado é uma organização sem funil nenhum.
+
+#### Anomalias deixam de ser conteúdo
+
+Com etapas tipadas, a inconsistência **deriva da definição** — a organização não escreve nem
+configura regra de anomalia:
+
+| Anomalia | Deriva de |
+|---|---|
+| score registrado ≠ recalculado | operador + escalas |
+| rótulo aplicado ≠ faixa calculada | cortes da faixa |
+| item na fila sem dimensão obrigatória | escalas declaradas |
+| faixa de triagem alta caindo em banda de descarte | ambas são ordenadas |
+| nota fora do intervalo | mínimo/máximo da escala |
+
+#### Binding — onde o valor mora
+
+Separado do funil de propósito: **o funil é da organização, o binding é da integração**.
+
+```
+Onde gravar a priorização no backlog
+  Triagem     → [rótulo com prefixo ▾]  MSCW::
+  Dimensões   → [campo próprio ▾ | tabela na descrição (legado)]
+```
+
+No produto o valor é **estado do artefato** (§4.2), canônico no Hub e projetado para o
+backlog. Extração por expressão regular vira adaptador do modo legado, escondido no
+provider — nunca superfície de configuração.
+
+#### Trilhos de edição
+
+Editar funil de produção mexe em fila viva. Quatro trilhos, todos obrigatórios:
+
+| Trilho | Comportamento |
+|---|---|
+| Pré-visualização de impacto | *"34 demandas mudam de banda, 3 saem do topo"* **antes** de salvar |
+| Versão | o funil é versionado e cada item pontuado carimba a versão — reranquear sob versão nova é re-pontuação explícita, nunca silenciosa |
+| Migração | remover faixa ou escala exige mapear destino ou marcar para re-triagem; nunca perda silenciosa |
+| Aprovação | salvar passa pelo mesmo portão de 3.2 |
+
+#### Fora do alcance de quem configura
+
+Portão humano · contrato de saída · a regra de que a análise **só identifica** e nunca
+corrige sozinha · o export em lote único · os cinco tipos de etapa. Pior funil possível
+ainda para no portão e ainda produz o artefato no formato declarado — é o §7 do
+`ARCHITECTURE.md` aplicado a um encaixe que calcula.
+
 ---
 
 ## 4. Telas de trabalho
@@ -165,9 +253,7 @@ O harness de hoje é legível por humano e por modelo, mas **não por interface*
 ajustes dentro de `.agents/` que destravam o desenvolvimento do Hub. Nenhum depende do
 produto existir; todos continuam valendo no modo repositório.
 
-> **Estado: 7.1 a 7.7 implementados.** O que resta é conteúdo, não estrutura — o pack
-> precisa ships os `procedimento.md` padrão que hoje faltam (§7.1). O build reporta a lista
-> a cada execução, e `--strict` reprova enquanto ela existir.
+> **Estado: 7.1 a 7.8 implementados.** O build passa em `--strict` sem avisos.
 
 ### 7.1 Encaixe ganha metadado de interface 🔴 — feito
 
@@ -256,6 +342,21 @@ placeholder — placeholder dentro de f-string é código quebrado, não documen
 Não virou um quarto adapter: o Hub consome a API, não arquivo em disco. Persona é registro
 no manifesto (identificador, rótulo, gatilho, modo) — um alvo a menos para manter.
 
+### 7.8 Encaixe estruturado 🟡 — feito
+
+`TIPOS_ENCAIXE` ganhou `estrutura`, que exige `schema: <id>` apontando para
+`system/schemas/<id>.yaml` — o vocabulário fechado é do sistema, a instância é da
+organização. O manifesto publica o identificador do schema, e é por ele que a interface sabe
+**qual construtor** desenhar (§3.4); sem isso, encaixe que alimenta cálculo cairia numa
+textarea genérica.
+
+Primeiro schema: `funil-priorizacao`. O funil da organização saiu da prosa e virou instância
+declarada, com a rubrica de cada faixa de nota junto — o que antes só existia no documento
+humano e era relido a cada execução.
+
+Não vale para todo encaixe: procedimento, template e vocabulário continuam texto. `estrutura`
+é para o conteúdo que uma máquina precisa **calcular**, não interpretar.
+
 ---
 
 ## 8. O que construir no produto, em ordem
@@ -283,4 +384,6 @@ Vivem em `MODOS.md` §6 e valem para este documento:
   não controla.
 - Contrato do materializador: atomicidade, integridade, comportamento sem rede.
 - Até onde o encaixe `procedimento` pode ir sem virar substituição disfarçada.
+- Quantos schemas estruturados (§3.4) o sistema mantém antes de virar zoológico — cada um é
+  um construtor de interface a desenhar e versionar.
 - Como rastrear contra qual release do harness uma camada foi validada.
