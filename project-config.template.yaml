@@ -15,6 +15,7 @@ identidade:
 
 recursos:
   url_base_demandas: ""          # ex.: https://gitlab.exemplo.com/grupo/projeto/-/issues/ | vazio → [ISSUE_URL_BASE]
+  url_documento_regras_global: "" # documento de regras global do projeto — entra na seção 9 do .md | vazio → N/A
   service_account_sync: ""       # e-mail do robô do Drive (papel Leitor nas pastas)
                                  # setup: .agents/system/providers/knowledge/drive-rclone.md
 
