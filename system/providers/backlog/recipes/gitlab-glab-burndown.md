@@ -92,18 +92,13 @@ Total de issues no escopo
 ### 3.2 Distribuição por tipo e prioridade
 
 ```
-Por tipo (TIPO:: labels):
-  FEATURE:      N  (XX%)
-  MELHORIA:     N  (XX%)
-  BUG:          N  (XX%)
-  SEM TIPO:     N  (XX%)
+Por tipo (uma linha por rótulo de tipo encontrado + SEM TIPO):
+  <TIPO>:       N  (XX%)
+  ...
 
-Por prioridade (PRIORIDADE:: labels):
-  QUICK WIN:    N  (XX%)
-  PLAN:         N  (XX%)
-  LATER:        N  (XX%)
-  DROP:         N  (XX%)
-  SEM PRIO:     N  (XX%)
+Por faixa de prioridade (as bandas do funil declarado, na ordem, + SEM PRIORIDADE):
+  <BANDA>:      N  (XX%)
+  ...
 ```
 
 ### 3.3 Métricas de saúde
