@@ -24,8 +24,10 @@ import sys
 SCHEMA = 1
 
 # Tipos de campo que uma interface precisa saber renderizar. Fechado de propósito —
-# tipo novo exige a interface saber desenhá-lo (docs/ARCHITECTURE.md §7).
-TIPOS_ENCAIXE = ("texto-longo", "arquivo", "imagem", "script")
+# tipo novo exige a interface saber desenhá-lo (docs/ARCHITECTURE.md §7). 'estrutura' é o
+# encaixe que alimenta cálculo: exige 'schema', e o schema é do sistema (system/schemas/).
+TIPOS_ENCAIXE = ("texto-longo", "arquivo", "imagem", "script", "estrutura")
+TIPO_ESTRUTURA = "estrutura"
 
 ERRO, AVISO = "erro", "aviso"
 
@@ -177,7 +179,7 @@ def normalizar_acao(valor):
 
 
 def normalizar_encaixes(valor):
-    """{nome: caminho} ou {nome: {caminho, rotulo, ajuda, tipo, essencial}} → lista."""
+    """{nome: caminho} ou {nome: {caminho, rotulo, ajuda, tipo, schema, essencial}} → lista."""
     if not isinstance(valor, dict):
         return []
     encaixes = []
@@ -189,6 +191,7 @@ def normalizar_encaixes(valor):
                 "rotulo": str(corpo.get("rotulo", "")).strip() or _rotulo_de(nome),
                 "ajuda": str(corpo.get("ajuda", "")).strip(),
                 "tipo": str(corpo.get("tipo", "")).strip() or "texto-longo",
+                "schema": str(corpo.get("schema", "")).strip(),
                 "essencial": corpo.get("essencial") is True,
                 "completo": bool(str(corpo.get("rotulo", "")).strip()
                                  and str(corpo.get("ajuda", "")).strip()
@@ -197,7 +200,8 @@ def normalizar_encaixes(valor):
         else:
             encaixes.append({
                 "id": nome, "caminho": str(corpo).strip(), "rotulo": _rotulo_de(nome),
-                "ajuda": "", "tipo": "texto-longo", "essencial": False, "completo": False,
+                "ajuda": "", "tipo": "texto-longo", "schema": "", "essencial": False,
+                "completo": False,
             })
     return sorted(encaixes, key=lambda e: e["id"])
 
@@ -323,10 +327,11 @@ def descobrir_providers(*diretorios):
 
 # ── Validação ─────────────────────────────────────────────────────────────────
 
-def validar(workflows, dir_pack):
+def validar(workflows, dir_pack, dir_schemas=""):
     """Devolve lista de (severidade, mensagem). Erro reprova o build sempre."""
     problemas = []
     pack = pathlib.Path(dir_pack)
+    schemas = pathlib.Path(dir_schemas) if dir_schemas else None
 
     def erro(msg):
         problemas.append((ERRO, msg))
@@ -371,6 +376,17 @@ def validar(workflows, dir_pack):
             if encaixe["tipo"] not in TIPOS_ENCAIXE:
                 erro(f"{alvo}: tipo '{encaixe['tipo']}' desconhecido "
                      f"(use {' | '.join(TIPOS_ENCAIXE)}).")
+            # Encaixe estruturado sem schema é textarea disfarçada: a interface não tem
+            # construtor para desenhar e o motor volta a interpretar prosa (HUB §3.4).
+            if encaixe["tipo"] == TIPO_ESTRUTURA and not encaixe["schema"]:
+                erro(f"{alvo}: tipo '{TIPO_ESTRUTURA}' exige 'schema' "
+                     f"(ARCHITECTURE §7).")
+            elif encaixe["schema"] and encaixe["tipo"] != TIPO_ESTRUTURA:
+                erro(f"{alvo}: 'schema' só vale para tipo '{TIPO_ESTRUTURA}'.")
+            elif encaixe["schema"] and schemas is not None \
+                    and not (schemas / f"{encaixe['schema']}.yaml").exists():
+                erro(f"{alvo}: schema '{encaixe['schema']}' não existe em "
+                     f"system/schemas/ — vocabulário é do sistema.")
             if do_pack and not encaixe["completo"]:
                 aviso(f"{alvo}: sem 'rotulo'/'ajuda'/'tipo' — a interface não tem "
                       f"como desenhar o campo (HUB §7.1).")
@@ -473,7 +489,8 @@ def manifesto(workflows, personas, providers, release):
         condicoes.update(c["quando"] for c in wf["requer_condicional"])
         encaixes = [{
             "id": e["id"], "rotulo": e["rotulo"], "ajuda": e["ajuda"], "tipo": e["tipo"],
-            "essencial": e["essencial"], "padrao": e.get("padrao", "nenhum"),
+            "schema": e.get("schema", ""), "essencial": e["essencial"],
+            "padrao": e.get("padrao", "nenhum"),
             "preenchido": e.get("preenchido", False),
         } for e in wf["encaixes"]]
         indisponivel = [e["id"] for e in encaixes
@@ -582,7 +599,7 @@ def main():
 
     problemas = [(AVISO, linha) for linha
                  in os.environ.get("RESOLUCAO_AVISOS", "").splitlines() if linha.strip()]
-    problemas += validar(workflows, dir_pack)
+    problemas += validar(workflows, dir_pack, os.environ.get("SCHEMAS_DIR", ""))
 
     if os.environ.get("HARNESS_LIST") == "1":
         print(f"{'WORKFLOW':<26} {'ORIGEM':<14} {'AÇÃO':<26} ENCAIXES PREENCHIDOS")
