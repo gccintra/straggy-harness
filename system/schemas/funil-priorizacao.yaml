@@ -1,0 +1,135 @@
+# Schema `funil-priorizacao` — vocabulário fechado do encaixe `funil`
+#
+# O que é: a definição de COMO uma organização ordena a fila de demandas. Uma instância
+# deste schema substitui a prosa que antes descrevia o funil, e é o que o motor de
+# priorização lê para calcular, agrupar, ordenar e detectar inconsistência.
+#
+# Quem edita o quê: o schema é do sistema (elemento novo = release). A instância é da
+# organização — `org/workflows/backlog-prioritization/references/funil.yaml`. Instância
+# ausente → vale o preset do pack.
+#
+# Regra de ouro: nome de faixa, de escala, corte, fórmula e rótulo do backlog são TODOS da
+# organização. Nenhum modelo de priorização é privilegiado aqui — MoSCoW, ICE, RICE, WSJF e
+# Kano são composições deste vocabulário, não conceitos do sistema.
+#
+# Ver: docs/ARCHITECTURE.md §7 · docs/HUB.md §3.4
+schema: funil-priorizacao
+versao: 1
+
+# ── Cabeçalho da instância ────────────────────────────────────────────────────
+# nome     obrigatório  como a organização chama o funil
+# versao   obrigatório  inteiro; muda a cada alteração de etapa, corte ou escala.
+#                       Todo item pontuado carimba a versão sob a qual foi avaliado —
+#                       é o que impede reranqueamento silencioso (HUB §3.4).
+# fonte    opcional     documento humano do qual esta instância é projeção. Quando
+#                       presente, o documento é a AUTORIDADE e este arquivo é a leitura
+#                       de máquina dele; divergência entre os dois é defeito a corrigir,
+#                       nunca decisão a tomar em execução.
+
+# ── etapas ────────────────────────────────────────────────────────────────────
+# Lista ORDENADA. Cada etapa tem um `tipo` do conjunto fechado abaixo e um `id` único.
+# Nenhum outro tipo é aceito; modelo que não couber nos cinco é release do sistema.
+
+tipos_de_etapa:
+
+  triagem:
+    # Classificação categórica feita por humano, antes de qualquer número.
+    # Precede o score na ordenação: faixa superior vence faixa inferior, qualquer que
+    # seja o score. Instâncias conhecidas: MoSCoW, Kano.
+    campos:
+      id:       identificador da etapa
+      rotulo:   nome exibido
+      faixas:   lista ordenada por precedência (índice 0 = mais prioritário)
+    faixa:
+      id:         identificador
+      rotulo:     nome exibido
+      criterio:   uma frase — o que coloca uma demanda nesta faixa
+      descartada: true quando a faixa tira a demanda da fila (não é ranqueada)
+
+  escala:
+    # Dimensão numérica avaliada por humano. Instâncias: Impacto, Confiança, Facilidade,
+    # Alcance, Esforço, Custo do Atraso.
+    campos:
+      id:       identificador curto usado nas fórmulas (ex.: I, C, F)
+      rotulo:   nome exibido
+      minimo:   inteiro
+      maximo:   inteiro
+      direcao:  maior-melhor | menor-melhor
+      avalia:   uma frase — o que a nota mede, para o avaliador não reduzir a dimensão
+      rubrica:  lista de faixas de nota com significado; é o que evita nota por feeling
+    rubrica:
+      de:        nota inicial (inclusiva)
+      ate:       nota final (inclusiva)
+      rotulo:    nome da zona
+      criterio:  o que caracteriza uma nota nesta zona
+    # Rubrica é opcional: sem ela a escala continua válida, mas a avaliação perde o
+    # critério compartilhado. Faixas não podem se sobrepor nem deixar buraco.
+
+  score:
+    # Agregação das escalas num número. Operador de conjunto FECHADO — não existe campo
+    # de fórmula livre, de propósito: expressão em texto exige parser, aceita entrada
+    # inválida e não é desenhável em tela.
+    campos:
+      id:         identificador
+      rotulo:     nome exibido
+      operador:   produto | soma | media | soma-ponderada | razao
+      entradas:   lista de id de escala          (todos os operadores menos razao)
+      numerador:  lista de id de escala          (só razao)
+      denominador: lista de id de escala         (só razao)
+      pesos:      mapa id-de-escala → número     (só soma-ponderada)
+    # produto: ICE, ICE-like · razao: RICE, WSJF, valor/esforço · soma-ponderada: scorecard
+
+  faixa:
+    # Corta uma escala ou um score em bandas nomeadas. `dimensoes` com dois ids produz a
+    # matriz 2-D (quadrante). Instâncias: matriz esforço × valor, bandas de score.
+    campos:
+      id:         identificador
+      rotulo:     nome exibido
+      dimensoes:  lista de 1 ou 2 id de escala (ou id de score)
+      bandas:     lista ordenada da mais prioritária para a menos
+    banda:
+      id:        identificador
+      rotulo:    nome exibido
+      cortes:    mapa id-de-dimensão → {min, max} — limites inclusivos; ausente = sem limite
+      acao:      uma frase — o que a organização faz com o que cai aqui
+    # As bandas precisam cobrir todo o espaço das dimensões, sem sobreposição. Buraco de
+    # cobertura é erro de definição: demanda sem banda não tem como ser ordenada.
+
+  ordenacao:
+    # Como a fila final é montada. Sempre a última etapa.
+    campos:
+      id:        identificador
+      por:       lista de {etapa, sentido} — etapa é o id de uma triagem, faixa ou score
+      sentido:   asc | desc   (irrelevante para triagem e faixa, que já são ordenadas)
+      desempate: antiguidade | recencia | nenhum
+    # `desempate` usa atributo intrínseco da demanda (data de criação), não etapa — é o
+    # critério de último recurso quando tudo acima empata. Default: nenhum.
+
+# ── binding ───────────────────────────────────────────────────────────────────
+# Onde os valores de cada etapa moram na demanda, no backlog ativo. É config de
+# INTEGRAÇÃO, não de funil: trocar de ferramenta muda o binding e não muda o funil.
+# Toda chave é opcional; ausente = o motor não escreve nem lê aquele valor no backlog.
+binding:
+  rotulos:     mapa id-de-faixa → rótulo literal no backlog (label, campo, status)
+  dimensoes:   como as notas são lidas/gravadas
+    modo:      campo-proprio | bloco-na-descricao
+    referencia: nome do campo, ou identificador do bloco quando modo = bloco-na-descricao
+  fila:        rótulos que delimitam a fila que esta priorização ordena
+
+# ── anomalias ─────────────────────────────────────────────────────────────────
+# NÃO se declaram. Derivam da definição acima e valem para qualquer funil:
+#
+#   score registrado ≠ recalculado pelo operador
+#   rótulo aplicado no backlog ≠ banda calculada
+#   item na fila sem alguma escala obrigatória preenchida
+#   faixa de triagem alta caindo em banda de descarte
+#   nota fora de [minimo, maximo]
+#   demanda na fila sem faixa de triagem
+#
+# A organização pode SOMAR regras próprias — nunca substituir as derivadas:
+anomalias_extras:
+  id:         identificador
+  quando:     uma frase descrevendo a combinação suspeita
+  severidade: alta | media | baixa | info
+  acao:       o que fazer a respeito
+# O motor sinaliza; corrigir é decisão do usuário, sempre (contrato de saída do workflow).
