@@ -1,27 +1,31 @@
 # Procedimento padrão — priorizar backlog (pack)
 
-Funil default. A organização sobrescreve este arquivo em
-`org/workflows/backlog-prioritization/references/procedimento.md` — é ali que moram os
-critérios, a fórmula e as faixas de corte dela.
+As etapas do funil não moram aqui: elas são o encaixe `funil` (`references/funil.yaml`).
+Este arquivo cobre o que o funil **não calcula** — o julgamento que depende de contexto.
 
-## Funil mínimo, três estágios
+## Via expressa
 
-| Estágio | O que separa |
-|---|---|
-| 1. Criticidade | o que o negócio trata como obrigatório, desejável, opcional ou descartado |
-| 2. Valor × esforço | dentro de cada faixa de criticidade, o que entrega mais com menos |
-| 3. Desempate | antiguidade na fila: a mais antiga primeiro |
+Criticidade real — sistema indisponível, risco de perda ou vazamento de dado, fluxo core
+bloqueado, sem contorno — **não passa pelo funil**. Vai para execução imediata, e a
+priorização registra o desvio em vez de tentar ranqueá-lo.
 
-A ordem final é estágio 1, depois 2, depois 3. Demanda descartada não é ranqueada — sai da
-fila com o motivo registrado.
+## Item que o funil não sabe pontuar
 
-## Escalas são declaradas, não decoradas
+Obrigação legal, aposta estratégica, manutenção sem alcance mensurável: sai da fila e é
+decidido no explícito, com o motivo registrado. Forçar uma nota inventada para caber no
+score é pior que declarar que o item não é comparável.
 
-Escala, fórmula e faixa de corte pertencem à organização. Sem nada declarado, o funil roda
-com três faixas de valor e três de esforço (alta, média, baixa).
+## Fila separada
 
-## Anomalia
+Tipo de demanda com esteira própria não disputa posição com os demais — aparece como
+anomalia de fila, não como item mal ranqueado.
 
-Demanda cuja classificação contradiz o próprio conteúdo — criticidade máxima sem
-justificativa, esforço que não casa com o escopo descrito, classificação duplicada —
-aparece no resultado como anomalia apontada, ao lado da fila ordenada.
+## Desempate final
+
+Empate após toda a ordenação declarada: a demanda mais antiga na fila vem primeiro.
+
+## A análise só identifica
+
+Anomalia encontrada vira linha no relatório com a ação sugerida. Corrigir rótulo, nota ou
+descrição é passo separado, e cada correção é aprovada pelo usuário antes de qualquer
+escrita no backlog.

@@ -1,7 +1,8 @@
 ---
 name: backlog-issue-creator
 description: >
-  Cria e refina demandas do backlog com template estruturado, triagem MoSCoW e labels
+  Cria e refina demandas do backlog com template estruturado, triagem de criticidade
+  (MoSCoW ou o que o funil declarar) e labels
   corretas. Acione quando o usuário mencionar criar issue, item de backlog, demanda,
   feature, bug, melhoria ou qualquer coisa que precise ser rastreada — em português ou
   inglês (criar issue, demanda, backlog, bug, melhoria, feature, nova funcionalidade, erro,
@@ -49,8 +50,9 @@ sempre e não é substituível.
 
 - **Registra o problema, não a solução.** Solução que veio junto no pedido vira nota para
   o discovery. Mecanismo, formato e tecnologia não entram na demanda.
-- **Triagem MoSCoW na entrada**; score e quadrante só depois de solução definida
-  (`discovery`).
+- **Só a etapa de triagem na entrada** — a primeira etapa do funil declarado (encaixe
+  `funil` da ação `priorizar-backlog`), com justificativa. Dimensões e score só depois de
+  solução definida (`discovery`): facilidade é incalculável antes de existir solução.
 - **Labels**: consulte a taxonomia real pelo provider (operação **listar labels**) antes de
   sugerir — nunca invente label nova sem aprovação.
 - **Duplicata**: antes de criar, busque demandas parecidas pelo provider e mostre o que

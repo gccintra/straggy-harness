@@ -25,7 +25,8 @@ encaixes:
 | Camada | Referência |
 |---|---|
 | Restrições | `system/CONSTITUTION.md` |
-| Métodos | `system/professions/product-specialist/methods/ice.md` (funil e leitura de score) |
+| Métodos | `system/professions/product-specialist/methods/ice.md` (leitura de score e funil) |
+| Funil | encaixe `funil` da ação `priorizar-backlog` — schema `system/schemas/funil-priorizacao.yaml` |
 | Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
 | Código | receita de export e template do burndown da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-burndown.md`) |
 
@@ -39,10 +40,9 @@ sempre e não é substituível.
 
 ## Bindings
 
-- **Funil primeiro**: para qualquer análise de prioridade/score, use o documento em
-  `caminhos.documento_priorizacao` (`project-config.yaml`); chave vazia → o funil de
-  `org/ORG.md`; nem lá → pergunte. Fórmula, cortes, hierarquia, labels e ordem saem de lá —
-  nunca de memória.
+- **Funil primeiro**: para qualquer análise de prioridade/score, leia a instância do encaixe
+  `funil` da ação `priorizar-backlog` (schema `system/schemas/funil-priorizacao.yaml`).
+  Etapas, escalas, fórmula, cortes, rótulos e ordem saem de lá — nunca de memória.
 - **Escopo pelo pedido**: backlog completo (abertas) · sprint específica (milestone) ·
   fechadas do período · tudo. Ambíguo → pergunte.
 - **Um export em lote** pela receita do provider → CSV em `{caminhos.dados}` (com data no nome, nunca

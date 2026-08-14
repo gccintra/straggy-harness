@@ -1,0 +1,85 @@
+# Funil padrão do pack — instância de `funil-priorizacao` (system/schemas/).
+#
+# É o funil mínimo descrito em `procedimento.md`: criticidade, depois valor × esforço,
+# desempate por antiguidade. Serve a organização que ainda não declarou o funil dela;
+# assim que ela escrever `org/workflows/backlog-prioritization/references/funil.yaml`,
+# este arquivo deixa de valer inteiro (encaixe substitui, não mescla).
+#
+# Nenhum modelo de mercado é privilegiado aqui de propósito — MoSCoW, ICE, RICE e WSJF são
+# composições deste mesmo vocabulário, e escolher entre eles é da organização.
+schema: funil-priorizacao
+nome: Funil mínimo
+versao: 1
+
+etapas:
+
+  - tipo: triagem
+    id: criticidade
+    rotulo: Criticidade
+    faixas:
+      - id: obrigatorio
+        rotulo: Obrigatório
+        criterio: sem isso a entrega do ciclo não faz sentido
+      - id: desejavel
+        rotulo: Desejável
+        criterio: importante, mas o produto sobrevive sem por um tempo
+      - id: opcional
+        rotulo: Opcional
+        criterio: agrega valor marginal
+      - id: descartado
+        rotulo: Descartado
+        criterio: válido, mas fora de cogitação neste ciclo
+        descartada: true
+
+  - tipo: escala
+    id: V
+    rotulo: Valor
+    minimo: 1
+    maximo: 3
+    direcao: maior-melhor
+    avalia: o ganho para quem usa e para o negócio quando isto estiver resolvido
+    rubrica:
+      - { de: 3, ate: 3, rotulo: Alto,  criterio: resolve dor recorrente de muita gente }
+      - { de: 2, ate: 2, rotulo: Médio, criterio: melhora um fluxo sem eliminar a dor }
+      - { de: 1, ate: 1, rotulo: Baixo, criterio: conveniência pontual }
+
+  - tipo: escala
+    id: E
+    rotulo: Esforço
+    minimo: 1
+    maximo: 3
+    direcao: menor-melhor
+    avalia: o trabalho e o risco de execução, não só o tempo
+    rubrica:
+      - { de: 1, ate: 1, rotulo: Baixo, criterio: cabe numa entrega, um sistema só }
+      - { de: 2, ate: 2, rotulo: Médio, criterio: mais de uma entrega ou mais de um sistema }
+      - { de: 3, ate: 3, rotulo: Alto,  criterio: exige fatiamento ou dependência externa }
+
+  - tipo: faixa
+    id: matriz
+    rotulo: Valor × Esforço
+    dimensoes: [V, E]
+    bandas:
+      - id: fazer-ja
+        rotulo: Fazer já
+        cortes: { V: { min: 2 }, E: { max: 1 } }
+        acao: entra na próxima entrega
+      - id: planejar
+        rotulo: Planejar
+        cortes: { V: { min: 2 }, E: { min: 2 } }
+        acao: fatiar até caber
+      - id: encaixar
+        rotulo: Encaixar
+        cortes: { V: { max: 1 }, E: { max: 1 } }
+        acao: entra se sobrar capacidade
+      - id: descartar
+        rotulo: Descartar
+        cortes: { V: { max: 1 }, E: { min: 2 } }
+        acao: sai da fila com o motivo registrado
+
+  - tipo: ordenacao
+    id: fila
+    por:
+      - { etapa: criticidade }
+      - { etapa: matriz }
+    desempate: antiguidade

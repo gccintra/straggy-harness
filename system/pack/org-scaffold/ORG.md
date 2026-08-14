@@ -52,16 +52,21 @@ placeholder no documento, a skill não inventa valor.
 
 ## 5. Funil de priorização
 
-`caminhos.documento_priorizacao` (`project-config.yaml`) preenchido → o funil sai de lá e
-esta seção não é lida. Vazio → **declare o funil aqui**; as skills de priorização leem
-deste arquivo e nunca decoram valores.
+O funil **não é declarado neste arquivo**: é o encaixe estruturado `funil` da ação
+`priorizar-backlog` — escreva
+`org/workflows/backlog-prioritization/references/funil.yaml` seguindo o schema
+`system/schemas/funil-priorizacao.yaml`. Etapas, escalas e rubricas, fórmula do score,
+cortes e ordenação saem de lá, e é de lá que todas as skills leem.
 
-- Criticidade (MoSCoW) na entrada da demanda: `[definir hierarquia e labels]`.
-- Score pós-solução (ICE ou equivalente): `[definir fórmula e escalas]`.
-- Quadrantes e thresholds: `[definir]`.
-- Ordenação final: `[definir]`.
+Sem esse arquivo vale o funil padrão do pack — nenhuma skill decora valor, e nenhuma para
+por falta de configuração.
 
-Nada declarado aqui nem no documento do projeto → as skills **param e perguntam**.
+Existindo um documento humano do funil, aponte-o em `caminhos.documento_priorizacao`
+(`project-config.yaml`) e declare-o em `fonte:` dentro do `funil.yaml`: o documento passa a
+ser a autoridade, e o arquivo é a leitura de máquina dele.
+
+O julgamento que o funil não calcula — bypass de emergência, itens incomparáveis, caixas de
+capacidade — vai no encaixe `procedimento` do mesmo workflow.
 
 ## 6. Vocabulário próprio
 

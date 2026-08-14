@@ -58,8 +58,8 @@ sempre e não é substituível.
   mensagem) — é o que alimenta a documentação sem refazer o trabalho.
 - **Fronteira**: discovery é material bruto em linguagem de negócio. Não numera regra
   final, não formata documento, não cria demanda. Quem estrutura é o `doc-consolidator`.
-- **Thresholds e fórmula de score** saem do documento de priorização do projeto, nunca de
-  memória (`methods/ice.md`).
+- **Escalas, rubrica de cada nota, fórmula do score e cortes** saem da instância do encaixe
+  `funil` (ação `priorizar-backlog`), nunca de memória (`methods/ice.md`).
 
 ## Encerramento
 

@@ -17,8 +17,8 @@ O ganho verificável quando isso estiver resolvido — não a tela, não o mecan
 Quem pediu, quantas vezes, o que acontece sem isso.
 
 ## Priorização
-- **Criticidade (MoSCoW):** MUST | SHOULD | COULD | WONT
-- **Impacto / Confiança / Facilidade:** — (preenchidos no discovery)
+- **Criticidade:** a faixa de triagem do funil declarado, com justificativa de uma frase.
+- **Dimensões:** — (preenchidas no discovery, quando existe solução)
 
 ## Notas do solicitante
 Solução proposta por quem pediu, se houver — insumo para o discovery, não requisito.

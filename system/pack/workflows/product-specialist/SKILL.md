@@ -50,8 +50,8 @@ Desempates (é aqui que a decisão é da organização, não do gatilho):
 - **Ordem protótipo × documentação**: demanda com interface documenta **depois** do
   protótipo validado — o protótipo é onde a solução converge (`double-diamond.md`), e
   documentar antes gera retrabalho. Demanda sem interface vai direto ao consolidado.
-- **Priorização**: criticidade (MoSCoW) na entrada da demanda; score/quadrante só depois
-  de solução definida no discovery.
+- **Priorização**: só a etapa de triagem do funil na entrada da demanda; dimensões, score e
+  faixa só depois de solução definida no discovery.
 - **Intake**: demanda nova registra o **problema**; solução proposta pelo solicitante vira
   nota para o discovery, não requisito.
 - **Consulta pontual** no backlog (`vê a #NNN`, `busca X`) → `backlog-query`, não as
