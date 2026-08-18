@@ -34,6 +34,11 @@ encaixes:
 Pensar a interface antes do JSX. `design-screen` responde "como transcrevo esta
 referência?"; a brief responde "o que esta demanda vira na interface, e o que ela quebra?".
 
+**Contexto carregado em todo nível ≥ leve** (moldura, não depende do procedimento): a
+demanda pelo provider `backlog/` — ou `{caminhos.pasta_por_demanda}` no modo local — e o
+contexto do produto pelo provider `knowledge/` (regra de negócio, requisito de referência,
+glossário). Ausência é contexto vazio declarado, nunca preenchido por chute.
+
 
 **Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a
 seguir. A moldura acima — ação, métodos, providers, portões e contrato de saída — vale

@@ -15,9 +15,7 @@ arquivo em `org/workflows/design-brief/references/procedimento.md`.
 
 ## Fluxo (nível completo)
 
-1. **Ler a demanda**: demanda pelo provider (ou `{caminhos.pasta_por_demanda}` no modo local) + contexto
-   do produto pelo provider `knowledge/`.
-   Extraia só a **superfície de tela**: CA → comportamento observável; RN → estado/
+1. **Ler a demanda**: extraia só a **superfície de tela**: CA → comportamento observável; RN → estado/
    habilitação/máscara/cálculo exibido; MSG → **um lugar concreto** na tela; escopo →
    quais telas entram. Regra de backend puro → anote, não invente UI.
 2. **Inventariar o protótipo** (obrigatório em todo nível ≥ leve):

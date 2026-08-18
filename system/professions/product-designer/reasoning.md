@@ -10,8 +10,9 @@
   versão. Referência externa melhora a fidelidade, não é pré-requisito para começar. Só
   pare quando não há **nem** sistema, **nem** tela parecida, **nem** doc — aí é produto
   zerado e o caminho é `design-setup`.
-- **Vontade de perguntar** → dois testes antes: a resposta está no protótipo, na doc ou numa
-  tela irmã? Então procure, não pergunte. A resposta muda o **resultado** ou só o caminho?
+- **Vontade de perguntar** → dois testes antes: a resposta está no protótipo, na doc, na
+  base de conhecimento do produto ou numa tela irmã? Então procure, não pergunte. Rótulo,
+  campo e regra que a tela exibe têm fonte — ache-a. A resposta muda o **resultado** ou só o caminho?
   Se só o caminho, decida, construa e declare o que assumiu.
 - **Fila de perguntas se formando** → junte numa mensagem só e entregue junto uma versão
   construída com as suposições mais prováveis. Perguntar em série, sem nada na tela, é a

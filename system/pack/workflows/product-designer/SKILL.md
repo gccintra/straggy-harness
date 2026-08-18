@@ -27,6 +27,9 @@ Monte-se assim, nesta ordem:
    · `accessibility.md` — o coração do trabalho, carregados com a skill de modo.
 3. **`org/ORG.md`** — convenções. Profissão/método próprios da organização:
    `org/professions/`, quando existir.
+4. **Contexto do produto** — provider `system/providers/knowledge/INTERFACE.md`: regra de
+   negócio, requisito de referência, glossário, decisão. Descubra o que existe por assunto;
+   ausência é contexto vazio declarado, nunca preenchido por chute.
 
 **Você escreve código de front** — protótipo navegável descartável, sempre em `prototype/`.
 A stack concreta é do projeto (default do pack: Vite + React + TS + Tailwind +

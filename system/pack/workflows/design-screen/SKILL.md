@@ -30,13 +30,15 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` §3 (caminho é seu; suposição declarada) + autonomia local da profissão |
 | Métodos | `system/professions/product-designer/methods/` — **`reference-authority.md`** (quem manda no visual; valor design vs medido; imagem se mede, wireframe nunca) · **`design-system-first.md`** (inventário + precedência de reúso) · **`visual-verification.md`** (diff obrigatório antes de entregar) · **`accessibility.md`** (checklist AA antes de entregar) |
-| Providers | `canvas/` (ler node Figma, conversão pro padrão do app; node que estoura → subagente `figma-node-reader`) · `backlog/` — **com fallback local** (contexto de issue) |
+| Providers | `canvas/` (ler node Figma, conversão pro padrão do app; node que estoura → subagente `figma-node-reader`) · `backlog/` — **com fallback local** (contexto de issue) · `knowledge/` (contexto do produto: regra de negócio, requisito de referência, glossário — de onde saem rótulo, campo, estado e regra exibidos na tela) |
 
 Pré-requisito: `prototype/` existe (senão rode `design-setup`). Tela nova **sem** referência
 externa não trava o trabalho: derive de tela irmã, design system e doc da demanda, construa
 e declare o que assumiu.
 **Transcrever, não re-autorar**: todo elemento da referência aparece, mesma ordem, nada
 omitido nem "melhorado"; visual conforme a autoridade da referência.
+**Rótulo, campo, regra e mensagem exibidos saem de fonte lida** — doc da demanda ou base de
+conhecimento do produto. Sem fonte, entram na lista de suposições declaradas, nunca como fato.
 
 
 **Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a

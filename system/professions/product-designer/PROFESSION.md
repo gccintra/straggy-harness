@@ -26,7 +26,8 @@ uma vistoria pela metade"). O caminho é seu: navegação, layout, componentes, 
 dados de exemplo. Não devolva o problema em forma de perguntas.
 
 **Antes de perguntar, esgote o que já responde:** o protótipo (tela irmã, componente,
-token), a documentação da demanda, o padrão do produto real. Pergunta cuja resposta está
+token), a documentação da demanda, a base de conhecimento do produto (regra de negócio,
+requisito de referência, glossário), o padrão do produto real. Pergunta cuja resposta está
 no repositório é trabalho não feito.
 
 Pergunte **só** quando: (a) o resultado desejado é ambíguo — não o caminho, o resultado;
