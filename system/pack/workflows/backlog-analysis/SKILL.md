@@ -12,6 +12,10 @@ acao:
   id: analisar-backlog
   rotulo: Analisar backlog
   descricao: métricas, distribuição e status do backlog
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: bulk-export
 encaixes:
   procedimento:
     caminho: references/procedimento.md
@@ -28,7 +32,7 @@ encaixes:
 | Métodos | `system/professions/product-specialist/methods/ice.md` (leitura de score e funil) |
 | Funil | encaixe `funil` da ação `priorizar-backlog` — schema `system/schemas/funil-priorizacao.yaml` |
 | Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
-| Código | receita de export e template do burndown da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-burndown.md`) |
+| Código | receita de export da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-burndown.md`, `linear-mcp-burndown.md`) + `recipes/burndown-local.md` (métricas e HTML, agnóstico de ferramenta) |
 
 Análise quantitativa de 10+ issues de uma vez. Consulta pontual (ver uma issue, buscar
 texto) → `backlog-query`, não esta skill.

@@ -1,7 +1,7 @@
 ---
 name: sprint-ops
 description: >
-  Gerencia sprints (milestones) no backlog do projeto — GitLab, Jira ou o que estiver
+  Gerencia sprints (milestones/ciclos) no backlog do projeto — GitLab, Linear, Jira ou o que estiver
   configurado: criar nova sprint com datas e objetivo, fechar sprint atual e gerar sumário
   de conclusão, mover issues entre sprints em lote, listar issues de uma sprint com status
   resumido, e documentar a sprint preenchendo a descrição com Meta da Sprint, Prazos e
@@ -13,6 +13,10 @@ acao:
   id: gerenciar-sprint
   rotulo: Gerenciar sprint
   descricao: cria, fecha, move e documenta sprints
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: sprints
 encaixes:
   procedimento:
     caminho: references/procedimento.md
@@ -35,7 +39,11 @@ encaixes:
 | Métodos | `system/professions/product-specialist/methods/sprint-goal.md` (meta é outcome) |
 | Formatos | `references/milestone-doc.md` — template da descrição de sprint (a organização sobrescreve este arquivo para impor o formato dela) |
 
-Sprint = milestone; termos intercambiáveis.
+Sprint = milestone (GitLab/GitHub) = ciclo (Linear); termos intercambiáveis.
+
+**Criar, editar e fechar sprint exigem `sprints-write`** — nem toda implementação tem
+(`INTERFACE.md`). Faltando, informe a indisponibilidade nessas operações e siga com as
+outras (listar, mover em lote, documentar); nunca tente o comando mesmo assim.
 
 
 **Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a

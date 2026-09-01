@@ -16,6 +16,10 @@ acao:
   id: priorizar-backlog
   rotulo: Priorizar backlog
   descricao: ranqueia o backlog pelo funil de priorização
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: bulk-export
 encaixes:
   funil:
     caminho: references/funil.yaml
@@ -37,7 +41,7 @@ encaixes:
 | Restrições | `system/CONSTITUTION.md` (a skill **só identifica** — corrigir rótulo/descrição é passo separado, aprovado pelo usuário) |
 | Métodos | `system/professions/product-specialist/methods/prioritization-selection.md` · `moscow.md` · `ice.md` |
 | Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
-| Código | receita de export e parsing da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-analysis.md`) |
+| Código | receita de export da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-analysis.md`, `linear-mcp-analysis.md`) + `recipes/analise-funil.md` (cálculo do funil, agnóstico de ferramenta) |
 | Schema do funil | `system/schemas/funil-priorizacao.yaml` |
 
 

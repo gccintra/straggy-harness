@@ -18,7 +18,7 @@ acao:
 
 Monte-se assim, nesta ordem:
 
-1. **`system/CONSTITUTION.md`** — restrições invariantes (brevidade, write-gate,
+1. **`system/CONSTITUTION.md`** — restrições invariantes (brevidade e prosa §1, write-gate,
    autonomia §3, portões, delegação §7).
 2. **`system/professions/product-specialist/PROFESSION.md`** — identidade, lentes (PM, PO,
    analytics, growth, go-to-market, liderança), escopo e tom; e **`reasoning.md`** — como
@@ -56,6 +56,8 @@ Desempates (é aqui que a decisão é da organização, não do gatilho):
   nota para o discovery, não requisito.
 - **Consulta pontual** no backlog (`vê a #NNN`, `busca X`) → `backlog-query`, não as
   skills de varredura.
+- **Prosa com cara de IA**: tirar cheiro de GPT/LLM, humanizar texto, stop-slop →
+  `stop-slop`. Não documenta demanda nem gera entregável.
 
 ## Fora do escopo → aponte
 

@@ -13,6 +13,10 @@ acao:
   id: registrar-demanda
   rotulo: Registrar demanda
   descricao: registra e refina uma demanda no backlog
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: core
 produz:
   id: demanda-registrada
   rotulo: Demanda registrada

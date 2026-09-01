@@ -13,6 +13,10 @@ acao:
   id: auditar-backlog
   rotulo: Auditar backlog
   descricao: saúde do backlog — inconsistências, duplicatas, zumbis
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: bulk-export
 encaixes:
   procedimento:
     caminho: references/procedimento.md

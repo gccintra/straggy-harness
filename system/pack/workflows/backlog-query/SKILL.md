@@ -6,12 +6,16 @@ description: >
   específica, listar labels e sprints. Use para qualquer pedido pontual de backlog: "vê a
   #NNN", "busca issues sobre X", "quais issues da sprint atual", "comenta na #NNN",
   "fecha a #NNN", "quais labels existem", e também quando o usuário citar a ferramenta
-  direto (glab, GitLab, Jira). Para varredura do backlog inteiro use backlog-analysis,
+  direto (glab, GitLab, Linear, Jira). Para varredura do backlog inteiro use backlog-analysis,
   backlog-health ou backlog-prioritization.
 acao:
   id: consultar-backlog
   rotulo: Consultar backlog
   descricao: consulta e operação pontual numa demanda
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: core
 encaixes:
   procedimento:
     caminho: references/procedimento.md
@@ -27,7 +31,8 @@ operação da interface. Leia, nesta ordem:
 
 1. **`.agents/system/providers/backlog/INTERFACE.md`** — provider ativo
    (`BACKLOG_PROVIDER`), capacidades, gate e modo degradado. Valem para toda operação.
-2. **A implementação ativa** (ex.: `.agents/system/providers/backlog/gitlab-glab.md`, ou a
+2. **A implementação ativa** (ex.: `.agents/system/providers/backlog/gitlab-glab.md`,
+   `linear-mcp.md`, ou a
    da organização em `org/providers/backlog/`) — sintaxe concreta dos comandos.
 
 Toda operação de **escrita** (criar/atualizar/comentar/fechar) passa pelo write-gate —

@@ -1,7 +1,8 @@
 ---
 name: wiki-publish
 description: >
-  Publica e atualiza páginas na wiki do projeto (GitLab, Jira ou o backlog configurado).
+  Publica e atualiza páginas na wiki do projeto (GitLab, documents do Linear, Jira ou o
+  backlog configurado).
   Use sempre que precisar publicar, criar ou atualizar documentação de produto na wiki —
   fluxo novo, módulo documentado, decisão técnica, ou entrada de changelog. Gatilhos:
   "publica na wiki", "cria a página", "atualiza a wiki", "documenta o módulo na wiki".
@@ -12,6 +13,10 @@ acao:
   id: publicar-na-wiki
   rotulo: Publicar na wiki
   descricao: publica e atualiza páginas na wiki do projeto
+provider:
+  dominio: backlog
+  selecao: BACKLOG_PROVIDER
+  capacidade: wiki
 encaixes:
   procedimento:
     caminho: references/procedimento.md
