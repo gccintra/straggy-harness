@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  fecha a sprint atual, gera o sumário e move pra próxima o que não entrou
+
+atende: gerenciar-sprint
+confunde_com:
+  - definir-meta-de-sprint
+
+motivo: >
+  Operar o milestone não é redigir a meta.

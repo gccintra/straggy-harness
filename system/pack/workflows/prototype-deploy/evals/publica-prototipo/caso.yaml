@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  publica o protótipo no servidor, atrás de autenticação e HTTPS
+
+atende: publicar-prototipo
+confunde_com:
+  - capturar-prints
+
+motivo: >
+  Deploy no servidor não gera imagem para documento.

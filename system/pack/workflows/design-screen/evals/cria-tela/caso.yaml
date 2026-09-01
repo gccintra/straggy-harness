@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  cria a tela de listagem de candidatos como rota no protótipo
+
+atende: construir-tela
+confunde_com:
+  - analisar-demanda-de-tela
+  - configurar-design-system
+
+motivo: >
+  O design system já está configurado e a análise já passou; o pedido é construir.

@@ -1,0 +1,16 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  documenta a #412 — monta o documento base com os critérios de aceite e as regras de negócio
+
+atende: documentar-requisito
+confunde_com:
+  - gerar-documento-final
+  - explorar-solucao
+  - gerar-narrativa-de-requisito
+  - limpar-prosa
+
+motivo: >
+  Pedido genérico gera o `.md` primeiro e PARA para revisão humana. O entregável formal, o
+  discovery e a narrativa são passos distintos, cada um com portão próprio.

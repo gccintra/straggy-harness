@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  configura o design system do projeto a partir dessas prints do sistema atual e faz o
+  scaffold do protótipo
+
+atende: configurar-design-system
+confunde_com:
+  - construir-tela
+
+motivo: >
+  Configurar tokens e scaffold é o passo zero, não a construção de uma tela.

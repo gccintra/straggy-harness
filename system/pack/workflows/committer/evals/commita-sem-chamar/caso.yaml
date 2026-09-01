@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  commita isso pra mim, por favor
+
+atende: nenhuma
+confunde_com:
+  - versionar-mudancas
+
+motivo: >
+  O committer é MANUAL: sem `@committer`/`$committer` explícito ele não ativa, por mais claro
+  que seja o pedido.

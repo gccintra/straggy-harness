@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  escreve a meta da sprint que vai começar, com foco em outcome
+
+atende: definir-meta-de-sprint
+confunde_com:
+  - gerenciar-sprint
+
+motivo: >
+  Redigir a meta não cria nem move milestone.

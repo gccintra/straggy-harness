@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  publica a documentação do módulo de inscrição na wiki
+
+atende: publicar-na-wiki
+provider: backlog

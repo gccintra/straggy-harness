@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  consulta no banco de homologação quantos candidatos estão com status pendente
+
+atende: consultar-dados
+confunde_com:
+  - consultar-backlog
+
+motivo: >
+  Contagem no banco de homologação não vem do backlog.

@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  roda a priorização do backlog e me dá a lista ranqueada com as anomalias de rótulo
+
+atende: priorizar-backlog
+confunde_com:
+  - analisar-backlog
+
+motivo: >
+  Ranquear pelo funil declarado não é a mesma coisa que medir o backlog.

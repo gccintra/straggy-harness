@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  cria uma issue: os candidatos não conseguem anexar o comprovante de residência no portal
+
+atende: registrar-demanda
+confunde_com:
+  - consultar-backlog
+
+motivo: >
+  Demanda nova nasce com triagem e template; tratar como consulta pula os dois.

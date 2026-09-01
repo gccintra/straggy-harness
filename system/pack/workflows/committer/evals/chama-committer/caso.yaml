@@ -1,0 +1,11 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  @committer commita o que está pendente e abre o PR
+
+atende: versionar-mudancas
+confunde_com: []
+
+motivo: >
+  Chamada explícita — é o único jeito de ativar o committer.

@@ -1,0 +1,14 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  vamos explorar alternativas pra #412 antes de escrever requisito — não sei ainda qual é o
+  problema de verdade
+
+atende: explorar-solucao
+confunde_com:
+  - documentar-requisito
+
+motivo: >
+  Documentar antes do problema estar definido produz requisito de uma solução que ninguém
+  escolheu.

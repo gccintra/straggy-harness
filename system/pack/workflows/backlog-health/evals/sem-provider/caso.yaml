@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  audita a saúde do backlog e me diz quais issues estão sem tipo
+
+atende: auditar-backlog
+provider: backlog

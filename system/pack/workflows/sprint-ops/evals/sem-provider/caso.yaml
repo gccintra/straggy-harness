@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  fecha a sprint atual e gera o sumário
+
+atende: gerenciar-sprint
+provider: backlog

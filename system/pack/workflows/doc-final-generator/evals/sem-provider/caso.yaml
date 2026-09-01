@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  gera o docx da #412 — o md já foi revisado
+
+atende: gerar-documento-final
+provider: docs-output

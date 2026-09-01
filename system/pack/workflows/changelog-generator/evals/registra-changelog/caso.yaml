@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  registra essa entrega no changelog do projeto
+
+atende: manter-changelog
+confunde_com:
+  - publicar-na-wiki
+
+motivo: >
+  Registrar no repositório não publica em destino externo.

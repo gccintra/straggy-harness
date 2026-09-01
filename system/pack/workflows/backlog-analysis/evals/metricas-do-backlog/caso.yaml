@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  quero as métricas do backlog: distribuição por tipo, velocidade do time e burndown da sprint
+
+atende: analisar-backlog
+confunde_com:
+  - priorizar-backlog
+  - auditar-backlog
+
+motivo: >
+  Métrica é visão quantitativa: não ordena pelo funil nem audita higiene de cadastro.

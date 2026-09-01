@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  quero as métricas do backlog: distribuição por tipo e velocidade
+
+atende: analisar-backlog
+provider: backlog

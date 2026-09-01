@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  acha as issues sem tipo, sem responsável e as duplicatas — o backlog está uma bagunça
+
+atende: auditar-backlog
+confunde_com:
+  - analisar-backlog
+
+motivo: >
+  Saúde do backlog é higiene de cadastro, não métrica de entrega.

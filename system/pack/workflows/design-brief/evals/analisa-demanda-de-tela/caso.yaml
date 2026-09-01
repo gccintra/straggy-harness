@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  analisa o que a #412 vira de tela antes de eu construir — quero saber o que reusa e o que
+  falta no design system
+
+atende: analisar-demanda-de-tela
+confunde_com:
+  - construir-tela
+
+motivo: >
+  A análise prévia é conversa: não escreve rota nem componente.

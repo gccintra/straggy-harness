@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  roda a priorização do backlog e me dá a lista ranqueada
+
+atende: priorizar-backlog
+provider: backlog

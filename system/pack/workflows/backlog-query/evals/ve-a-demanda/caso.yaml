@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  vê a #412 e me diz em que sprint ela está e quem é o responsável
+
+atende: consultar-backlog
+confunde_com:
+  - registrar-demanda
+  - consultar-dados
+
+motivo: >
+  Consulta pontual não cria nada, e o dado vem do backlog — não do banco de homologação.

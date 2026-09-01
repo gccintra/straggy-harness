@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  captura as prints do protótipo pra seção de protótipo do documento da #412
+
+atende: capturar-prints
+confunde_com:
+  - publicar-prototipo
+
+motivo: >
+  A captura alimenta o documento; publicar é deploy no servidor.

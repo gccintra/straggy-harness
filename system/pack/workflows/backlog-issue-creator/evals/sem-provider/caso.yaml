@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  cria uma issue: o upload de documento está falhando no portal
+
+atende: registrar-demanda
+provider: backlog

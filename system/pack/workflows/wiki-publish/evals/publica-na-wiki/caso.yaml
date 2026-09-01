@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  publica o módulo de inscrição na wiki do projeto
+
+atende: publicar-na-wiki
+confunde_com:
+  - manter-changelog
+
+motivo: >
+  A wiki é destino externo com portão próprio; o changelog é tabela no repositório.

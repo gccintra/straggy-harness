@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  gera o docx da #412 — o md consolidado já foi revisado
+
+atende: gerar-documento-final
+confunde_com:
+  - documentar-requisito
+
+motivo: >
+  O `.md` já existe e foi revisado; reabrir a consolidação refaz trabalho aprovado e descarta
+  a revisão humana.

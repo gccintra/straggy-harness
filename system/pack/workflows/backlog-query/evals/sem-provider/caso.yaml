@@ -1,0 +1,8 @@
+schema: 1
+tipo: modo-degradado
+
+frase: >
+  lista as issues abertas da sprint atual
+
+atende: consultar-backlog
+provider: backlog

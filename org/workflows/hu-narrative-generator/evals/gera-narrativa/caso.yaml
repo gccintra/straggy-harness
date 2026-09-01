@@ -1,0 +1,12 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  gera a descrição narrativa da HU08 — quero o comportamento em texto corrido
+
+atende: gerar-narrativa-de-requisito
+confunde_com:
+  - documentar-requisito
+
+motivo: >
+  O `.md` consolidado é estruturado por seções; narrativa é texto corrido.
