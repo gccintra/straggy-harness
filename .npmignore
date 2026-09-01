@@ -1,0 +1,4 @@
+# O pacote npm é só o bootstrap (get.sh). O harness em si — inclusive docs/ —
+# não sobe no registry: o get.sh clona o Git depois, no .agents do projeto.
+*
+!get.sh
