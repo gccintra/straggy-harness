@@ -40,6 +40,7 @@ mudar é a declaração `acao:` do workflow.
 | `explorar-solucao` | conduz o discovery de uma demanda até a solução definida | `formato-fase` |
 | `gerar-documento-final` | transcreve o documento revisado para o formato entregável | `estrutura-final` · `exemplos` · `gerador` · `marca` |
 | `gerenciar-sprint` | cria, fecha, move e documenta sprints | `template-sprint` |
+| `limpar-prosa` | reescreve texto removendo padrões previsíveis de prosa de IA | — |
 | `manter-changelog` | gera e atualiza o histórico de evolução do produto | `formato-changelog` |
 | `persona-design` | a persona de design do projeto | — |
 | `persona-produto` | a persona de produto (PM/PO) do projeto | — |

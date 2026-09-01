@@ -1,0 +1,14 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  humaniza esse parágrafo, tá com cheiro de IA: É importante ressaltar que, no
+  contexto atual, não se trata de um problema técnico, mas de pessoas. Vale
+  destacar que as implicações são significativas.
+
+atende: limpar-prosa
+confunde_com:
+  - documentar-requisito
+
+motivo: >
+  Reescrever prosa existente não gera o documento consolidado da demanda.
