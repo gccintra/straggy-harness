@@ -4,8 +4,13 @@ Transforma o `.md` consolidado (fonte de verdade) em documento formal entregáve
 
 ## Seleção da implementação
 
-`DOCS_OUTPUT_PROVIDER` no `.env`: `pandoc` (default) · `none` · nome de uma implementação
-da organização.
+`DOCS_OUTPUT_PROVIDER` no `.env`: `pandoc` (default) · `pandoc-docx` · `none` · nome de uma
+implementação da organização. Cada implementação declara no frontmatter o valor que a ativa
+(`selecao`) — vazio cai na que se declara `default`.
+
+Organização que preencheu o encaixe do gerador (`generate_doc.py`) precisa de
+`pandoc-docx`: o default converte, mas não aplica layout próprio. As duas declarações
+divergindo é aviso do `build.sh` (`docs/ARCHITECTURE.md` §4.5), não silêncio.
 
 - **`pandoc-cli.md`** — default do pack. Converte o `.md` direto, com estilo opcional via
   documento de referência. Sem código próprio para manter.

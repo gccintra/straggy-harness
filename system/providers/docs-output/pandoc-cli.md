@@ -1,4 +1,6 @@
 ---
+selecao: pandoc
+default: true
 capacidades: [render]
 requisitos:
   binarios: [pandoc]

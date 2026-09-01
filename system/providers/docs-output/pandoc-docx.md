@@ -1,4 +1,5 @@
 ---
+selecao: pandoc-docx
 capacidades: [render, layout-custom, image-embed]
 requisitos:
   binarios: [python3]

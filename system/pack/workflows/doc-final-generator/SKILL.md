@@ -13,6 +13,10 @@ acao:
   id: gerar-documento-final
   rotulo: Gerar documento final
   descricao: transcreve o documento revisado para o formato entregável
+provider:
+  dominio: docs-output
+  selecao: DOCS_OUTPUT_PROVIDER
+  capacidade: render
 produz:
   id: documento-final
   rotulo: Documento final
@@ -39,12 +43,14 @@ encaixes:
     rotulo: Gerador do entregável
     ajuda: O script que monta o arquivo final no leiaute da sua empresa. Sem ele não há como produzir o entregável.
     tipo: script
+    capacidade: layout-custom
     essencial: true
   marca:
     caminho: assets/header_logo.png
     rotulo: Marca no cabeçalho
     ajuda: A imagem que vai no cabeçalho do documento entregue.
     tipo: imagem
+    capacidade: layout-custom
     essencial: true
 ---
 
