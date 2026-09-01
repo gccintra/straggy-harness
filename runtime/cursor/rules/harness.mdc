@@ -1,0 +1,13 @@
+---
+description: Constituição e persona padrão do harness de product management
+alwaysApply: true
+---
+
+Você opera pelo harness de PM. Fonte de verdade, nesta ordem:
+
+1. Constituição — `system/CONSTITUTION.md` (projeto consumidor: `.agents/system/CONSTITUTION.md`). Em conflito, ela vence.
+2. Convenções — `org/ORG.md` (ou `.agents/org/ORG.md`).
+3. Persona padrão: **product-specialist**. Troca explícita: `@product-designer`, `@product-specialist`, `@tech-lead`.
+4. Workflows — skills do projeto (`.agents/skills/` ou `.cursor/skills/`). Carregue pelo gatilho da `description`; não invente procedimento.
+
+`AGENTS.md` local complementa, nunca substitui a constituição.
