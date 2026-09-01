@@ -39,27 +39,33 @@ link_path ".agents/runtime/codex" "$PROJECT_DIR/.codex"
 link_path ".agents/runtime/opencode" "$PROJECT_DIR/.opencode"
 link_path ".agents/sync-context.sh" "$PROJECT_DIR/sync-context.sh"
 
-# Cursor CLI / IDE: o `.cursor/` do projeto é do IDE (MCP, settings) — nunca o
-# substituímos. Plantamos um `.mdc` por arquivo gerado em `.cursor/rules/`.
-# Skills o CLI já descobre em `.agents/skills/` (o build cria esse symlink).
+# Cursor: igual aos outros quando `.cursor` ainda não existe (symlink da pasta
+# inteira). Se o IDE já criou `.cursor/` (MCP, settings), planta só as rules —
+# nunca substitui a pasta.
 plant_cursor() {
+  local dest="$PROJECT_DIR/.cursor"
+  local target=".agents/runtime/cursor"
+  local f base
+
+  if [[ -L "$dest" && "$(readlink "$dest")" == "$target" ]]; then
+    return 0
+  fi
+  if [[ ! -e "$dest" ]]; then
+    ln -s "$target" "$dest"
+    return 0
+  fi
+
+  mkdir -p "$dest/rules"
   local src="$HARNESS_DIR/runtime/cursor/rules"
-  local dest_dir="$PROJECT_DIR/.cursor/rules"
-  local f base dest target
-
-  mkdir -p "$dest_dir"
   [ -d "$src" ] || return 0
-
   for f in "$src"/*.mdc; do
     [ -f "$f" ] || continue
     base="$(basename "$f")"
-    dest="$dest_dir/$base"
-    target=".agents/runtime/cursor/rules/$base"
-    if [[ -e "$dest" && ! -L "$dest" ]]; then
-      echo "Não alterado: $dest já existe." >&2
+    if [[ -e "$dest/rules/$base" && ! -L "$dest/rules/$base" ]]; then
+      echo "Não alterado: $dest/rules/$base já existe." >&2
       continue
     fi
-    ln -sfn "$target" "$dest"
+    ln -sfn ".agents/runtime/cursor/rules/$base" "$dest/rules/$base"
   done
 }
 

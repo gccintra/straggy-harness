@@ -48,8 +48,8 @@ O instalador cria só estes caminhos, nunca sobrescreve arquivo existente, e rod
 
 | Caminho | O que é |
 |---|---|
-| `.claude` / `.codex` / `.opencode` | symlinks → `.agents/runtime/<runtime>` |
-| `.cursor/rules/*.mdc` | symlinks → `.agents/runtime/cursor/rules/` — o `.cursor/` do IDE não é substituído |
+| `.claude` / `.codex` / `.opencode` / `.cursor` | symlinks → `.agents/runtime/<runtime>` |
+| `.cursor/` já existia (IDE) | o install **não** substitui: planta só `.cursor/rules/*.mdc` |
 | `sync-context.sh` | symlink → `.agents/sync-context.sh` |
 | `project-config.yaml` | cópia do template — versionado no projeto |
 | `.env` | cópia do `.env.example` — fora do Git (tem segredo) |

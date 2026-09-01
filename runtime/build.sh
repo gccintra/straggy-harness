@@ -145,8 +145,8 @@ trap 'rm -f "$RESOLUCAO"' EXIT
 printf '%s' "$resolucao" > "$RESOLUCAO"
 personas=$(python3 "$ADAPTERS_DIR/render.py")
 
-# Planta os .mdc gerados. Arquivo regular do usuário não é tocado; symlink nosso
-# é atualizado — persona nova aparece no rebuild, sem re-install.
+# Cursor: pasta inteira como os outros runtimes, se `.cursor` ainda não existe.
+# Se o IDE já criou a pasta, planta só os `.mdc` — nunca substitui MCP/settings.
 plant_cursor_rules() {
   local dest_dir="$1" target_prefix="$2" src="$RUNTIME_DIR/cursor/rules"
   local f base dest
@@ -163,25 +163,32 @@ plant_cursor_rules() {
   done
 }
 
-# Este repo é o projeto → .cursor/ aqui. Nested em .agents/ → projeto pai.
-# --out é sandbox — não planta.
 plant_cursor_discovery() {
   [ "$RUNTIME_DIR" = "$HARNESS_DIR/runtime" ] || return 0
   [ -w "$HARNESS_DIR" ] || return 0
 
+  local dest target rules_prefix
   if [ "$(basename "$HARNESS_DIR")" = ".agents" ]; then
     local projeto
     projeto="$(cd "$HARNESS_DIR/.." && pwd)"
     [ -d "$projeto/.git" ] || return 0
-    plant_cursor_rules "$projeto/.cursor/rules" ".agents/runtime/cursor/rules"
-    return 0
+    dest="$projeto/.cursor"
+    target=".agents/runtime/cursor"
+    rules_prefix=".agents/runtime/cursor/rules"
+  else
+    dest="$HARNESS_DIR/.cursor"
+    target="runtime/cursor"
+    rules_prefix="../../runtime/cursor/rules"
   fi
 
-  plant_cursor_rules "$HARNESS_DIR/.cursor/rules" "../../runtime/cursor/rules"
-  local skills="$HARNESS_DIR/.cursor/skills"
-  if [ ! -e "$skills" ] || [ -L "$skills" ]; then
-    ln -sfn ../runtime/skills "$skills"
+  if [ -L "$dest" ] && [ "$(readlink "$dest")" = "$target" ]; then
+    return 0
   fi
+  if [ ! -e "$dest" ]; then
+    ln -s "$target" "$dest"
+    return 0
+  fi
+  plant_cursor_rules "$dest/rules" "$rules_prefix"
 }
 plant_cursor_discovery
 

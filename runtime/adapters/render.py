@@ -236,9 +236,8 @@ def _persona_padrao(personas):
 def render_cursor(personas, aliases):
     """Rules `.mdc` + symlink de skills. Fonte: o mesmo PERSONA.md / SKILL.md dos outros.
 
-    Cursor não pode ganhar o `.cursor/` inteiro — o IDE guarda MCP e settings lá.
-    O adapter gera só `rules/`; o install planta um diretório dentro de `.cursor/rules/`.
-    Skills não se copiam: o CLI já descobre `.agents/skills/` no projeto consumidor.
+    Cursor: `runtime/cursor/` vira `.cursor` por symlink, como os outros runtimes — salvo
+    quando o IDE já criou `.cursor/` (MCP, settings); aí o install planta só as rules.
     """
     limpar(CURSOR_RULES)
     CURSOR_SKILLS.parent.mkdir(parents=True, exist_ok=True)

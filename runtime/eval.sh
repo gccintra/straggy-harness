@@ -79,11 +79,7 @@ ln -s "$HARNESS_DIR" "$WS/.agents"
 ln -s ".agents/runtime/claude"   "$WS/.claude"
 ln -s ".agents/runtime/codex"    "$WS/.codex"
 ln -s ".agents/runtime/opencode" "$WS/.opencode"
-mkdir -p "$WS/.cursor/rules"
-for f in "$HARNESS_DIR/runtime/cursor/rules"/*.mdc; do
-  [ -f "$f" ] || continue
-  ln -s ".agents/runtime/cursor/rules/$(basename "$f")" "$WS/.cursor/rules/$(basename "$f")"
-done
+ln -s ".agents/runtime/cursor"   "$WS/.cursor"
 cp "$HARNESS_DIR/project-config.template.yaml" "$WS/project-config.yaml" 2>/dev/null || true
 # O .env NÃO é copiado de propósito: ausência de configuração é o cenário dos casos
 # modo-degradado, e herdar credencial os faria passar por engano.

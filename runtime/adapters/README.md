@@ -31,8 +31,8 @@ model: <id>                     # opcional; default em codex.model deste README
 | `aliases.tsv` | `alias<TAB>persona<TAB>descrição` — gera um slash-command por linha (Claude) e uma rule por linha (Cursor) |
 | `codex.defaults` | `model=<id>` usado quando o `PERSONA.md` não declara |
 
-Cursor CLI (`agent`) lê `.cursor/rules/*.mdc` e descobre skills em `.agents/skills/` (já
-o ponto de descoberta do Codex). O `.cursor/` do IDE não é substituído: o install planta
-só os `.mdc` gerados em `.cursor/rules/`. Quando este repo **é** o projeto, o `build.sh`
-planta também `.cursor/skills` → `runtime/skills`. Headless (`agent -p`) é o mesmo
-adapter; o runner de eval entra quando o restante estiver no ar.
+Cursor CLI (`agent`) lê `.cursor/rules/*.mdc` e `.cursor/skills/`. O adapter gera
+`runtime/cursor/` (rules + symlink de skills). Install: se `.cursor` **não existe**,
+symlink da pasta inteira — igual `.claude` / `.codex` / `.opencode`. Se o IDE já criou
+`.cursor/` (MCP, settings), planta só os `.mdc` em `.cursor/rules/`. Headless (`agent -p`)
+é o mesmo adapter; o runner de eval entra quando o restante estiver no ar.
