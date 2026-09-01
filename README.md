@@ -8,31 +8,57 @@ sobre uma arquitetura de camadas, com pack padrão que funciona sem nenhuma cust
 referência que os agentes carregam: comportamento em `system/CONSTITUTION.md`, camadas em
 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), modos de operação e fluxos de manipulação
 em [`docs/MODOS.md`](docs/MODOS.md), fluxos de interface do Hub em
-[`docs/HUB.md`](docs/HUB.md), procedimento em cada `SKILL.md`.
+[`docs/HUB.md`](docs/HUB.md), procedimento em cada `SKILL.md`. A intenção de produto do
+Hub — o que ele é, para quem e o que ainda não existe — está em
+[`docs/PRD.md`](docs/PRD.md), e o discovery que a sustenta em
+[`docs/discovery/`](docs/discovery/00-INDEX.md). O recorte do que entra na primeira versão
+usável — e como ela funciona — está em [`docs/MVP.md`](docs/MVP.md), a tradução dele para
+itens de backlog em [`docs/MVP-BACKLOG.md`](docs/MVP-BACKLOG.md), e as decisões e eixos
+técnicos para começar a desenvolver em [`docs/MVP-TECNICO.md`](docs/MVP-TECNICO.md). Os dois
+consolidados numa fila só, ordenada por release e pronta para virar backlog:
+[`docs/MVP-RELEASES.md`](docs/MVP-RELEASES.md). O registro de **como** esse discovery foi
+conduzido — e a proposta de trazê-lo para dentro da ferramenta como trabalho nomeado — está
+em [`docs/DISCOVERY-DE-PRODUTO.md`](docs/DISCOVERY-DE-PRODUTO.md).
 
 ---
 
 ## Instalar
 
+Na raiz do projeto:
+
 ```bash
-cd <raiz-do-projeto>
-git clone <url-do-harness> .agents
-./.agents/install.sh
+npx straggy-harness
 ```
+
+Antes de publicar no npm, o mesmo comando via GitHub:
+
+```bash
+npx github:gccintra/straggy-harness
+```
+
+Sem Node: `curl -fsSL https://raw.githubusercontent.com/gccintra/straggy-harness/main/get.sh | bash`.
+
+O bootstrap clona o harness em `.agents/` **sem a pasta `docs/`** (discovery, PRD e
+arquitetura de produto ficam no repositório do harness, não no projeto) e roda o
+`install.sh` — que liga os runtimes (Claude, Codex, OpenCode, Cursor CLI), semeia o que
+faltar e gera os adapters. Pin de versão: `HARNESS_REF=<tag> npx straggy-harness`. Para
+materializar `docs/` depois: `git -C .agents sparse-checkout add docs`.
 
 O instalador cria só estes caminhos, nunca sobrescreve arquivo existente, e roda o build:
 
 | Caminho | O que é |
 |---|---|
 | `.claude` / `.codex` / `.opencode` | symlinks → `.agents/runtime/<runtime>` |
+| `.cursor/rules/*.mdc` | symlinks → `.agents/runtime/cursor/rules/` — o `.cursor/` do IDE não é substituído |
 | `sync-context.sh` | symlink → `.agents/sync-context.sh` |
 | `project-config.yaml` | cópia do template — versionado no projeto |
 | `.env` | cópia do `.env.example` — fora do Git (tem segredo) |
 | `.agents/org/` | cópia de `system/pack/org-scaffold/` — **sua camada**, fora do Git do harness |
 
 Requisito: `bash` e `python3` (o build gera os adapters). Ferramentas externas, nenhuma
-obrigatória — cada provider avisa e para se faltar: `gh` ou `glab` autenticado · `pandoc` ·
-`rclone` · `pdftotext` · Node 20+ (protótipo) · cliente CLI do banco.
+obrigatória — cada provider avisa e para se faltar: `gh` ou `glab` autenticado (ou o
+servidor MCP do Linear conectado) · `pandoc` · `rclone` · `pdftotext` · Node 20+
+(protótipo) · cliente CLI do banco.
 
 Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 
@@ -74,7 +100,7 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 ├── skills →             symlink para runtime/skills — ponto de descoberta de skills
 ├── runtime/             build.sh + adapters/ (fonte dos adapters gerados)
 │   ├── skills/          GERADO — visão resolvida que os runtimes leem
-│   └── claude|codex|opencode/  GERADO — a partir dos PERSONA.md resolvidos
+│   └── claude|codex|opencode|cursor/  GERADO — a partir dos PERSONA.md resolvidos
 └── docs/ARCHITECTURE.md referência normativa das camadas
 ```
 
@@ -91,6 +117,7 @@ escreve `runtime/manifest.json` (o catálogo como dado, `docs/ARCHITECTURE.md` �
 | `--fix` | regenera a tabela derivada do `system/ACOES.md` (sem a flag, o build só verifica e reprova se divergiu) |
 | `--strict` | aviso vira reprovação, código de saída 3 — modo de CI |
 | `--org DIR` · `--out DIR` | camada da organização e saída gerada fora dos caminhos padrão |
+| `--env FILE` | `.env` a conferir contra o que a organização preencheu (default: o do projeto) |
 
 Portão humano, contrato de saída e método ficam **fora** de qualquer encaixe: a organização
 não os alcança, então não consegue degradar a qualidade da resposta configurando errado.
@@ -175,7 +202,7 @@ final).
 | Fonte | Como chega | Provider |
 |---|---|---|
 | Google Drive (HUs, regras) | `./sync-context.sh` → `docs/context_docs/md/` | `knowledge/drive-rclone` |
-| Backlog | `BACKLOG_PROVIDER` + chaves do `.env` | `backlog/github-gh` · `backlog/gitlab-glab` |
+| Backlog | `BACKLOG_PROVIDER` + chaves do `.env` | `backlog/github-gh` · `backlog/gitlab-glab` · `backlog/linear-mcp` |
 | Documento final | `DOCS_OUTPUT_PROVIDER` | `docs-output/pandoc-cli` |
 | Banco | `DB_CONNECT_CMD` | `database/cli` |
 | Figma | MCP | `canvas/figma-mcp` |
@@ -210,13 +237,42 @@ Três leis de escrita (detalhe em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 Validação antes do commit:
 
 ```bash
-cd .agents && ./runtime/build.sh
+cd .agents && ./runtime/build.sh --strict
 for d in runtime/skills/*/; do n=$(basename "$d")
   grep -q "^name: $n$" "$d/SKILL.md" || echo "ERRO: $n"; done
 python3 -c "import json; json.load(open('runtime/opencode/opencode.json'))"
+test -f runtime/cursor/rules/harness.mdc
 python3 -m py_compile runtime/adapters/render.py
-bash -n install.sh runtime/build.sh
+bash -n install.sh get.sh runtime/build.sh
 ```
+
+Isso é a **camada de contrato**: determinística, de graça, e é o que pega duas declarações
+discordando em silêncio — encaixe preenchido sob provider que não suporta a capacidade,
+fonte de eval citando ação renomeada, ação sem contraprova de gatilho.
+
+A **camada de comportamento** (o gatilho dispara no pedido certo, e não no do vizinho)
+precisa de um runtime executando, e roda à parte:
+
+```bash
+./.agents/runtime/eval.sh                        # harness inteiro
+./.agents/runtime/eval.sh --skill doc-final-generator
+./.agents/runtime/eval.sh --tipo modo-degradado --runner codex-exec
+```
+
+Toda corrida grava `runtime/evals/<carimbo>/` com `resultado.json` (o que CI consome) e
+`report.html` (o que gente lê — taxa, estados, cobertura do gatilho por ação).
+
+Quem executa é o provider `eval-runner` — `claude-headless` (default), `codex-exec`,
+`opencode-run`, `claude-plugin-eval`. Só a Claude expõe **qual skill engajou**, então caso de
+roteamento só roda nela; os de modo degradado rodam nos três. Capacidade que falta vira caso
+**NÃO-RODADO**, nunca verde.
+
+A fonte versionada é neutra — `<workflow>/evals/<caso>/caso.yaml`, no vocabulário do harness.
+Cada implementação a lê do seu jeito; editar o que `render.py` gera em `runtime/skills/` é
+trabalho que o próximo build apaga.
+
+Suíte verde não prova nada por si — quebre o gatilho de propósito e confira que o caso fica
+vermelho. Formato, pareamento e as três provas: `docs/ARCHITECTURE.md` §9.
 
 Commit é sempre manual, via `@committer`.
 
@@ -230,7 +286,7 @@ Declarado de propósito, para ninguém descobrir no meio do trabalho:
 - **Língua do pack é PT-BR.** Descrições de skill (que fazem o roteamento), formatos e
   prosa. Organização que trabalha noutro idioma declara em `org/ORG.md` §1 e sobrescreve
   os encaixes de formato — a moldura das skills continua em PT-BR.
-- **Providers com implementação hoje:** backlog (`gh`, `glab`), documento final (`pandoc`),
+- **Providers com implementação hoje:** backlog (`gh`, `glab`, Linear via MCP), documento final (`pandoc`),
   conhecimento (Drive + rclone), banco (qualquer cliente CLI), canvas (Figma). Outra
   ferramenta = implementação nova em `org/providers/`, sob a mesma `INTERFACE.md` — nunca
   fork do core.
