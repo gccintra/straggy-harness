@@ -32,3 +32,11 @@ runtime/claude/agents/
 runtime/claude/commands/
 runtime/codex/agents/
 runtime/opencode/opencode.json
+runtime/cursor/rules/
+
+# Plantio local do Cursor CLI quando este repo É o projeto (gerado pelo build).
+# No projeto consumidor o install.sh planta em <projeto>/.cursor/rules/harness.
+/.cursor/
+
+# Resultados de eval — gerados por runtime/eval.sh (report.html + resultado.json)
+runtime/evals/

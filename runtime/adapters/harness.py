@@ -29,6 +29,18 @@ SCHEMA = 1
 TIPOS_ENCAIXE = ("texto-longo", "arquivo", "imagem", "script", "estrutura")
 TIPO_ESTRUTURA = "estrutura"
 
+# Tipos de caso de eval. Fechado como os tipos de encaixe: tipo novo exige um
+# renderizador que saiba traduzi-lo para cada runtime (docs/ARCHITECTURE.md §9).
+TIPO_ROTEAMENTO, TIPO_DEGRADADO = "roteamento", "modo-degradado"
+TIPOS_CASO = (TIPO_ROTEAMENTO, TIPO_DEGRADADO)
+
+# A fonte do caso é neutra: descreve a intenção no vocabulário do harness (ação, provider),
+# nunca a tool de um runtime. O artefato de cada runner é gerado a partir dela.
+ARQUIVO_CASO = "caso.yaml"
+
+# Ação que ninguém atende — a frase existe justamente para não ser atendida.
+ACAO_NENHUMA = "nenhuma"
+
 ERRO, AVISO = "erro", "aviso"
 
 
@@ -154,6 +166,12 @@ def frontmatter(path):
     return campos, m.group(2).strip()
 
 
+def carregar_yaml(path):
+    """Documento YAML solto (sem as cercas `---` do frontmatter). Mesmo subconjunto."""
+    campos, _ = _mapa(_tokenizar(pathlib.Path(path).read_text(encoding="utf-8")), 0, 0)
+    return campos
+
+
 # ── Normalização das declarações ──────────────────────────────────────────────
 # Toda declaração aceita forma curta (string) e forma longa (mapa). A curta serve o
 # modo repositório, onde ninguém precisa de rótulo; a longa alimenta a interface.
@@ -179,7 +197,8 @@ def normalizar_acao(valor):
 
 
 def normalizar_encaixes(valor):
-    """{nome: caminho} ou {nome: {caminho, rotulo, ajuda, tipo, schema, essencial}} → lista."""
+    """{nome: caminho} ou {nome: {caminho, rotulo, ajuda, tipo, schema, capacidade,
+    essencial}} → lista."""
     if not isinstance(valor, dict):
         return []
     encaixes = []
@@ -192,6 +211,7 @@ def normalizar_encaixes(valor):
                 "ajuda": str(corpo.get("ajuda", "")).strip(),
                 "tipo": str(corpo.get("tipo", "")).strip() or "texto-longo",
                 "schema": str(corpo.get("schema", "")).strip(),
+                "capacidade": str(corpo.get("capacidade", "")).strip(),
                 "essencial": corpo.get("essencial") is True,
                 "completo": bool(str(corpo.get("rotulo", "")).strip()
                                  and str(corpo.get("ajuda", "")).strip()
@@ -200,10 +220,24 @@ def normalizar_encaixes(valor):
         else:
             encaixes.append({
                 "id": nome, "caminho": str(corpo).strip(), "rotulo": _rotulo_de(nome),
-                "ajuda": "", "tipo": "texto-longo", "schema": "", "essencial": False,
+                "ajuda": "", "tipo": "texto-longo", "schema": "", "capacidade": "",
+                "essencial": False,
                 "completo": False,
             })
     return sorted(encaixes, key=lambda e: e["id"])
+
+
+def normalizar_provider(valor):
+    """Provider que o workflow exige (ARCHITECTURE §4.4): domínio, variável que seleciona
+    a implementação e capacidade mínima da ação."""
+    if not isinstance(valor, dict):
+        return None
+    dominio = str(valor.get("dominio", "")).strip()
+    if not dominio:
+        return None
+    return {"dominio": dominio,
+            "selecao": str(valor.get("selecao", "")).strip(),
+            "capacidade": str(valor.get("capacidade", "")).strip()}
 
 
 def normalizar_artefato(valor):
@@ -251,6 +285,44 @@ def carregar_resolucao(texto):
     return sorted(linhas, key=lambda w: w["nome"])
 
 
+def carregar_env(caminho):
+    """`.env` do projeto como {chave: valor}, ou None quando não há projeto configurado.
+
+    None e {} são estados diferentes: sem arquivo não existe instância para julgar (o build
+    roda assim no produto, com `--out` fora do projeto); arquivo vazio é instância que não
+    escolheu nada, e aí o default de cada interface vale.
+    """
+    arquivo = pathlib.Path(caminho) if caminho else None
+    if not arquivo or not arquivo.is_file():
+        return None
+    valores = {}
+    for linha in arquivo.read_text(encoding="utf-8", errors="replace").splitlines():
+        linha = linha.strip()
+        if not linha or linha.startswith("#") or "=" not in linha:
+            continue
+        chave, _, bruto = linha.partition("=")
+        valor = bruto.strip()
+        if len(valor) >= 2 and valor[0] == valor[-1] and valor[0] in "\"'":
+            valor = valor[1:-1]
+        valores[chave.strip()] = valor
+    return valores
+
+
+def resolver_implementacao(implementacoes, valor):
+    """Qual implementação o valor da variável de seleção ativa.
+
+    Vazio → a que se declara `default`. Preenchido → casa por `selecao`, ou pelo id do
+    arquivo para implementação que ainda não declara a sua. Nada casa → None, e quem chama
+    decide se isso é gate da INTERFACE ou valor errado.
+    """
+    if not valor:
+        return next((i for i in implementacoes if i.get("default")), None)
+    for impl in implementacoes:
+        if impl.get("selecao") == valor or impl["id"] == valor:
+            return impl
+    return None
+
+
 def carregar_workflows(resolucao):
     for wf in resolucao:
         skill = pathlib.Path(wf["resolvido"]) / "SKILL.md"
@@ -259,6 +331,7 @@ def carregar_workflows(resolucao):
         wf["campos"] = campos
         wf["acao"] = normalizar_acao(campos.get("acao"))
         wf["encaixes"] = normalizar_encaixes(campos.get("encaixes"))
+        wf["provider"] = normalizar_provider(campos.get("provider"))
         wf["produz"] = normalizar_artefato(campos.get("produz"))
         wf["requer"] = [a for a in (normalizar_artefato(v)
                                     for v in _lista(campos.get("requer"))) if a]
@@ -269,6 +342,7 @@ def carregar_workflows(resolucao):
             if isinstance(item, dict) and item.get("artefato") and item.get("quando")
         ]
         wf["persona"] = (pathlib.Path(wf["resolvido"]) / "PERSONA.md").exists()
+        wf["evals"] = carregar_evals(wf["resolvido"])
     return resolucao
 
 
@@ -321,13 +395,54 @@ def descobrir_providers(*diretorios):
                                           for c in _lista(campos.get("capacidades"))),
                     "requisitos": normalizar_requisitos(campos.get("requisitos")),
                     "declarado": bool(campos.get("requisitos")),
+                    "selecao": str(campos.get("selecao", "")).strip(),
+                    "default": campos.get("default") is True,
                 })
     return [{"id": nome, "implementacoes": dominios[nome]} for nome in sorted(dominios)]
 
 
+def _inteiro(valor):
+    """Escalar de frontmatter como int, ou None. O parser devolve texto: sem isto,
+    `min: 0` nunca é reconhecido como zero."""
+    if isinstance(valor, bool) or valor is None:
+        return None
+    if isinstance(valor, int):
+        return valor
+    texto = str(valor).strip()
+    return int(texto) if texto.isdigit() else None
+
+
+def carregar_evals(dir_workflow):
+    """Casos de eval de um workflow resolvido: `evals/<caso>/caso.yaml`.
+
+    A fonte é neutra por decisão de arquitetura (§9): declara a intenção — que ação deve
+    atender a frase, quem não pode sequestrá-la, qual provider ausente deve travar — e
+    nunca o formato de um runner. `render.py` traduz para cada runtime, do mesmo jeito que
+    PERSONA.md vira agente de Claude, Codex, opencode e Cursor.
+    """
+    raiz = pathlib.Path(dir_workflow) / "evals"
+    if not raiz.is_dir():
+        return []
+    casos = []
+    for pasta in sorted(p for p in raiz.iterdir() if p.is_dir()):
+        arquivo = pasta / ARQUIVO_CASO
+        campos = carregar_yaml(arquivo) if arquivo.is_file() else {}
+        casos.append({
+            "id": pasta.name,
+            "tem_fonte": arquivo.is_file(),
+            "tipo": str(campos.get("tipo", "")).strip(),
+            "frase": str(campos.get("frase", "")).strip(),
+            "atende": str(campos.get("atende", "")).strip(),
+            "confunde_com": [str(a).strip() for a in _lista(campos.get("confunde_com"))],
+            "provider": str(campos.get("provider", "")).strip(),
+            "motivo": str(campos.get("motivo", "")).strip(),
+        })
+    return casos
+
+
 # ── Validação ─────────────────────────────────────────────────────────────────
 
-def validar(workflows, dir_pack, dir_schemas=""):
+def validar(workflows, dir_pack, dir_schemas="", providers=(), env=None):
     """Devolve lista de (severidade, mensagem). Erro reprova o build sempre."""
     problemas = []
     pack = pathlib.Path(dir_pack)
@@ -422,6 +537,8 @@ def validar(workflows, dir_pack, dir_schemas=""):
                           f"pelo pack (ARCHITECTURE §7).")
 
     problemas += _validar_esteira(workflows)
+    problemas += _validar_providers(workflows, providers, env)
+    problemas += _validar_evals(workflows)
     return problemas
 
 
@@ -474,6 +591,155 @@ def _validar_esteira(workflows):
 
 # ── Manifesto ─────────────────────────────────────────────────────────────────
 
+def _validar_providers(workflows, providers, env):
+    """A implementação ativa suporta o que a ação — e o que a organização preencheu —
+    exigem (ARCHITECTURE §4.4).
+
+    Existe porque encaixe preenchido e provider selecionado são duas declarações separadas
+    que podem discordar em silêncio: a organização ships um gerador de layout próprio, a
+    variável continua apontando a implementação genérica, e o build passava sem dizer nada.
+    """
+    if env is None:
+        return []
+    por_dominio = {p["id"]: p["implementacoes"] for p in providers}
+    problemas = []
+    for wf in workflows:
+        prov = wf.get("provider")
+        if not prov:
+            continue
+        nome = wf["nome"]
+        implementacoes = por_dominio.get(prov["dominio"])
+        if implementacoes is None:
+            problemas.append((ERRO, f"'{nome}': provider '{prov['dominio']}' não existe "
+                                    f"em system/providers/."))
+            continue
+        if not prov["selecao"]:
+            continue
+        valor = env.get(prov["selecao"], "").strip()
+        # 'none' é escolha explícita de não ter a ferramenta — a INTERFACE já manda parar
+        # e avisar. Não é divergência de configuração.
+        if valor == "none":
+            continue
+        ativa = resolver_implementacao(implementacoes, valor)
+        if ativa is None:
+            if valor:
+                problemas.append((AVISO,
+                    f"'{prov['selecao']}={valor}' não corresponde a nenhuma implementação "
+                    f"de '{prov['dominio']}' — '{nome}' cai no gate da INTERFACE."))
+            continue
+        exigidas = [(prov["capacidade"], "a ação")]
+        exigidas += [(e["capacidade"], f"o encaixe '{e['id']}'") for e in wf["encaixes"]
+                     if e.get("capacidade") and e.get("preenchido")]
+        origem_valor = valor or "<vazio>"
+        for capacidade, quem in exigidas:
+            if capacidade and capacidade not in ativa["capacidades"]:
+                problemas.append((AVISO,
+                    f"'{nome}': {quem} exige a capacidade '{capacidade}', e a "
+                    f"implementação ativa ('{ativa['id']}', por "
+                    f"{prov['selecao']}={origem_valor}) não a declara — aponte "
+                    f"{prov['selecao']} para uma implementação que a suporte."))
+    return problemas
+
+
+def _validar_evals(workflows):
+    """Toda ação tem frase que a aciona e frase que ela NÃO pode sequestrar.
+
+    O build não roda eval — isso é do runner, custa modelo e sai caro. O que ele faz é a
+    parte determinística: fonte incompleta, ação citada que não existe, e — o que importa
+    mais — **cobertura dos dois lados**. Suíte que só afirma "esta frase aciona" mede
+    metade: o modo de falha caro é a skill disparar no pedido do vizinho, e esse só
+    aparece quando alguma frase declara quem não pode atendê-la.
+    """
+    problemas = []
+    por_acao = {wf["acao"]["id"]: wf for wf in workflows
+                if wf["acao"] and wf["acao"]["id"]}
+    atendidas, contraprovadas = set(), set()
+
+    for wf in workflows:
+        nome = wf["nome"]
+        if not wf["acao"] or not wf["acao"]["id"]:
+            continue
+        acao = wf["acao"]["id"]
+
+        for antigo in ("evals.json", "prompt.md"):
+            achados = sorted(pathlib.Path(wf["resolvido"]).glob(f"evals/**/{antigo}"))
+            if achados:
+                problemas.append((ERRO, f"'{nome}/evals': '{antigo}' é artefato de runner, "
+                                        f"agora gerado em runtime/skills/. A fonte "
+                                        f"versionada é {ARQUIVO_CASO} "
+                                        f"(docs/ARCHITECTURE.md §9)."))
+                break
+
+        for caso in wf["evals"]:
+            alvo = f"'{nome}/evals/{caso['id']}'"
+            if not caso["tem_fonte"]:
+                problemas.append((ERRO, f"{alvo}: sem {ARQUIVO_CASO}."))
+                continue
+            if caso["tipo"] not in TIPOS_CASO:
+                problemas.append((ERRO, f"{alvo}: tipo '{caso['tipo'] or '—'}' desconhecido "
+                                        f"(use {' | '.join(TIPOS_CASO)})."))
+                continue
+            if not caso["frase"]:
+                problemas.append((ERRO, f"{alvo}: sem 'frase' — não há o que mandar."))
+
+            atende, invalida = caso["atende"], False
+            if atende and atende != ACAO_NENHUMA and atende not in por_acao:
+                problemas.append((ERRO, f"{alvo}: 'atende: {atende}' não é ação declarada."))
+                atende, invalida = "", True
+            for rival in caso["confunde_com"]:
+                if rival not in por_acao:
+                    problemas.append((ERRO, f"{alvo}: 'confunde_com: {rival}' não é ação "
+                                            f"declarada."))
+                elif rival == atende:
+                    problemas.append((ERRO, f"{alvo}: '{rival}' aparece em 'atende' e em "
+                                            f"'confunde_com' — o caso se contradiz."))
+                else:
+                    contraprovadas.add(rival)
+
+            if caso["tipo"] == TIPO_DEGRADADO:
+                if not caso["provider"]:
+                    problemas.append((ERRO, f"{alvo}: tipo '{TIPO_DEGRADADO}' exige "
+                                            f"'provider: <domínio>'."))
+                elif not wf["provider"]:
+                    problemas.append((ERRO, f"{alvo}: testa ausência de provider, mas "
+                                            f"'{nome}' não declara 'provider:' no "
+                                            f"frontmatter — não há regime a provar."))
+                elif wf["provider"]["dominio"] != caso["provider"]:
+                    problemas.append((ERRO, f"{alvo}: provider '{caso['provider']}' "
+                                            f"diverge do declarado por '{nome}' "
+                                            f"('{wf['provider']['dominio']}')."))
+
+            if atende == ACAO_NENHUMA:
+                if not caso["confunde_com"]:
+                    problemas.append((ERRO, f"{alvo}: 'atende: {ACAO_NENHUMA}' sem "
+                                            f"'confunde_com' — a frase não prova nada."))
+                continue
+            if not atende:
+                if not invalida:
+                    problemas.append((ERRO, f"{alvo}: sem 'atende'."))
+            elif atende != acao:
+                # A fonte mora com quem atende a frase: é lá que ela é mantida quando o
+                # gatilho muda. Espalhada, ninguém acha na hora de corrigir.
+                problemas.append((ERRO, f"{alvo}: 'atende: {atende}' é de "
+                                        f"'{por_acao[atende]['nome']}' — a fonte mora no "
+                                        f"workflow que atende a frase."))
+            else:
+                atendidas.add(acao)
+
+    for wf in workflows:
+        if not wf["acao"] or not wf["acao"]["id"] or wf["persona"]:
+            continue
+        acao, nome = wf["acao"]["id"], wf["nome"]
+        if acao not in atendidas:
+            problemas.append((AVISO, f"'{nome}': nenhuma frase declara 'atende: {acao}' — "
+                                     f"a ação entrega sem prova de que o gatilho dispara "
+                                     f"(docs/ARCHITECTURE.md §9)."))
+        if acao not in contraprovadas:
+            problemas.append((AVISO, f"'{nome}': nenhuma frase de outra ação declara "
+                                     f"'confunde_com: {acao}' — gatilho sem contraprova."))
+    return problemas
+
+
 def manifesto(workflows, personas, providers, release):
     """Catálogo como dado. Determinístico: sem timestamp, chaves e listas ordenadas.
 
@@ -489,7 +755,8 @@ def manifesto(workflows, personas, providers, release):
         condicoes.update(c["quando"] for c in wf["requer_condicional"])
         encaixes = [{
             "id": e["id"], "rotulo": e["rotulo"], "ajuda": e["ajuda"], "tipo": e["tipo"],
-            "schema": e.get("schema", ""), "essencial": e["essencial"],
+            "schema": e.get("schema", ""), "capacidade": e.get("capacidade", ""),
+            "essencial": e["essencial"],
             "padrao": e.get("padrao", "nenhum"),
             "preenchido": e.get("preenchido", False),
         } for e in wf["encaixes"]]
@@ -503,6 +770,7 @@ def manifesto(workflows, personas, providers, release):
             "gatilho": str(wf["campos"].get("description", "")).strip(),
             "tipo": "persona" if wf["persona"] else "trabalho",
             "encaixes": encaixes,
+            "provider": wf["provider"],
             "produz": wf["produz"]["id"] if wf["produz"] else None,
             "requer": sorted(a["id"] for a in wf["requer"]),
             "requer_condicional": sorted(wf["requer_condicional"],
@@ -599,7 +867,8 @@ def main():
 
     problemas = [(AVISO, linha) for linha
                  in os.environ.get("RESOLUCAO_AVISOS", "").splitlines() if linha.strip()]
-    problemas += validar(workflows, dir_pack, os.environ.get("SCHEMAS_DIR", ""))
+    problemas += validar(workflows, dir_pack, os.environ.get("SCHEMAS_DIR", ""),
+                         providers, carregar_env(os.environ.get("ENV_FILE", "")))
 
     if os.environ.get("HARNESS_LIST") == "1":
         print(f"{'WORKFLOW':<26} {'ORIGEM':<14} {'AÇÃO':<26} ENCAIXES PREENCHIDOS")

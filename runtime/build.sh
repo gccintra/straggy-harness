@@ -2,7 +2,7 @@
 # Gera a visão resolvida do harness para os runtimes:
 #   <runtime>/skills/        — workflows (system ∪ pack ∪ org), regra em docs/ARCHITECTURE.md §3 e §7
 #   <runtime>/manifest.json  — o catálogo como dado (docs/ARCHITECTURE.md §8)
-#   <runtime>/claude|codex|opencode/ — adapters, a partir dos PERSONA.md resolvidos
+#   <runtime>/claude|codex|opencode|cursor/ — adapters, a partir dos PERSONA.md resolvidos
 # Rode depois de criar, renomear, desabilitar ou sobrescrever qualquer workflow ou persona.
 #
 # Divisão de trabalho: este script resolve o sistema de arquivos; runtime/adapters/harness.py
@@ -14,6 +14,8 @@
 #   --fix           regenera o bloco derivado de system/ACOES.md
 #   --org  DIR      raiz da camada da organização   (env: HARNESS_ORG_DIR)
 #   --out  DIR      raiz da saída gerada            (env: HARNESS_OUT_DIR)
+#   --env  FILE     .env do projeto, lido só para conferir se o provider selecionado
+#                   suporta o que a organização preencheu   (env: HARNESS_ENV_FILE)
 #
 # Códigos de saída: 0 ok · 2 uso incorreto · 3 contrato reprovado.
 set -euo pipefail
@@ -28,6 +30,9 @@ SCHEMAS_DIR="$HARNESS_DIR/system/schemas"
 
 ORG_ROOT="${HARNESS_ORG_DIR:-$HARNESS_DIR/org}"
 RUNTIME_DIR="${HARNESS_OUT_DIR:-$HARNESS_DIR/runtime}"
+# O harness mora em <projeto>/.agents/; ausente (produto, CI), a checagem de provider
+# simplesmente não roda — não há instância para julgar.
+ENV_FILE="${HARNESS_ENV_FILE:-$HARNESS_DIR/../.env}"
 LIST=0
 HARNESS_STRICT="${HARNESS_STRICT:-0}"
 HARNESS_FIX="${HARNESS_FIX:-0}"
@@ -39,8 +44,9 @@ while [ $# -gt 0 ]; do
     --fix)    HARNESS_FIX=1 ;;
     --org)    ORG_ROOT="${2:?--org exige um caminho}"; shift ;;
     --out)    RUNTIME_DIR="${2:?--out exige um caminho}"; shift ;;
-    -h|--help) sed -n '2,20p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
-    *) echo "uso: build.sh [--list] [--strict] [--fix] [--org DIR] [--out DIR]" >&2; exit 2 ;;
+    --env)    ENV_FILE="${2:?--env exige um caminho}"; shift ;;
+    -h|--help) sed -n '2,22p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    *) echo "uso: build.sh [--list] [--strict] [--fix] [--org DIR] [--out DIR] [--env FILE]" >&2; exit 2 ;;
   esac
   shift
 done
@@ -61,6 +67,9 @@ list_names() {
 }
 
 # Copia a árvore de $1 para $OUT_DIR/$2 como symlinks por arquivo (override por caminho).
+# Sempre por arquivo, nunca symlink da pasta inteira: a saída recebe artefato gerado
+# (os casos de eval de cada runner) e um link de diretório faria essa escrita atravessar
+# de volta para dentro de system/ ou org/ — a fonte versionada mutando sozinha a cada build.
 overlay() {
   local src="$1" name="$2" rel
   (cd "$src" && find . \( -type f -o -type l \) -print) | sed 's|^\./||' | while read -r rel; do
@@ -83,7 +92,7 @@ for name in $(list_names); do
     if [ -d "$org" ] || [ -d "$pack" ]; then
       avisos_resolucao+="'$name' é workflow de sistema (não-forkável) — override ignorado."$'\n'
     fi
-    ln -sfn "$(abs "$sys")" "$OUT_DIR/$name"
+    overlay "$sys" "$name"
     origin="sistema"
   elif [ -d "$org" ] && [ -f "$org/DISABLED" ]; then
     continue
@@ -93,10 +102,10 @@ for name in $(list_names); do
     overlay "$org" "$name"
     origin="pack+encaixes"; pack_ref="$(abs "$pack")"; org_ref="$(abs "$org")"
   elif [ -d "$pack" ]; then
-    ln -sfn "$(abs "$pack")" "$OUT_DIR/$name"
+    overlay "$pack" "$name"
     origin="pack"; pack_ref="$(abs "$pack")"
   else
-    ln -sfn "$(abs "$org")" "$OUT_DIR/$name"
+    overlay "$org" "$name"
     origin="org"; org_ref="$(abs "$org")"
   fi
 
@@ -118,7 +127,7 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 
 export HARNESS_DIR ADAPTERS_DIR OUT_DIR RUNTIME_DIR PACK_DIR MANIFEST ACOES
-export PROVIDERS_DIR ORG_PROVIDERS_DIR SCHEMAS_DIR
+export PROVIDERS_DIR ORG_PROVIDERS_DIR SCHEMAS_DIR ENV_FILE
 export HARNESS_STRICT HARNESS_FIX
 export HARNESS_LIST="$LIST"
 export RESOLUCAO_AVISOS="$avisos_resolucao"
@@ -128,7 +137,53 @@ export RESOLUCAO_AVISOS="$avisos_resolucao"
 # convivendo com skills novas — pior que o problema que a validação denuncia.
 codigo=0
 printf '%s' "$resolucao" | python3 "$ADAPTERS_DIR/harness.py" || codigo=$?
+
+# A tabela de resolução atravessa por arquivo para o render (o stdin dele é o do build) —
+# render_evals_* precisa dos mesmos workflows que a validação viu.
+RESOLUCAO="$(mktemp)"; export RESOLUCAO
+trap 'rm -f "$RESOLUCAO"' EXIT
+printf '%s' "$resolucao" > "$RESOLUCAO"
 personas=$(python3 "$ADAPTERS_DIR/render.py")
+
+# Planta os .mdc gerados. Arquivo regular do usuário não é tocado; symlink nosso
+# é atualizado — persona nova aparece no rebuild, sem re-install.
+plant_cursor_rules() {
+  local dest_dir="$1" target_prefix="$2" src="$RUNTIME_DIR/cursor/rules"
+  local f base dest
+  mkdir -p "$dest_dir"
+  [ -d "$src" ] || return 0
+  for f in "$src"/*.mdc; do
+    [ -f "$f" ] || continue
+    base="$(basename "$f")"
+    dest="$dest_dir/$base"
+    if [ -e "$dest" ] && [ ! -L "$dest" ]; then
+      continue
+    fi
+    ln -sfn "$target_prefix/$base" "$dest"
+  done
+}
+
+# Este repo é o projeto → .cursor/ aqui. Nested em .agents/ → projeto pai.
+# --out é sandbox — não planta.
+plant_cursor_discovery() {
+  [ "$RUNTIME_DIR" = "$HARNESS_DIR/runtime" ] || return 0
+  [ -w "$HARNESS_DIR" ] || return 0
+
+  if [ "$(basename "$HARNESS_DIR")" = ".agents" ]; then
+    local projeto
+    projeto="$(cd "$HARNESS_DIR/.." && pwd)"
+    [ -d "$projeto/.git" ] || return 0
+    plant_cursor_rules "$projeto/.cursor/rules" ".agents/runtime/cursor/rules"
+    return 0
+  fi
+
+  plant_cursor_rules "$HARNESS_DIR/.cursor/rules" "../../runtime/cursor/rules"
+  local skills="$HARNESS_DIR/.cursor/skills"
+  if [ ! -e "$skills" ] || [ -L "$skills" ]; then
+    ln -sfn ../runtime/skills "$skills"
+  fi
+}
+plant_cursor_discovery
 
 echo "skills: $count workflow(s) resolvido(s) em $OUT_DIR"
 echo "adapters: $personas"
