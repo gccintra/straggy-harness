@@ -5,13 +5,19 @@ nunca a ferramenta: nada de comando, endpoint ou variável de fornecedor em work
 
 ## Seleção da implementação
 
-`BACKLOG_PROVIDER` no `.env` decide quem atende: `github` · `gitlab` · `none`
-(`jira`, `hub`: quando as implementações existirem).
+`BACKLOG_PROVIDER` no `.env` decide quem atende: `github` · `gitlab` · `linear` · `none`
+(`jira`, `azure`: quando as implementações existirem).
+
+O backlog é **sempre** de uma ferramenta externa. O produto não tem backlog próprio — é
+decisão de escopo, não pendência (`docs/discovery/18-moscow.md`, "Recusa de escopo").
 
 - Não definido → **compatibilidade**: `GITLAB_ENABLED=true` equivale a
   `BACKLOG_PROVIDER=gitlab`; qualquer outro valor equivale a `none`.
 - Implementações do sistema: **`github-gh.md`** (`gh` CLI) · **`gitlab-glab.md`** (`glab`
-  CLI, com receitas de export em lote em `recipes/`).
+  CLI) · **`linear-mcp.md`** (servidor MCP do Linear). Receitas de export em lote em
+  `recipes/`, uma por implementação; o cálculo que roda sobre o CSV é agnóstico de
+  ferramenta (`recipes/analise-funil.md`, `recipes/burndown-local.md`) e não se duplica por
+  provider.
 - Implementação própria da organização: `org/providers/backlog/<nome>.md`, sob esta mesma
   interface (`docs/ARCHITECTURE.md` §3).
 
@@ -27,7 +33,8 @@ nunca a ferramenta: nada de comando, endpoint ou variável de fornecedor em work
 | comentar demanda | **E** | `comments` |
 | fechar/reabrir demanda | **E** | `core` |
 | atualizar bloco estruturado dentro da descrição | **E** | `description-block` |
-| listar/criar/editar/fechar sprint | L / **E** | `sprints` |
+| listar sprint, mover demanda entre sprints, documentar sprint | L / **E** | `sprints` |
+| criar/editar/fechar sprint | **E** | `sprints-write` |
 | listar/criar labels | L / **E** | `labels` |
 | listar/criar/atualizar página de wiki | L / **E** | `wiki` |
 
@@ -44,13 +51,18 @@ usuário — nunca tentativa de comando que vai falhar, nunca contorno silencios
 implementação ativa e ofereça repetir. Nunca contorne autenticação, nunca resuma o erro a
 "deu problema".
 
-| Capacidade | `github-gh` | `gitlab-glab` |
-|---|---|---|
-| `core` · `comments` · `description-block` · `sprints` · `labels` · `bulk-export` | sim | sim |
-| `wiki` | **não** (wiki do GitHub é repo Git separado, sem API no `gh`) | sim |
+| Capacidade | `github-gh` | `gitlab-glab` | `linear-mcp` |
+|---|---|---|---|
+| `core` · `comments` · `description-block` · `sprints` · `labels` · `bulk-export` | sim | sim | sim |
+| `sprints-write` | sim (milestone) | sim (milestone) | **não** (ciclo é gerado pela cadência do time; a API não cria nem fecha) |
+| `wiki` | **não** (wiki do GitHub é repo Git separado, sem API no `gh`) | sim | sim (documents) |
 
 > "Este backlog (`<provider>`) não tem wiki. Publique o conteúdo noutro destino ou
 > registre localmente."
+
+Capacidade que falta a **uma operação** de um workflow que declara a capacidade mínima
+(sprint-ops declara `sprints` e faz operações de `sprints-write`) segue a mesma regra: a
+operação indisponível é informada e as outras seguem — nunca comando que vai falhar.
 
 ## Gate e modo degradado — definido AQUI, uma vez
 

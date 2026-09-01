@@ -1,5 +1,6 @@
 ---
-capacidades: [core, comments, description-block, sprints, labels, wiki, bulk-export]
+selecao: gitlab
+capacidades: [core, comments, description-block, sprints, sprints-write, labels, wiki, bulk-export]
 requisitos:
   binarios: [glab]
   variaveis: [GITLAB_HOST, GITLAB_URI, GITLAB_REPO, GITLAB_TOKEN]
@@ -13,11 +14,12 @@ raciocínio). A seleção do provider, o gate e o modo degradado estão na `INTE
 não se repetem aqui.
 
 **Ativa quando** `BACKLOG_PROVIDER=gitlab` (ou, por compatibilidade, `GITLAB_ENABLED=true`).
-**Capacidades:** `core` · `comments` · `description-block` · `sprints` (milestones) ·
-`labels` · `wiki` · `bulk-export`.
+**Capacidades:** `core` · `comments` · `description-block` · `sprints` e `sprints-write`
+(milestones) · `labels` · `wiki` · `bulk-export`.
 **Variáveis da instância:** `GITLAB_HOST`, `GITLAB_URI`, `GITLAB_REPO`, `GITLAB_TOKEN`.
 **Receitas de export em lote:** `recipes/gitlab-glab-analysis.md` (priorização),
-`recipes/gitlab-glab-burndown.md` (métricas e burndown).
+`recipes/gitlab-glab-burndown.md` (métricas e burndown). O que roda depois, sobre o CSV, é
+agnóstico de ferramenta: `recipes/analise-funil.md` e `recipes/burndown-local.md`.
 
 
 > Reference version: glab 1.95.0+  

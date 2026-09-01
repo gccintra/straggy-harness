@@ -1,5 +1,6 @@
 ---
-capacidades: [core, comments, description-block, sprints, labels, bulk-export]
+selecao: github
+capacidades: [core, comments, description-block, sprints, sprints-write, labels, bulk-export]
 requisitos:
   binarios: [gh]
   variaveis: [GITHUB_REPO, GITHUB_TOKEN]
@@ -13,8 +14,8 @@ bem-vindo aqui — sintaxe de ferramenta é fato, não raciocínio. Seleção do
 modo degradado moram na `INTERFACE.md` e não se repetem aqui.
 
 **Ativa quando** `BACKLOG_PROVIDER=github`.
-**Capacidades:** `core` · `comments` · `description-block` · `sprints` (milestones) ·
-`labels` · `bulk-export`.
+**Capacidades:** `core` · `comments` · `description-block` · `sprints` e `sprints-write`
+(milestones) · `labels` · `bulk-export`.
 **Não suporta:** `wiki` — a wiki do GitHub é um repositório Git separado, sem API no `gh`.
 Workflow que exige `wiki` deve informar indisponibilidade (ver `INTERFACE.md`).
 **Variáveis da instância:** `GITHUB_REPO` (`OWNER/REPO`), `GITHUB_TOKEN` (ou `gh auth
