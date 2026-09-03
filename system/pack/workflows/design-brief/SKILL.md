@@ -14,6 +14,13 @@ acao:
   id: analisar-demanda-de-tela
   rotulo: Analisar demanda de tela
   descricao: analisa o que a demanda vira na interface, antes do código
+objetivo: Descobrir o que a demanda vira na interface, e o que ela quebra, antes de alguém escrever JSX.
+entrega:
+  - a análise na conversa — superfície de tela, o que o protótipo já tem, navegação, estados, impacto no que existe e pendências de produto
+  - opcional `{caminhos.pasta_por_demanda}{ID}_design.md`, o plano que a construção da tela consome
+portoes:
+  - PARA na conversa e itera ali — é ordens de grandeza mais barato que iterar em JSX
+  - o documento é opt-in (write-gate); vira obrigatório só quando a demanda tem ID e vai virar documento consolidado
 encaixes:
   procedimento:
     caminho: references/procedimento.md

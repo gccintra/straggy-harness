@@ -6,6 +6,7 @@ description: >
   FRAGMENTOS HTML em disco. Devolve o caminho de cada fragmento, o índice de seções e os chutes.
   Existe SÓ para o caso em que o node estoura — mantém o dump (80k+) fora do contexto principal.
   É invocada como SUBAGENTE pela `design-screen` (caminho B) — não é gatilho direto do usuário.
+objetivo: Transcrever node grande do Figma para HTML em disco, queimando o contexto num subagente em vez da thread principal.
 ---
 
 # figma-node-reader

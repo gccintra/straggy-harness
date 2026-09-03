@@ -13,6 +13,7 @@ acao:
   id: persona-design
   rotulo: Persona de design
   descricao: a persona de design do projeto
+objetivo: A persona de design do projeto — pensa interface, fluxo e design system, e escreve o código do protótipo.
 ---
 
 # product-designer — persona (pack padrão)

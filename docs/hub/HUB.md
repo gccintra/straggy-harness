@@ -1,8 +1,9 @@
 # Hub — fluxos de interface
 
-Especificação de produto do **modo aplicativo**. Arquitetura e precedência de camadas:
-[`ARCHITECTURE.md`](ARCHITECTURE.md). Quem manipula o quê em cada modo e o contrato de
-portabilidade: [`MODOS.md`](MODOS.md). Catálogo público: [`../system/ACOES.md`](../system/ACOES.md).
+Especificação de produto do **modo aplicativo**. Intenção do produto — problema, personas,
+escopo e o que ainda não existe: [`PRD.md`](PRD.md). Arquitetura e precedência de camadas:
+[`ARCHITECTURE.md`](../ARCHITECTURE.md). Quem manipula o quê em cada modo e o contrato de
+portabilidade: [`MODOS.md`](../MODOS.md). Catálogo público: [`../system/ACOES.md`](../../system/ACOES.md).
 
 > **Estado.** Nada aqui está implementado. `MODOS.md` §6 dá a *direção* da costura entre os
 > modos; este documento dá a *forma* das telas. Muda em ritmo de produto, não de arquitetura —

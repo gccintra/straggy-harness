@@ -11,6 +11,13 @@ acao:
   id: definir-meta-de-sprint
   rotulo: Definir meta da sprint
   descricao: escreve a meta da sprint orientada a resultado
+objetivo: Escrever a meta da sprint como ganho para o usuário ou o negócio, não como lista de entregas.
+entrega:
+  - 2 a 3 opções de meta na conversa, cada uma com por que é outcome e como verificar
+  - recomendação e alertas
+portoes:
+  - input vago demais → uma pergunta antes de gerar
+  - só propõe — quem grava a meta na sprint é a ação `gerenciar-sprint`, com aprovação
 encaixes:
   procedimento:
     caminho: references/procedimento.md

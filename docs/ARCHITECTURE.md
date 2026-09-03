@@ -1,9 +1,10 @@
 # Arquitetura do harness
 
-Referência normativa: decide **onde cada coisa mora** e **o que pode ser escrito** em cada
-camada. Consultada pela skill `skill-creator` antes de qualquer alteração no harness. Uso
-no dia a dia e instalação: `../README.md`. Quem manipula o quê em cada modo de entrega
-(repositório × aplicativo), e o contrato de portabilidade entre eles: [`MODOS.md`](MODOS.md).
+Referência normativa humana: decide **onde cada coisa mora** e **o que pode ser escrito** em cada
+camada. A skill `harness-change` aplica estas regras de forma autônoma — o conhecimento
+operacional mora nela, não neste arquivo. Uso no dia a dia e instalação: `../README.md`.
+Quem manipula o quê em cada modo de entrega (repositório × aplicativo), e o contrato de
+portabilidade entre eles: [`MODOS.md`](MODOS.md).
 
 ---
 
@@ -11,7 +12,7 @@ no dia a dia e instalação: `../README.md`. Quem manipula o quê em cada modo d
 
 | Camada | O que é | Onde | Quem edita |
 |---|---|---|---|
-| **L0** Constituição | restrição de comportamento invariante (gate, portão, honestidade, delegação) | `system/CONSTITUTION.md` | ninguém (sistema) |
+| **L0** Constituição | restrição de comportamento invariante (gate, portão, honestidade, prosa, delegação) | `system/CONSTITUTION.md` | ninguém (sistema) |
 | **L1** Profissão | como a profissão pensa: seleção de método, barra de qualidade, contrato de output | `system/professions/<profissão>/` | sistema (+ overlay em `org/professions/`) |
 | **L2** Workflow | procedimento: gatilho, binding, portão, formato de entrega | `system/pack/workflows/` (padrão) + `org/workflows/` (organização) | organização |
 | **Provider** | contrato de ferramenta + implementação | `system/providers/<domínio>/` (+ `org/providers/`) | sistema (+ implementação da organização) |
@@ -74,7 +75,7 @@ system/          imutável pela organização (no produto: shipped read-only)
 org/             POSSE da organização — FORA do Git do harness, semeada pelo install.sh
 ├── ORG.md · workflows/ · professions/ · providers/
 runtime/skills/  GERADO — a visão resolvida que os runtimes leem
-runtime/claude|codex|opencode/  GERADO — adapters, a partir dos PERSONA.md resolvidos
+runtime/claude|codex|opencode|cursor/  GERADO — adapters, a partir dos PERSONA.md resolvidos
 ```
 
 O **pack padrão** é o que faz o harness funcionar sem nenhuma customização. A organização
@@ -99,9 +100,13 @@ O **que** a organização pode reivindicar, e por onde, é a superfície públic
 customização: **§7**.
 
 **Build.** A visão mesclada é gerada, nunca mantida à mão: `runtime/build.sh` produz
-`runtime/skills/`, fora do Git — é o que todos os runtimes leem (`--list` imprime a origem
-de cada workflow). Assim `org/` significa exatamente "propriedade da organização": nenhum
-arquivo de sistema mora lá dentro.
+`runtime/skills/` como **cópia** (arquivo real, fora do Git) — é o que todos os runtimes
+leem (`--list` imprime a origem de cada workflow). Overlay é por caminho, não symlink:
+o Codex descarta `SKILL.md` que é link de arquivo, e o eval grava artefato no gerado
+sem atravessar para `system/` ou `org/`. Ponteiro de descoberta é symlink de **pasta**
+(`.agents/skills` e `runtime/{claude,codex,cursor}/skills` → `runtime/skills`). Assim
+`org/` significa exatamente "propriedade da organização": nenhum arquivo de sistema mora
+lá dentro.
 
 **Fork barato.** Trocar o formato de um documento não copia a skill inteira: a organização
 sobrescreve `references/<arquivo>.md` e herda o resto. Fork de SKILL.md inteiro congela a
@@ -122,7 +127,7 @@ adiciona e substitui procedimento/método; nunca reescreve L0 nem afrouxa portã
 
 ## 4. Providers — abstração de ferramenta
 
-Cada domínio (`backlog`, `canvas`, `knowledge`, `database`, `docs-output`) tem uma
+Cada domínio (`backlog`, `canvas`, `knowledge`, `database`, `docs-output`, `eval-runner`) tem uma
 `INTERFACE.md` com operações abstratas e N implementações.
 
 1. **Workflow só usa operações da interface.** Nunca cita comando, endpoint ou variável de
@@ -132,13 +137,22 @@ Cada domínio (`backlog`, `canvas`, `knowledge`, `database`, `docs-output`) tem 
    quando forem longas.
 3. **Gate e modo degradado moram na INTERFACE, uma vez.** O workflow só declara o regime
    ("com" ou "sem" fallback local); o texto não se repete.
-4. **Seleção e capacidades são declaradas.** A instância diz qual provider está ativo
-   (ex.: `BACKLOG_PROVIDER`); cada implementação declara as capacidades que suporta; o
-   workflow declara a que exige. Capacidade ausente = indisponibilidade explícita, nunca
-   erro de comando nem contorno silencioso.
-5. **Contrato é do sistema, implementação é plugável** (`org/providers/`). Ferramenta
+4. **Seleção e capacidades são declaradas** — em frontmatter, dos dois lados, para o build
+   poder conferir. A implementação diz por qual valor é ativada (`selecao`, e `default:
+   true` na que atende a variável vazia) e o que suporta (`capacidades`); o workflow diz de
+   qual domínio depende e o mínimo que exige (`provider: {dominio, selecao, capacidade}`);
+   um encaixe cujo conteúdo só faz sentido sob uma capacidade declara a sua
+   (`capacidade:`). Capacidade ausente = indisponibilidade explícita, nunca erro de comando
+   nem contorno silencioso.
+5. **Divergência entre encaixe preenchido e provider selecionado é aviso do build.** A
+   organização preencher um encaixe é uma declaração; a instância apontar a variável de
+   seleção é outra, e elas podem discordar — gerador de layout próprio no `org/`, variável
+   ainda no conversor genérico. Sem a checagem isso não falha: sai um artefato plausível e
+   errado. O build lê o `.env` do projeto só para isso (`--env`); sem projeto, não há
+   instância para julgar e a checagem não roda.
+6. **Contrato é do sistema, implementação é plugável** (`org/providers/`). Ferramenta
    interna nunca deve exigir fork do core.
-6. **Implementação declara o que precisa para rodar**, no frontmatter do próprio arquivo:
+7. **Implementação declara o que precisa para rodar**, no frontmatter do próprio arquivo:
    `capacidades` e `requisitos` (`binarios`, `pacotes`, `variaveis`, `servicos`, `hosts`).
    Cada bucket é uma ação diferente de quem prepara o ambiente — é o que permite um
    sandbox provisionar a execução sem ler prosa. Entra no manifesto (§8). Requisito que
@@ -162,18 +176,19 @@ montagem = L0 (sempre, primeiro, imutável)
 
 | Runtime | Como monta |
 |---|---|
-| **Claude Code** | L0 + persona via `runtime/claude/agents\|commands`; workflows descobertos em `runtime/skills/` |
-| **Codex** | idem via `runtime/codex/agents/*.toml`, apontando para `runtime/skills/` |
+| **Claude Code** | L0 + persona via `runtime/claude/agents\|commands`; workflows em `runtime/skills/` (`.claude/skills` → a mesma árvore) |
+| **Codex** | L0 + persona via `runtime/codex/agents/*.toml`; workflows em `.agents/skills` (pasta-link para `runtime/skills/`, arquivos reais) |
 | **OpenCode** | idem via `runtime/opencode/opencode.json` |
+| **Cursor CLI** (`agent`) | L0 + persona via `runtime/cursor/rules/*.mdc`; pasta `.cursor` é symlink de `runtime/cursor/` como os outros runtimes, ou (se o IDE já criou `.cursor/`) só as rules são plantadas. Workflows em `.cursor/skills` → a mesma árvore. Headless: o mesmo adapter, `agent -p` — runner de eval quando o restante estiver no ar |
 | **Produto (Hub)** | L0+L1 no system prompt (usuário não vê nem edita); pack servido como base e overlay da organização editável na UI; providers = integrações conectadas; L3 = formulário do projeto |
 
 **Adapter é gerado, nunca mantido à mão.** A fonte única de uma persona é
 `<workflow>/PERSONA.md` (modo, resumo, ferramentas, corpo agnóstico de runtime) mais a
 `description` do `SKILL.md` do mesmo workflow — que continua sendo o único lugar do
-gatilho de roteamento. `runtime/build.sh` renderiza os três runtimes a partir disso
+gatilho de roteamento. `runtime/build.sh` renderiza **todos** os runtimes a partir disso
 (contrato do `PERSONA.md`: `runtime/adapters/README.md`). Persona nova = um arquivo, não
-três; e o `PERSONA.md` é sobrescrevível pela organização como qualquer outro arquivo do
-overlay.
+um por runtime; e o `PERSONA.md` é sobrescrevível pela organização como qualquer outro
+arquivo do overlay.
 
 Princípios de portabilidade: **física única** (cada arquivo num lugar só, runtimes
 referenciam) · **carregamento progressivo** (L0 e profissão são pequenos e sempre
@@ -331,6 +346,7 @@ degradação limpa continua valendo:
 |---|---|---|
 | `padrao` | **ninguém — é derivado** | o build checa se o arquivo do encaixe existe no pack: `pack` (há padrão do sistema) ou `nenhum`. Não é declarável, então não pode mentir |
 | `essencial: true` | o sistema, no workflow do pack | sem conteúdo neste encaixe **a ação não roda** — é dependência da ação, não obrigação de quem configura. Só para o que o sistema não tem como ter padrão (a marca da empresa, um gerador proprietário) |
+| `capacidade: <nome>` | o sistema, no workflow do pack | o conteúdo deste encaixe só produz efeito se a implementação ativa do provider suportar essa capacidade (§4.5). Encaixe preenchido sob implementação que não a declara vira aviso do build — é o caso do gerador de layout com a variável apontando o conversor genérico |
 
 Encaixe comum sem padrão no pack e sem conteúdo da organização vira **aviso do build** — é
 defeito do pack, que prometeu um padrão e não ships. Encaixe `essencial` vazio não é
@@ -413,6 +429,18 @@ Conteúdo: **ações** (com rótulo, gatilho, encaixes e o que a ação produz/e
 **personas**, **artefatos** da esteira, **condições** que o produto precisa saber avaliar e
 **providers** com seus requisitos de execução.
 
+Cada ação carrega também a **ficha** que a torna legível sem abrir a skill: `objetivo` (o
+problema que resolve), `entrega` (o que existe no mundo quando termina) e `portoes` (onde a
+execução para e espera decisão humana). São declarações do sistema, fora de qualquer encaixe
+— a organização não as alcança. O build reprova ação de trabalho que não as declare; persona
+declara só `objetivo`, porque é identidade e não produz artefato.
+
+Delas sai [`WORKFLOWS.md`](WORKFLOWS.md), a referência de manutenção: uma ficha por
+workflow, gerada pelo mesmo mecanismo de bloco marcado do `ACOES.md`. O catálogo é o que a
+organização **contrata**; a ficha é o que quem **edita o harness** precisa saber. Documentar
+por derivação é o que impede a documentação de envelhecer — divergir do frontmatter reprova
+o build.
+
 ### Pontos de troca do build
 
 A resolução (§3) é a mesma nos dois modos; o que muda é de onde vêm as entradas e para
@@ -423,9 +451,171 @@ onde vai a saída. Tudo o que varia é parâmetro, nada é deduzido do disco:
 | Camada da organização | `--org` · `HARNESS_ORG_DIR` | repositório próprio, ou pasta materializada pelo produto (`MODOS.md` §6) |
 | Saída gerada | `--out` · `HARNESS_OUT_DIR` | no produto o `system/` chega read-only por release — o build não escreve dentro dele |
 | Referência às skills | `SKILLS_REF` | como o runtime aponta para a visão resolvida, que no produto não mora em `.agents/` |
+| `.env` do projeto | `--env` · `HARNESS_ENV_FILE` | a única leitura de instância que o build faz: conferir se o provider selecionado suporta o que a organização preencheu (§4.5). Ausente → a checagem não roda |
 | Rigor | `--strict` | aviso vira reprovação (código 3): é o modo de CI |
-| Catálogo derivado | `--fix` | regenera o bloco gerado do `ACOES.md`; **sem a flag, o build apenas verifica** e reprova se divergiu |
+| Blocos derivados | `--fix` | regenera os blocos gerados do `ACOES.md` e do `docs/WORKFLOWS.md`; **sem a flag, o build apenas verifica** e reprova se divergiu |
 
 Verificar por padrão e só reescrever sob pedido é o que permite rodar o build inteiro com
 `system/` read-only — e ao mesmo tempo garante que o catálogo público não divirja do
 frontmatter.
+
+---
+
+## 9. Evals — o que o build não consegue provar
+
+§8 fecha o que o harness sabe **declarar**. Esta seção trata do que ele precisa
+**provar**, e a divisão importa porque as duas coisas têm custo e alcance opostos.
+
+### Duas camadas, e a fronteira entre elas
+
+| Camada | Onde roda | Custo | O que só ela pega |
+|---|---|---|---|
+| **Contrato** | `build.sh` (`--strict` em CI) | zero, determinístico | duas declarações que discordam em silêncio: encaixe preenchido sob provider que não suporta a capacidade, grader apontando skill renomeada, caso sem grader, encaixe essencial vazio |
+| **Comportamento** | `runtime/eval.sh`, provider `eval-runner` | modelo por caso | gatilho que não cobre como o usuário pede, gatilho que dispara no trabalho do vizinho, ação que inventa dado quando a ferramenta não respondeu |
+
+A fronteira é uma pergunta: **o disco basta para responder?** Se sim, é contrato, e vira
+checagem do build — nunca eval. Eval que testa o que o build já prova é caro, lento e
+duplicado. O caminho contrário também vale: o que exige um modelo lendo a resposta não vira
+regra de build, vira caso.
+
+### Por que o gatilho precisa de contraprova
+
+Uma suíte que só afirma "esta frase aciona a skill" mede metade. O modo de falha caro é o
+oposto — a skill dispara no pedido do vizinho, começa o trabalho errado, e o certo não
+acontece. Por isso toda ação declara **os dois**: um caso que dispara e um caso que **não**
+pode disparar, com a frase da ação vizinha mais próxima. O build reprova quem tem só um dos
+lados.
+
+Persona é exceção: o gatilho dela é o adapter do runtime (`@nome`), não a tool `Skill`.
+Exigir grader de disparo seria exigir teste que não pode passar.
+
+### Fonte neutra, artefato por runtime
+
+O harness serve Claude, Codex, opencode e Cursor CLI (§5). Um caso escrito no formato de um runner
+serve **um** runtime — e `tool_used` com `tool: Skill` é a tool da Claude Code, que os
+outros não têm. Então eval segue exatamente o caminho que persona já segue:
+
+```
+<workflow>/evals/<caso>/caso.yaml      fonte, versionada, neutra
+  └─ render.py
+       ├─ runtime/skills/<n>/evals/<caso>/prompt.md + graders/   (claude)
+       ├─ codex     — sem runner de eval; o seam existe, a implementação não
+       ├─ opencode  — idem
+       └─ cursor    — `agent -p`; o seam existe, a implementação entra quando o restante estiver no ar
+```
+
+A fonte declara **intenção no vocabulário do harness** — que ação deve atender a frase,
+quem não pode sequestrá-la, qual provider ausente deve travar a ação. Nunca nome de tool,
+nunca formato de runner.
+
+```yaml
+schema: 1
+tipo: roteamento              # roteamento | modo-degradado
+frase: >
+  gera o docx da #412 — o md consolidado já foi revisado
+atende: gerar-documento-final          # ou `nenhuma`: frase que ninguém deve atender
+confunde_com:
+  - documentar-requisito               # quem não pode sequestrar esta frase
+motivo: >
+  O `.md` já existe e foi revisado; reabrir a consolidação descarta a revisão humana.
+```
+
+### O pareamento é estrutural, não convenção
+
+De **um** arquivo saem os dois lados: o caso positivo no workflow que atende, e o caso
+negativo em **cada** workflow listado em `confunde_com` — com a mesma frase, byte a byte.
+
+Isso existe porque escrever os dois à mão tem um modo de falha invisível: a frase da
+contraprova vira uma paráfrase distante, o caso passa sozinho, e ninguém descobre que a
+discriminação nunca foi testada. Saindo do mesmo arquivo, não existe estado em que a frase
+do negativo deixou de ser a frase real do vizinho.
+
+O build fecha o resto: toda ação precisa aparecer em algum `atende` **e** em algum
+`confunde_com`. Faltar o segundo é a metade que mede pouco.
+
+### Posse
+
+Mesma regra do resto (§3): a fonte mora no workflow que **atende** a frase — é lá que ela é
+mantida quando o gatilho muda. A organização estende por override de caminho
+(`org/workflows/<nome>/evals/<caso>/caso.yaml`).
+
+Uma consequência que o build cobra: **fonte do pack não cita ação que só a organização
+declara.** Citar quebra a organização recém-criada, que reprova por conteúdo que nunca teve
+— e é o que o aceite de `--org <vazio>` existe para pegar.
+
+`evals/` **não é encaixe**: encaixe é conteúdo que a moldura consome em execução; eval é
+teste da moldura, e some do artefato.
+
+### O runner é um provider, não uma ferramenta
+
+A camada de contrato é do build. A de comportamento precisa de um runtime executando de
+verdade — e aí vale a mesma regra de §4, pelo mesmo motivo: **um contrato, N
+implementações**. Amarrar a suíte ao runner de um runtime faz a prova valer só lá, e o
+harness serve N runtimes.
+
+`system/providers/eval-runner/`, selecionado por `EVAL_RUNNER`. O que cada um consegue não é
+preferência, é o que o runtime expõe:
+
+| | `roteamento-skill` | `julgamento` | `ablacao` · `fixture` |
+|---|---|---|---|
+| `claude-headless` (default) | **sim** | sim | não |
+| `codex-exec` | não | sim | não |
+| `opencode-run` | não | sim | não |
+| `claude-plugin-eval` | sim | sim | sim |
+
+`roteamento-skill` exige o runtime **dizer qual skill engajou**. A Claude emite a chamada no
+`stream-json`; o codex não tem o conceito (o adapter dele ships persona, invocada
+explicitamente); o opencode roteia por persona e imprime qual — roteamento de outro objeto.
+
+Capacidade ausente = caso **NÃO-RODADO**, reportado por caso. Nunca verde: suíte que
+esconde o que não rodou mente sobre a própria cobertura.
+
+`claude plugin eval` é **uma implementação**, não o desenho — a que tem ablação, fixture e
+juiz por votação, e a que está em early access. As implementações headless leem a fonte
+neutra direto; só ela consome o artefato que `render.py` gera.
+
+### Como rodar
+
+```bash
+./runtime/build.sh --strict                    # contrato — determinístico, de graça
+./runtime/eval.sh                              # comportamento — implementação do .env
+./runtime/eval.sh --runner codex-exec --tipo modo-degradado
+```
+
+Toda implementação roda num **projeto descartável montado como o `install.sh` monta** —
+`.agents/` apontando para o harness, mais os symlinks de runtime. Rodar na raiz do harness
+não testa nada: lá as skills não estão instaladas, e o caso reprova por motivo errado.
+
+O `.env` do projeto real **não** é copiado para lá: a ausência de configuração é justamente
+o cenário dos casos `modo-degradado`.
+
+Uma execução por **frase**, não por caso: a fonte declara `atende` e `confunde_com` da mesma
+frase, e um run responde as duas coisas.
+
+Escopo: `--skill <nome>` roda uma skill só, sem escopo roda o harness inteiro; `--tipo`
+separa roteamento de modo degradado.
+
+### O relatório
+
+Toda corrida grava `runtime/evals/<carimbo>/` com `resultado.json` e `report.html`. O HTML é
+**visão** do JSON, não segunda fonte (§8): o JSON é o que CI e diff consomem, o HTML é o que
+gente lê.
+
+O que ele mostra, e por quê: taxa dos casos **executados** como figura-herói; passou /
+falhou / **não rodou** como estados separados; e a **cobertura do gatilho** — quantas ações
+têm caso de disparo, quantas têm contraprova, quantas têm os dois. Essa última existe porque
+o resultado mais enganoso possível é suíte verde com cobertura parcial: tudo passa, e metade
+do risco nunca foi testada.
+
+Caso não-rodado **nunca** entra na taxa como passado. Uma taxa que engole o que não rodou
+mente sobre a própria cobertura, que é exatamente o que a suíte deveria denunciar.
+
+### Como saber se a suíte presta
+
+Suíte verde não prova nada por si. Em ordem de força:
+
+| Prova | Como | O que denuncia |
+|---|---|---|
+| **Mutação** | troque a `frase` da fonte por uma de outra ação e rode | caso que continua verde não testa nada — é a única prova que vale |
+| **Ablação** | `EVAL_RUNNER=claude-plugin-eval`, `--ablation with-without` | braço sem o harness com a mesma nota: o caso mede o modelo, não a skill |
+| **Pareamento** | estrutural, pela geração | já garantido: a contraprova é a frase real do vizinho |

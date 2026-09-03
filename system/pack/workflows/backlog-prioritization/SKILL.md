@@ -16,6 +16,13 @@ acao:
   id: priorizar-backlog
   rotulo: Priorizar backlog
   descricao: ranqueia o backlog pelo funil de priorização
+objetivo: Ordenar a fila do backlog pelo funil declarado e mostrar onde os dados contradizem o funil.
+entrega:
+  - CSV `{caminhos.dados}issues_YYYY-MM-DD.csv`
+  - relatório `{caminhos.historico}analyses/YYYY-MM-DD_priorizacao_backlog.md` com lista priorizada, anomalias por categoria e resumo de ações por severidade
+portoes:
+  - escopo ambíguo → pergunta antes de exportar
+  - a ação só identifica anomalia — corrigir rótulo ou descrição é passo separado, aprovado pelo usuário
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

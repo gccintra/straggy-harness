@@ -10,8 +10,8 @@
 > `export-ignore` neste caminho — acesso ao repositório entrega o arquivo junto.
 >
 > Documentos irmãos, mesma pasta:
-> [`HUB.md`](HUB.md) (telas do modo aplicativo) · [`ARCHITECTURE.md`](ARCHITECTURE.md)
-> (camadas do harness) · [`MODOS.md`](MODOS.md) (repositório × aplicativo) ·
+> [`HUB.md`](HUB.md) (telas do modo aplicativo) · [`ARCHITECTURE.md`](../ARCHITECTURE.md)
+> (camadas do harness) · [`MODOS.md`](../MODOS.md) (repositório × aplicativo) ·
 > [`ARQUITETURA_WEB.md`](ARQUITETURA_WEB.md) (infra do ramo interno) ·
 > [`AGENT_SDK.md`](AGENT_SDK.md) (como o backend fala com o runtime).
 

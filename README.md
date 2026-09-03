@@ -4,21 +4,16 @@ Harness compartilhado de Product Management para Claude Code, Codex e OpenCode �
 futuro Hub de PMs. Três profissões (`@product-specialist`, `@tech-lead`, `@product-designer`)
 sobre uma arquitetura de camadas, com pack padrão que funciona sem nenhuma customização.
 
-**Este é o único documento de leitura humana no dia a dia.** O resto do harness é
-referência que os agentes carregam: comportamento em `system/CONSTITUTION.md`, camadas em
-[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), modos de operação e fluxos de manipulação
-em [`docs/MODOS.md`](docs/MODOS.md), fluxos de interface do Hub em
-[`docs/HUB.md`](docs/HUB.md), procedimento em cada `SKILL.md`. A intenção de produto do
-Hub — o que ele é, para quem e o que ainda não existe — está em
-[`docs/PRD.md`](docs/PRD.md), e o discovery que a sustenta em
-[`docs/discovery/`](docs/discovery/00-INDEX.md). O recorte do que entra na primeira versão
-usável — e como ela funciona — está em [`docs/MVP.md`](docs/MVP.md), a tradução dele para
-itens de backlog em [`docs/MVP-BACKLOG.md`](docs/MVP-BACKLOG.md), e as decisões e eixos
-técnicos para começar a desenvolver em [`docs/MVP-TECNICO.md`](docs/MVP-TECNICO.md). Os dois
-consolidados numa fila só, ordenada por release e pronta para virar backlog:
-[`docs/MVP-RELEASES.md`](docs/MVP-RELEASES.md). O registro de **como** esse discovery foi
-conduzido — e a proposta de trazê-lo para dentro da ferramenta como trabalho nomeado — está
-em [`docs/DISCOVERY-DE-PRODUTO.md`](docs/DISCOVERY-DE-PRODUTO.md).
+**Este documento é o uso no dia a dia: instalar, configurar, trabalhar.** Para entender ou
+mudar o harness por dentro, o índice é [`docs/README.md`](docs/README.md):
+
+| Quero… | Vai em |
+|---|---|
+| entender como funciona, em uma página | [`docs/HARNESS.md`](docs/HARNESS.md) |
+| saber o que já existe, ficha por ficha | [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md) — gerado do frontmatter |
+| editar qualquer coisa do harness | [`docs/MANUTENCAO.md`](docs/MANUTENCAO.md) |
+| a regra normativa das camadas | [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) |
+| o produto com interface (nada implementado) | [`docs/hub/`](docs/hub/) |
 
 ---
 
@@ -95,13 +90,14 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 │   ├── providers/           contrato (INTERFACE.md) + implementações + recipes/
 │   ├── ACOES.md             catálogo público: ações e encaixes (o que a organização escreve)
 │   ├── pack/                L2 PADRÃO — workflows genéricos + org-scaffold/
-│   └── workflows/           máquina do harness (skill-creator, motores) — não-forkável
+│   └── workflows/           máquina do harness (harness-change, harness-guide, motores) — não-forkável
 ├── org/                 ✎ SUA — ORG.md, workflows/, professions/, providers/ (fora do Git)
 ├── skills →             symlink para runtime/skills — ponto de descoberta de skills
 ├── runtime/             build.sh + adapters/ (fonte dos adapters gerados)
 │   ├── skills/          GERADO — visão resolvida que os runtimes leem
 │   └── claude|codex|opencode|cursor/  GERADO — a partir dos PERSONA.md resolvidos
-└── docs/ARCHITECTURE.md referência normativa das camadas
+└── docs/             HARNESS.md (como funciona) · WORKFLOWS.md (o que existe, gerado)
+                     MANUTENCAO.md (como editar) · ARCHITECTURE.md (normativa) · hub/ (futuro)
 ```
 
 Resolução: máquina vence sempre · workflow resolvido = **moldura do pack + conteúdo da
@@ -114,7 +110,7 @@ escreve `runtime/manifest.json` (o catálogo como dado, `docs/ARCHITECTURE.md` �
 | Flag | Para quê |
 |---|---|
 | `--list` | origem, ação e quantos encaixes estão preenchidos, por workflow |
-| `--fix` | regenera a tabela derivada do `system/ACOES.md` (sem a flag, o build só verifica e reprova se divergiu) |
+| `--fix` | regenera os blocos derivados de `system/ACOES.md` e `docs/WORKFLOWS.md` (sem a flag, o build só verifica e reprova se divergiu) |
 | `--strict` | aviso vira reprovação, código de saída 3 — modo de CI |
 | `--org DIR` · `--out DIR` | camada da organização e saída gerada fora dos caminhos padrão |
 | `--env FILE` | `.env` a conferir contra o que a organização preencheu (default: o do projeto) |
@@ -122,17 +118,9 @@ escreve `runtime/manifest.json` (o catálogo como dado, `docs/ARCHITECTURE.md` �
 Portão humano, contrato de saída e método ficam **fora** de qualquer encaixe: a organização
 não os alcança, então não consegue degradar a qualidade da resposta configurando errado.
 
-| Quero mudar… | Vai em |
-|---|---|
-| comportamento invariante (gate, portão) | `system/CONSTITUTION.md` |
-| como uma persona se apresenta em todos os runtimes | `<workflow>/PERSONA.md` + build |
-| como a profissão pensa / método | `system/professions/` (ou `org/professions/`) |
-| convenção da empresa (língua, nomes, papéis) | `org/ORG.md` |
-| workflow que serve a qualquer empresa | `system/pack/workflows/<nome>/` |
-| formato, template ou **procedimento** desta empresa | encaixe em `org/workflows/<nome>/` (`system/ACOES.md`) |
-| ação que o harness não faz | `org/workflows/<nome>/SKILL.md` com `acao:` nova |
-| sintaxe de ferramenta | `system/providers/<domínio>/` (ou `org/providers/`) |
-| valor do projeto | `project-config.yaml` / `.env` |
+**Onde se edita cada coisa**: a tabela por camada está em
+[`docs/MANUTENCAO.md`](docs/MANUTENCAO.md) §1, e o arquivo exato de cada workflow na
+ficha dele em [`docs/WORKFLOWS.md`](docs/WORKFLOWS.md).
 
 ---
 
@@ -219,11 +207,17 @@ final).
 
 ## Editar o harness
 
-**Toda mudança em `.agents/` passa pela skill `skill-creator`** — peça em linguagem
-natural ("cria uma skill de X", "refatora a discovery", "extrai esse método"). Ela
-classifica a camada, propõe antes de escrever e propaga as referências. Editar na mão sem
-passar por ela é como commitar sem revisão: às vezes funciona, e é assim que a arquitetura
-apodrece.
+Duas skills cobrem o harness por dentro: **`harness-guide`** responde o que ele já faz,
+onde algo mora e o que quebra se você mexer — só leitura. **`harness-change`** especifica e
+executa a mudança. O processo completo (camada, spec com análise de impacto, critérios de
+aceite e o que faz estar pronto) está em [`docs/MANUTENCAO.md`](docs/MANUTENCAO.md). O
+resumo:
+
+**Toda mudança em `.agents/` passa pela skill `harness-change`** — peça em linguagem
+natural ("cria uma skill de X", "refatora a discovery", "extrai esse método"). Ela classifica
+a camada, levanta o impacto, escreve a spec em `docs/mudancas/`, propõe antes de escrever e
+propaga as referências. Editar na mão sem passar por ela é como commitar sem revisão: às
+vezes funciona, e é assim que a arquitetura apodrece.
 
 Três leis de escrita (detalhe em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)):
 

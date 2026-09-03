@@ -21,7 +21,7 @@ CLAUDE.md
 # `git rm -r --cached org/` para tirá-la do índice.
 # org/
 
-# Visão resolvida dos workflows — gerada por runtime/build.sh (symlinks absolutos)
+# Visão resolvida dos workflows — gerada por runtime/build.sh (cópia, não symlink)
 runtime/skills/
 
 # Catálogo como dado — gerado por runtime/build.sh a partir do frontmatter das skills
@@ -34,9 +34,23 @@ runtime/codex/agents/
 runtime/opencode/opencode.json
 runtime/cursor/rules/
 
-# Plantio local do Cursor CLI quando este repo É o projeto (gerado pelo build).
-# No projeto consumidor o install.sh planta em <projeto>/.cursor/rules/harness.
-/.cursor/
+# Ponteiro de descoberta por runtime — symlink de pasta para runtime/skills.
+# Sem barra final: pattern com barra só casa diretório real, não symlink.
+runtime/claude/skills
+runtime/codex/skills
+runtime/cursor/skills
+
+# Plantio local do Cursor/Claude quando este repo É o projeto (gerado pelo build /
+# criado à mão como symlink pro adapter). Sem barra final: pattern com barra só casa
+# diretório real, não symlink — sem isso o symlink aparecia untracked mesmo ignorado.
+# No projeto consumidor o install.sh planta em <projeto>/.cursor|.claude.
+/.cursor
+/.claude
+/.codex
+
+# Ponto de descoberta de skills do Codex quando o harness roda na própria raiz (self-
+# hosted) em vez de <projeto>/.agents/ — build.sh não cria isso sozinho nesse caso.
+/.agents
 
 # Resultados de eval — gerados por runtime/eval.sh (report.html + resultado.json)
 runtime/evals/

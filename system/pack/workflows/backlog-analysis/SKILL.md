@@ -12,6 +12,15 @@ acao:
   id: analisar-backlog
   rotulo: Analisar backlog
   descricao: métricas, distribuição e status do backlog
+objetivo: Responder em números o que o backlog diz — volume, distribuição, saúde e ritmo da sprint.
+entrega:
+  - CSV do export em lote em `{caminhos.dados}`, com data no nome e nunca sobrescrito
+  - relatório `{caminhos.historico}analyses/YYYY-MM-DD_analysis_[escopo].md` com score de saúde 0–100, distribuições, top 10 e 3 recomendações
+  - burndown HTML em `{caminhos.dados}` quando o escopo é uma sprint
+portoes:
+  - escopo ambíguo (backlog inteiro, sprint, período) → pergunta antes de exportar
+  - write-gate antes de gravar o CSV e o relatório
+  - não altera nenhuma demanda — a ação só lê o backlog
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

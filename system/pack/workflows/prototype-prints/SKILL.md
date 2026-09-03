@@ -14,6 +14,14 @@ acao:
   id: capturar-prints
   rotulo: Capturar prints
   descricao: captura as prints do protótipo para a documentação
+objetivo: Ilustrar uma demanda com as imagens que dizem algo sobre ela, em vez de um álbum do protótipo inteiro.
+entrega:
+  - PNGs numerados em `{caminhos.pasta_por_demanda}prototipo-prints/`, na ordem de leitura
+  - seção Protótipo do `.md` com um heading por print lógica e o link da rota por fluxo
+portoes:
+  - sem documentação da demanda → PARA e pede; sem ela não há critério de recorte
+  - propõe destino, lista numerada e o que fica de fora, e espera o aval antes de capturar
+  - apagar print já entregue também pede confirmação
 produz:
   id: prints-capturadas
   rotulo: Prints do protótipo

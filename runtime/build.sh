@@ -11,7 +11,7 @@
 #
 #   --list          imprime a origem resolvida e a ação de cada workflow
 #   --strict        aviso vira reprovação (código 3) — modo para CI
-#   --fix           regenera o bloco derivado de system/ACOES.md
+#   --fix           regenera os blocos derivados de system/ACOES.md e docs/WORKFLOWS.md
 #   --org  DIR      raiz da camada da organização   (env: HARNESS_ORG_DIR)
 #   --out  DIR      raiz da saída gerada            (env: HARNESS_OUT_DIR)
 #   --env  FILE     .env do projeto, lido só para conferir se o provider selecionado
@@ -25,6 +25,7 @@ SYS_DIR="$HARNESS_DIR/system/workflows"
 PACK_DIR="$HARNESS_DIR/system/pack/workflows"
 ADAPTERS_DIR="$HARNESS_DIR/runtime/adapters"
 ACOES="$HARNESS_DIR/system/ACOES.md"
+DOC_WORKFLOWS="$HARNESS_DIR/docs/WORKFLOWS.md"
 PROVIDERS_DIR="$HARNESS_DIR/system/providers"
 SCHEMAS_DIR="$HARNESS_DIR/system/schemas"
 
@@ -66,15 +67,16 @@ list_names() {
   done | sort -u
 }
 
-# Copia a árvore de $1 para $OUT_DIR/$2 como symlinks por arquivo (override por caminho).
-# Sempre por arquivo, nunca symlink da pasta inteira: a saída recebe artefato gerado
-# (os casos de eval de cada runner) e um link de diretório faria essa escrita atravessar
-# de volta para dentro de system/ ou org/ — a fonte versionada mutando sozinha a cada build.
+# Copia a árvore de $1 para $OUT_DIR/$2 arquivo a arquivo (override por caminho).
+# Cópia, não symlink: o Codex descarta SKILL.md que é link de arquivo (segue só pasta).
+# Pasta inteira também não: o eval grava prompt/graders em runtime/skills/ e um
+# link de diretório faria essa escrita atravessar de volta para system/ ou org/.
 overlay() {
   local src="$1" name="$2" rel
   (cd "$src" && find . \( -type f -o -type l \) -print) | sed 's|^\./||' | while read -r rel; do
     mkdir -p "$OUT_DIR/$name/$(dirname "$rel")"
-    ln -sfn "$(abs "$src/$rel")" "$OUT_DIR/$name/$rel"
+    rm -f "$OUT_DIR/$name/$rel"
+    cp "$src/$rel" "$OUT_DIR/$name/$rel"
   done
 }
 
@@ -127,6 +129,7 @@ if ! command -v python3 >/dev/null 2>&1; then
 fi
 
 export HARNESS_DIR ADAPTERS_DIR OUT_DIR RUNTIME_DIR PACK_DIR MANIFEST ACOES
+export DOC_WORKFLOWS ORG_DIR
 export PROVIDERS_DIR ORG_PROVIDERS_DIR SCHEMAS_DIR ENV_FILE
 export HARNESS_STRICT HARNESS_FIX
 export HARNESS_LIST="$LIST"

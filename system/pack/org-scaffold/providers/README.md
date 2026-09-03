@@ -7,4 +7,4 @@ suportadas, variáveis do `.env` que consome. Corpo procedural à vontade — co
 Contrato (`docs/ARCHITECTURE.md` §4): workflow nunca cita esta implementação, só operações
 da interface; capacidade não suportada = indisponibilidade explícita.
 
-Nasce vazio. Criar pela skill `skill-creator`.
+Nasce vazio. Criar pela skill `harness-change`.

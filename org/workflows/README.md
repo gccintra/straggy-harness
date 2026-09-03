@@ -24,4 +24,4 @@ ação que o pack já atende → **o build avisa**: é erro de configuração, n
 Criou, renomeou ou preencheu → **rode `./.agents/runtime/build.sh`** (`--list` mostra origem
 e ação de cada workflow resolvido).
 
-Contrato e anti-padrões: `docs/ARCHITECTURE.md` §1–§3 e §7. Criar pela skill `skill-creator`.
+Contrato e anti-padrões: `docs/ARCHITECTURE.md` §1–§3 e §7. Criar pela skill `harness-change`.

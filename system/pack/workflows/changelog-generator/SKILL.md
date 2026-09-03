@@ -10,6 +10,12 @@ acao:
   id: manter-changelog
   rotulo: Manter changelog
   descricao: gera e atualiza o histórico de evolução do produto
+objetivo: Manter o histórico de evolução do produto na linguagem de quem usa, não na de quem commitou.
+entrega:
+  - entrada nova no changelog do projeto, no formato do encaixe `formato-changelog`, mais recente no topo
+portoes:
+  - mostra a entrada antes de gravar
+  - publicar na wiki é ação separada (`publicar-na-wiki`), com portão próprio
 encaixes:
   procedimento:
     caminho: references/procedimento.md

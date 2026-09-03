@@ -12,6 +12,14 @@ acao:
   id: configurar-design-system
   rotulo: Configurar design system
   descricao: extrai tokens e faz o scaffold do protótipo
+objetivo: Dar ao projeto um protótipo com design system próprio, medido das evidências reais em vez de estimado.
+entrega:
+  - "`prototype/` scaffoldado — tokens em arquivo único, componentes base próprios, uma tela por rota, menu real e wrapper de export"
+  - "registro em `{caminhos.historico}YYYY-MM-DD_design-setup.md`"
+portoes:
+  - faltou evidência do visual → pergunta, não estima
+  - guidelines no canvas só sob pedido explícito
+  - re-execução edita tokens e componentes — nunca recria o protótipo
 encaixes:
   procedimento:
     caminho: references/procedimento.md

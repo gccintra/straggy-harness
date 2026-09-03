@@ -11,6 +11,7 @@ acao:
   id: persona-tecnica
   rotulo: Persona técnica
   descricao: a persona técnica (tech lead) do projeto
+objetivo: A persona técnica do projeto — separa comportamento esperado (documentação) de estado real (banco) antes de decidir.
 ---
 
 # tech-lead — persona (pack padrão)

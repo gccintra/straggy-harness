@@ -7,6 +7,12 @@ description: >
   "transformar a HU em texto corrido", "explicar o comportamento da HU" ou um documento no padrão
   `HU{ID}_Descricao_Narrativa.md`. Não cria requisitos nem substitui o documento consolidado.
 acao: gerar-narrativa-de-requisito
+objetivo: Transformar uma HU já documentada em narrativa funcional corrida, legível por produto, design, desenvolvimento, QA e negócio.
+entrega:
+  - "`{caminhos.pasta_por_demanda}HU{ID}_Descricao_Narrativa.md` — só Markdown narrativo, nunca `.docx`"
+portoes:
+  - aprovação explícita antes de salvar o arquivo
+  - conflito entre fontes que muda o comportamento esperado → PARA e faz uma pergunta objetiva
 ---
 
 # Descrição narrativa de HU

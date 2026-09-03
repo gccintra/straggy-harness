@@ -3,7 +3,7 @@
 Referência normativa: define **quem manipula o quê, por onde, com que portão**, nos dois
 modos de entrega do mesmo harness. Camadas e precedência: [`ARCHITECTURE.md`](ARCHITECTURE.md).
 Uso e instalação no dia a dia: [`../README.md`](../README.md). A **forma das telas** do modo
-aplicativo — papéis, fluxos, portão como estado, ordem de construção: [`HUB.md`](HUB.md).
+aplicativo — papéis, fluxos, portão como estado, ordem de construção: [`HUB.md`](hub/HUB.md).
 
 > **Estado.** O **modo repositório existe e é o que roda hoje**. O **modo aplicativo é
 > desenho** — nada dele está implementado. Cada seção marca o que vale para cada um; onde
@@ -17,7 +17,7 @@ aplicativo — papéis, fluxos, portão como estado, ordem de construção: [`HU
 |---|---|---|
 | Quem usa | PM/designer/tech lead com CLI + IDE | mesma pessoa, sem terminal |
 | Onde o agente roda | máquina do usuário | infra do produto, sessão por execução |
-| Como o harness chega | `git clone` em `<projeto>/.agents` | servido pelo produto, por release |
+| Como o harness chega | `npx straggy-harness` → `<projeto>/.agents` | servido pelo produto, por release |
 | O que o usuário enxerga | os arquivos | telas: personas, workflows, camada da organização |
 | Camada da organização | pasta local semeada do scaffold, ou repositório próprio montado em `.agents/org` | dado do produto, por organização |
 | Portão humano | parada na conversa + revisão da mudança | estado do artefato + trilha de aprovação |
@@ -37,7 +37,7 @@ Os dois rodam **as mesmas skills, sem fork**. É isso que a seção 3 protege.
 │   │   ├── professions/            L1 — PROFESSION + reasoning + methods/
 │   │   ├── providers/              contrato (INTERFACE.md) + implementações
 │   │   ├── pack/                   L2 padrão — workflows/ + org-scaffold/
-│   │   └── workflows/              máquina (skill-creator, motores) — não-forkável
+│   │   └── workflows/              máquina (harness-change, harness-guide, motores) — não-forkável
 │   ├── org/                    ◐ ORGANIZAÇÃO — fora do Git do harness
 │   │   ├── ORG.md                  convenções transversais
 │   │   ├── workflows/              registros nos encaixes + workflows de ação nova
@@ -49,7 +49,7 @@ Os dois rodam **as mesmas skills, sem fork**. É isso que a seção 3 protege.
 │   │   ├── build.sh                ▣ resolvedor
 │   │   ├── skills/                 ⚙ GERADO — visão resolvida que os runtimes leem
 │   │   ├── manifest.json           ⚙ GERADO — catálogo como dado (ARCHITECTURE §8)
-│   │   └── claude|codex|opencode/  ⚙ GERADO — a partir dos PERSONA.md resolvidos
+│   │   └── claude|codex|opencode|cursor/  ⚙ GERADO — a partir dos PERSONA.md resolvidos
 │   └── docs/                   ▣ ARCHITECTURE.md · MODOS.md (este)
 ├── project-config.yaml         ○ PROJETO — valores da instância (L3), no Git do projeto
 ├── .env                        ○ PROJETO — segredo e seleção de provider, fora do Git
@@ -99,11 +99,11 @@ principal risco arquitetural dos dois modos coexistirem.
 |---|---|---|---|---|---|
 | Comportamento invariante (gate, portão, honestidade) | L0 | `system/CONSTITUTION.md` | — | **ninguém**: muda por release do sistema | idem |
 | Como a profissão pensa; método novo universal | L1 | `system/professions/` | — | release do sistema | idem |
-| Método/profissão só desta empresa | L1 org | `org/professions/` | revisão | `skill-creator` + revisão | editor do produto + aprovação |
+| Método/profissão só desta empresa | L1 org | `org/professions/` | revisão | `harness-change` + revisão | editor do produto + aprovação |
 | Convenção da empresa (língua, nomes, papéis, funil) | L2 | `org/ORG.md` | revisão | edição + revisão | formulário + aprovação |
 | Workflow que serve a qualquer empresa | L2 pack | `system/pack/workflows/` | — | release do sistema | idem |
 | Formato, template, vocabulário, **procedimento** de uma ação existente | L2 org | registro no encaixe `(ação, encaixe)` | revisão | arquivo no encaixe declarado | escreve o texto e escolhe a ação; nunca vê o workflow |
-| Ação que o harness **não** faz | L2 org | workflow próprio + ação nova | revisão | `skill-creator` | editor de workflow |
+| Ação que o harness **não** faz | L2 org | workflow próprio + ação nova | revisão | `harness-change` | editor de workflow |
 | Portão, contrato de saída, método, L0 | — | área fechada (`ARCHITECTURE.md` §7) | — | **não alcançável** | não exposto |
 | Desligar workflow do pack | L2 org | `org/workflows/<n>/DISABLED` | revisão | arquivo vazio | interruptor na UI |
 | Implementação de ferramenta interna | provider | `org/providers/<domínio>/` | revisão | sob a mesma `INTERFACE.md` | idem |
@@ -111,7 +111,7 @@ principal risco arquitetural dos dois modos coexistirem.
 | Valor do projeto (cliente, URL, caminhos) | L3 | `project-config.yaml` | — | arquivo | formulário do projeto |
 | Credencial, token, seleção de provider | L3 | `.env` | — | arquivo local | cofre |
 
-**Toda alteração dentro de `.agents/` passa pela skill `skill-creator`** — ela classifica a
+**Toda alteração dentro de `.agents/` passa pela skill `harness-change`** — ela classifica a
 camada, propõe antes de escrever e propaga as referências. No modo aplicativo, o
 equivalente é a UI só expor os pontos de extensão da organização; `system/` não é editável
 nem por engano.
@@ -122,9 +122,9 @@ nem por engano.
 
 | Etapa | Modo repositório | Modo aplicativo |
 |---|---|---|
-| **Entrar** | `git clone <harness> .agents` · montar a camada da organização em `.agents/org` · `./.agents/install.sh` (semeia `org/` do scaffold se vier vazia, cria `project-config.yaml`/`.env`, roda o build) | criar organização → scaffold vira o estado inicial editável; conectar integrações |
+| **Entrar** | `npx straggy-harness` (clona em `.agents/` e roda o `install.sh`: semeia `org/` do scaffold se vier vazia, cria `project-config.yaml`/`.env`, liga os runtimes, roda o build) · montar a camada da organização em `.agents/org` se ela já existir noutro repo | criar organização → scaffold vira o estado inicial editável; conectar integrações |
 | **Usar** | fala em linguagem natural; o runtime escolhe o workflow pela `description` | idem, com contexto de tela somando à intenção |
-| **Customizar** | edita `org/` via `skill-creator` → `build.sh` → revisão | edita pelo produto → aprovação antes de valer para todos |
+| **Customizar** | edita `org/` via `harness-change` → `build.sh` → revisão | edita pelo produto → aprovação antes de valer para todos |
 | **Atualizar o harness** | `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`; `org/` intocada (fora do repo) | release do sistema; a camada da organização não é tocada — é de outra posse |
 | **Reverter** | histórico do versionamento da camada | versão anterior da camada |
 | **Auditar** | histórico do versionamento da camada | trilha de aprovação por artefato |
@@ -167,6 +167,11 @@ produto. Daí para frente o pipeline é idêntico nos dois modos.
   chegar à organização, a superfície pública da §7 do `ARCHITECTURE.md` vira decoração.
   Requisito de propriedade intelectual, não de arrumação. No modo repositório essa
   fronteira não existe por construção: o `system/` está no disco de quem usa.
+
+> **Nota de 2026-08-29.** O recorte do MVP ([`MVP.md`](hub/MVP.md)) força duas destas: o
+> materializador (bloqueante, sem ele não há modo aplicativo) e o destino dos artefatos de
+> trabalho — que a última linha desta seção adiava e o repositório de contexto tornou
+> inadiável. Viraram DT-04 e DT-05 em [`MVP-TECNICO.md`](hub/MVP-TECNICO.md).
 
 ### Decisões em aberto
 

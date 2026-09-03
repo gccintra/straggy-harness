@@ -13,6 +13,15 @@ acao:
   id: registrar-demanda
   rotulo: Registrar demanda
   descricao: registra e refina uma demanda no backlog
+objetivo: Transformar um pedido em demanda registrada no backlog — o problema, não a solução que veio junto.
+entrega:
+  - demanda criada ou refinada no backlog, com o corpo no formato do encaixe `template-demanda`
+  - etapa de triagem do funil aplicada na entrada, com justificativa
+portoes:
+  - apresenta a demanda documentada e itera na conversa antes de tocar no backlog
+  - aprovação explícita antes de criar ou atualizar a demanda
+  - label nova nunca é inventada sem aprovação — a taxonomia real vem do provider
+  - no refino, mostra o conteúdo atual antes de sobrescrever
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

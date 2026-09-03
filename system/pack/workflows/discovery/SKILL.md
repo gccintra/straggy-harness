@@ -12,6 +12,15 @@ acao:
   id: explorar-solucao
   rotulo: Explorar solução
   descricao: conduz o discovery de uma demanda até a solução definida
+objetivo: Levar a demanda do problema à solução definida, uma fase por vez, com a origem declarada em cada regra capturada.
+entrega:
+  - um registro por fase — comentário na demanda com marcador `[D1a]` a `[D2b]`
+  - bloco append em `{caminhos.historico}discoveries/YYYY-MM-DD_discovery_<ref>.md`
+  - priorização acordada gravada na demanda pelo bloco estruturado e pela label correspondente
+portoes:
+  - uma fase por turno — pular fase só com justificativa e aprovação
+  - depois de montar a lista de incógnitas, PARA — o usuário decide como resolver cada uma
+  - write-gate por fase, antes de comentar na demanda ou gravar o registro
 produz:
   id: solucao-definida
   rotulo: Solução definida

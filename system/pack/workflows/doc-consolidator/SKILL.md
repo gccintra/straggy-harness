@@ -12,6 +12,14 @@ acao:
   id: documentar-requisito
   rotulo: Documentar requisito
   descricao: gera o documento consolidado da demanda (fonte de verdade)
+objetivo: Reunir a demanda inteira num `.md` autocontido que passa a ser a fonte de verdade do requisito.
+entrega:
+  - um `.md` por demanda em `{caminhos.entregaveis}`, com história, critérios de aceite verificáveis, regras de negócio como invariante, mensagens ao usuário e rastreabilidade até o discovery
+portoes:
+  - sem solução definida em nenhuma fonte → PARA e pergunta; não inventa o requisito
+  - demanda com tela sem protótipo validado → PARA e pergunta
+  - PARA no fim e aguarda revisão humana — o formato final é ação separada
+  - não publica nada no backlog
 produz:
   id: documento-consolidado
   rotulo: Documento consolidado

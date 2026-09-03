@@ -12,6 +12,13 @@ acao:
   id: consultar-backlog
   rotulo: Consultar backlog
   descricao: consulta e operação pontual numa demanda
+objetivo: Resolver o pedido pontual numa demanda — ver, buscar, listar, comentar, fechar — sem varrer o backlog inteiro.
+entrega:
+  - a resposta na conversa
+  - na operação de escrita, a demanda criada, atualizada, comentada ou fechada
+portoes:
+  - leitura segue direto, sem portão
+  - toda escrita mostra alvo e conteúdo e espera aprovação (L0 §2)
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

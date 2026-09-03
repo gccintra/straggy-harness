@@ -13,6 +13,15 @@ acao:
   id: publicar-prototipo
   rotulo: Publicar protótipo
   descricao: publica o protótipo num servidor, com HTTPS e autenticação
+objetivo: Pôr o protótipo num endereço que dá para mandar ao cliente, com autenticação e HTTPS.
+entrega:
+  - protótipo publicado com SPA fallback, autenticação, HTTPS renovável e cache correto
+  - comando de republicação que roda num passo, buildando local
+  - bloco `prototipo_deploy` do `project-config.yaml` preenchido
+portoes:
+  - cada passo de configuração, comando destrutivo e escrita no `project-config.yaml` é um portão separado
+  - campo de configuração faltando → pergunta, não inventa (domínio errado queima o rate limit do certificado)
+  - desligar a autenticação exige decisão explícita do responsável, registrada
 encaixes:
   procedimento:
     caminho: references/procedimento.md

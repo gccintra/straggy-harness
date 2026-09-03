@@ -7,4 +7,4 @@ Contrato (`docs/ARCHITECTURE.md` §1 e §3): mesmo formato dos métodos do siste
 usar / quando não, barra de qualidade, contrato de output, sem enciclopédia. Overlay
 adiciona e substitui método; nunca reescreve a L0 nem afrouxa portão.
 
-Nasce vazio. Criar pela skill `skill-creator`.
+Nasce vazio. Criar pela skill `harness-change`.

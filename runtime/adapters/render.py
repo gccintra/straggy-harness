@@ -28,7 +28,6 @@ CLAUDE_COMMANDS = RUNTIME / "claude/commands"
 CODEX_AGENTS = RUNTIME / "codex/agents"
 OPENCODE_JSON = RUNTIME / "opencode/opencode.json"
 CURSOR_RULES = RUNTIME / "cursor/rules"
-CURSOR_SKILLS = RUNTIME / "cursor/skills"
 
 # Persona padrão do pack — a mesma que o opencode.base.json declara. Se a organização
 # desligar essa persona, cai na primeira primária descoberta.
@@ -54,6 +53,23 @@ def limpar(diretorio):
     if diretorio.exists():
         shutil.rmtree(diretorio)
     diretorio.mkdir(parents=True)
+
+
+def plant_skills_links():
+    """Ponteiro de descoberta: <runtime>/skills → runtime/skills (pasta, não arquivo).
+
+    Codex segue symlink de pasta e descarta SKILL.md que é link de arquivo. Claude e
+    Cursor leem o mesmo ponteiro. OpenCode referencia SKILLS_REF no json, não pasta.
+    """
+    for nome in ("claude", "codex", "cursor"):
+        dest = RUNTIME / nome / "skills"
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if dest.is_symlink() or dest.exists():
+            if dest.is_dir() and not dest.is_symlink():
+                shutil.rmtree(dest)
+            else:
+                dest.unlink()
+        dest.symlink_to("../skills")
 
 
 def render_claude(personas, aliases):
@@ -234,16 +250,13 @@ def _persona_padrao(personas):
 
 
 def render_cursor(personas, aliases):
-    """Rules `.mdc` + symlink de skills. Fonte: o mesmo PERSONA.md / SKILL.md dos outros.
+    """Rules `.mdc`. Fonte: o mesmo PERSONA.md / SKILL.md dos outros.
 
     Cursor: `runtime/cursor/` vira `.cursor` por symlink, como os outros runtimes — salvo
     quando o IDE já criou `.cursor/` (MCP, settings); aí o install planta só as rules.
+    O ponteiro `skills → ../skills` é o mesmo dos outros adapters (`plant_skills_links`).
     """
     limpar(CURSOR_RULES)
-    CURSOR_SKILLS.parent.mkdir(parents=True, exist_ok=True)
-    if CURSOR_SKILLS.is_symlink() or CURSOR_SKILLS.exists():
-        CURSOR_SKILLS.unlink()
-    CURSOR_SKILLS.symlink_to("../skills")
 
     padrao = _persona_padrao(personas)
     troca = ", ".join(f"`@{p['name']}`" for p in personas if p["mode"] == "primary")
@@ -335,6 +348,7 @@ def main():
     render_codex(personas, modelo)
     render_opencode(personas)
     render_cursor(personas, aliases)
+    plant_skills_links()
 
     # Só `claude-plugin-eval` consome artefato em disco; as implementações headless leem
     # a fonte neutra direto (system/providers/eval-runner/INTERFACE.md). Implementação nova

@@ -13,6 +13,16 @@ acao:
   id: gerenciar-sprint
   rotulo: Gerenciar sprint
   descricao: cria, fecha, move e documenta sprints
+objetivo: Operar a sprint no backlog — criar, listar, mover em lote, fechar e documentar.
+entrega:
+  - sprint criada, fechada ou com issues movidas, conforme a operação
+  - descrição da sprint no template do encaixe `template-sprint`
+  - registro em `{caminhos.historico}YYYY-MM-DD_sprint_doc_[SPRINT].md`
+portoes:
+  - cada operação de escrita tem preview e aprovação própria
+  - fechar sprint gera o sumário antes e espera confirmação
+  - capacidade `sprints-write` ausente → informa a indisponibilidade e nunca tenta o comando mesmo assim
+  - a meta da sprint nunca é escrita aqui — vem da ação `definir-meta-de-sprint`
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

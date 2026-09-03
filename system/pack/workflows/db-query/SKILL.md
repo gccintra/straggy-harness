@@ -10,6 +10,12 @@ acao:
   id: consultar-dados
   rotulo: Consultar dados
   descricao: consulta o banco de homologação do projeto
+objetivo: Responder o que os dados realmente dizem, quando a documentação só diz o comportamento esperado.
+entrega:
+  - resultado da consulta na conversa, formatado conforme a INTERFACE do provider `database`
+portoes:
+  - somente leitura — nenhuma escrita no banco, sob nenhum pedido
+  - gate `DB_ENABLED` — desligado, a ação não roda e diz por quê
 encaixes:
   procedimento:
     caminho: references/procedimento.md

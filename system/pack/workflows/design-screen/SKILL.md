@@ -13,6 +13,15 @@ acao:
   id: construir-tela
   rotulo: Construir tela
   descricao: cria e ajusta telas no app de protótipo
+objetivo: Construir a tela da demanda como rota real do protótipo, transcrevendo a referência em vez de re-autorar.
+entrega:
+  - "rota em `prototype/src/routes/`, registrada no roteador e alcançável pelo menu real, com estados via `?state=`"
+  - "`{caminhos.pasta_por_demanda}{ID}_design.md` atualizado com o que a tela faz de fato"
+  - "registro em `{caminhos.historico}YYYY-MM-DD_design_<nome>.md`"
+portoes:
+  - PARA após a verificação visual — entrega a URL, os estados e a lista do que assumiu
+  - "registrar o protótipo no `{ID}_design.md` é write-gate"
+  - export pro Figma é opt-in, tela a tela
 produz:
   id: prototipo-validado
   rotulo: Protótipo validado

@@ -1,0 +1,50 @@
+# Configuração do projeto (L3) — valores desta instância
+#
+# Arquivo único na raiz do projeto, criado pelo .agents/install.sh a partir deste template.
+# Só DADO: nada de convenção da organização (isso é org/ORG.md) nem de segredo (isso é .env).
+#
+# Campo vazio → a skill usa o placeholder indicado no comentário e segue; nunca inventa valor.
+# Formato: YAML hoje; migra para JSON + schema quando existir interface de edição.
+
+identidade:
+  cliente: ""                    # vazio → [CLIENTE]
+  projeto: ""                    # nome + descrição curta | vazio → [PROJETO]
+  token_arquivo: ""              # usado no nome do arquivo {HU|HT}{ID}_{TOKEN}_{Nome} | vazio → PROJ
+  responsavel_padrao: ""         # vazio → [RESPONSÁVEL]
+  ordem_servico_padrao: ""       # normalmente vem da demanda | vazio → perguntar ou [OS]
+
+recursos:
+  url_base_demandas: ""          # ex.: https://gitlab.exemplo.com/grupo/projeto/-/issues/ | vazio → [ISSUE_URL_BASE]
+  url_documento_regras_global: "" # documento de regras global do projeto — entra na seção 9 do .md | vazio → N/A
+  service_account_sync: ""       # e-mail do robô do Drive (papel Leitor nas pastas)
+                                 # setup: .agents/system/providers/knowledge/drive-rclone.md
+
+# Toda skill escreve nos caminhos declarados aqui — nenhuma carrega pasta literal.
+# É o que permite os artefatos migrarem para o armazenamento de outro modo de entrega
+# sem tocar em skill nenhuma (docs/MODOS.md §2).
+caminhos:
+  entregaveis: "outputs/"                          # raiz dos artefatos entregáveis
+  pasta_por_demanda: "outputs/{ID}_{NomeCurto}/"   # documento consolidado, formato final e prints da demanda
+                                                   # fica SOB entregaveis — mudou uma, mude a outra
+  historico: "history/"                            # memória do projeto: discovery, análise, registro de operação
+  dados: "data/"                                   # export bruto (CSV, JSON) — nunca sobrescreve o dia anterior
+  contexto: "docs/context_docs/md/"                # raiz do conhecimento do produto (regras, HUs, visão)
+                                                   # layout interno é do provider knowledge/, não daqui
+  documento_priorizacao: ""                        # documento humano do funil, quando existe — a autoridade do
+                                                   # conteúdo. O que as skills leem é o encaixe `funil`
+                                                   # (org/workflows/backlog-prioritization/references/funil.yaml),
+                                                   # que declara este caminho em `fonte:`. Vazio → só o funil.
+
+prototipo_deploy:                # lido por prototype-deploy; vazio → a skill pergunta
+  dominio: ""                    # ex.: projeto.suaempresa.tech (registro A apontando pra VPS antes do certbot)
+  host_ssh: ""                   # ex.: root@suaempresa.tech
+  web_root: ""                   # ex.: /root/production/<projeto>-proto/dist
+  porteiro_http: ""              # quem ocupa 80/443: nginx no host | Traefik | Caddy | vazio → a skill descobre
+  basic_auth:
+    habilitado: true             # protótipo com fluxo e dado de cliente: manter ligado
+    usuario: ""                  # senha nunca entra aqui nem no Git
+
+documentacao:
+  marca: ""                      # aparece em títulos internos | vazio → "Padrão do Projeto"
+  label_header_hu: "HISTÓRIA DE USUÁRIO"
+  label_header_ht: "HISTÓRIA TÉCNICA"

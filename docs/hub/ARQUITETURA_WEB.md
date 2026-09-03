@@ -9,8 +9,8 @@
 > assento, ICP, margem) e vive em [`ESTRATEGIA.md`](ESTRATEGIA.md).
 >
 > Irmãos: [`AGENT_SDK.md`](AGENT_SDK.md) (como o backend fala com o runtime) ·
-> [`HUB.md`](HUB.md) (telas do modo aplicativo) · [`MODOS.md`](MODOS.md) (repositório ×
-> aplicativo) · [`ARCHITECTURE.md`](ARCHITECTURE.md) (camadas do harness).
+> [`HUB.md`](HUB.md) (telas do modo aplicativo) · [`MODOS.md`](../MODOS.md) (repositório ×
+> aplicativo) · [`ARCHITECTURE.md`](../ARCHITECTURE.md) (camadas do harness).
 
 ---
 

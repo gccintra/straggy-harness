@@ -12,6 +12,14 @@ acao:
   id: versionar-mudancas
   rotulo: Versionar mudanças
   descricao: commits, push e abertura de PR
+objetivo: Fechar o trabalho em commits atômicos por camada, com push e PR — sem `git add -A` e sem commit gigante.
+entrega:
+  - branch, commits convencionais separados por camada, push e PR aberto
+  - resumo com hash, mensagem e URL do PR
+portoes:
+  - só ativa com `@committer` explícito — nenhuma persona ou skill a chama por baixo
+  - Plano de Commit, com a linha `Branch:` sempre visível, aprovado antes de qualquer `git add`
+  - arquivo sensível no diff para o fluxo e avisa, mesmo que o usuário tenha pedido o diretório inteiro
 encaixes:
   procedimento:
     caminho: references/procedimento.md

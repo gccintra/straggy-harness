@@ -13,6 +13,14 @@ acao:
   id: publicar-na-wiki
   rotulo: Publicar na wiki
   descricao: publica e atualiza páginas na wiki do projeto
+objetivo: Publicar e atualizar a documentação de produto na wiki sem sobrescrever em silêncio o que já estava lá.
+entrega:
+  - página criada, atualizada em replace ou acrescida em append, e a URL devolvida
+  - registro em `{caminhos.historico}YYYY-MM-DD_wiki_<slug>.md`
+portoes:
+  - publicar e sobrescrever são escrita com preview e aprovação — a wiki normalmente não tem lixeira
+  - em replace, mostra o conteúdo atual antes
+  - em append, mostra só a entrada nova e nunca lê a página inteira
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

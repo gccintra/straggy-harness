@@ -341,6 +341,9 @@ def carregar_workflows(resolucao):
             for item in _lista(campos.get("requer_condicional"))
             if isinstance(item, dict) and item.get("artefato") and item.get("quando")
         ]
+        wf["objetivo"] = str(campos.get("objetivo", "")).strip()
+        wf["entrega"] = [str(v).strip() for v in _lista(campos.get("entrega")) if str(v).strip()]
+        wf["portoes"] = [str(v).strip() for v in _lista(campos.get("portoes")) if str(v).strip()]
         wf["persona"] = (pathlib.Path(wf["resolvido"]) / "PERSONA.md").exists()
         wf["evals"] = carregar_evals(wf["resolvido"])
     return resolucao
@@ -482,6 +485,26 @@ def validar(workflows, dir_pack, dir_schemas="", providers=(), env=None):
             if do_pack and not acao["rotulo_declarado"]:
                 aviso(f"'{nome}': ação '{acao['id']}' sem 'rotulo' — a interface cai no "
                       f"rótulo derivado do identificador.")
+
+        # Ficha do workflow: o que a documentação gerada mostra a quem edita o harness
+        # (docs/WORKFLOWS.md). Sem isto, "o que esta ação faz e onde ela para" só existe
+        # em prosa dentro do SKILL.md, com nome de seção diferente em cada um.
+        if not wf["objetivo"]:
+            erro(f"'{nome}' não declara 'objetivo' — a ficha do workflow fica sem o "
+                 f"problema que ele resolve (docs/WORKFLOWS.md).")
+        if wf["persona"]:
+            for chave in ("entrega", "portoes"):
+                if wf[chave]:
+                    aviso(f"'{nome}' é persona e declara '{chave}' — persona é "
+                          f"identidade, não produz artefato nem tem portão próprio.")
+        elif acao and acao["id"]:
+            if not wf["entrega"]:
+                erro(f"'{nome}' não declara 'entrega' — sem ela ninguém sabe o que "
+                     f"existe no mundo quando a ação termina.")
+            if not wf["portoes"]:
+                erro(f"'{nome}' não declara 'portoes' — ação sem portão declarado é "
+                     f"ação sem controle humano visível (CONSTITUTION §2 e §5). "
+                     f"Só de leitura → declare isso como o portão.")
 
         for encaixe in wf["encaixes"]:
             alvo = f"'{nome}/{encaixe['id']}'"
@@ -769,6 +792,9 @@ def manifesto(workflows, personas, providers, release):
             "descricao": wf["acao"]["descricao"],
             "gatilho": str(wf["campos"].get("description", "")).strip(),
             "tipo": "persona" if wf["persona"] else "trabalho",
+            "objetivo": wf["objetivo"],
+            "entrega": list(wf["entrega"]),
+            "portoes": list(wf["portoes"]),
             "encaixes": encaixes,
             "provider": wf["provider"],
             "produz": wf["produz"]["id"] if wf["produz"] else None,
@@ -851,6 +877,150 @@ def sincronizar_acoes(caminho, man, corrigir):
     return []
 
 
+# ── Referência de manutenção derivada (docs/WORKFLOWS.md) ─────────────────────
+# O catálogo (ACOES.md) é a superfície pública — o que a organização contrata. Este é o
+# avesso dele: a ficha de cada workflow para quem **edita o harness**, com o que a ação
+# entrega, onde ela para e em que arquivo se mexe. Derivado das mesmas declarações, pelo
+# mesmo mecanismo de bloco gerado: documentação que diverge do código é o problema que
+# esta função existe para não ter.
+
+MARCA_DOC_INICIO = "<!-- gerado: fichas — regenerado por runtime/build.sh --fix -->"
+MARCA_DOC_FIM = "<!-- /gerado -->"
+
+
+def _itens(titulo, valores):
+    if not valores:
+        return []
+    return [f"**{titulo}**", ""] + [f"- {v}" for v in valores] + [""]
+
+
+def _origem_legivel(origem):
+    return {
+        "pack": "pack padrão",
+        "pack+encaixes": "pack padrão + encaixes desta organização",
+        "org": "própria desta organização",
+        "sistema": "máquina do harness",
+    }.get(origem, origem)
+
+
+def ficha_workflows(workflows, dir_pack, dir_org):
+    """Uma ficha por workflow resolvido, na ordem da ação. Determinístico."""
+    pack, org = pathlib.Path(dir_pack), pathlib.Path(dir_org)
+    trabalho = sorted((w for w in workflows if w["acao"] and w["acao"]["id"]
+                       and not w["persona"]), key=lambda w: w["acao"]["id"])
+    # Subagente da máquina também tem PERSONA.md (é assim que o runtime o descobre), mas
+    # não é com quem o usuário conversa — ele entra só na seção da máquina.
+    personas = sorted((w for w in workflows
+                       if w["persona"] and w["origem"] != "sistema"),
+                      key=lambda w: w["nome"])
+    maquina = sorted((w for w in workflows if w["origem"] == "sistema"),
+                     key=lambda w: w["nome"])
+
+    linhas = ["| Ação | Objetivo | Workflow | Origem |", "|---|---|---|---|"]
+    for wf in trabalho:
+        linhas.append(f"| [`{wf['acao']['id']}`](#{wf['acao']['id']}) | "
+                      f"{wf['objetivo']} | `{wf['nome']}` | "
+                      f"{_origem_legivel(wf['origem'])} |")
+
+    linhas += ["", "**Personas** — identidade de quem conversa com você, sem artefato "
+                   "próprio.", "", "| Persona | Objetivo |", "|---|---|"]
+    for wf in personas:
+        linhas.append(f"| `@{wf['nome']}` | {wf['objetivo']} |")
+
+    linhas += ["", "**Máquina do harness** — governa e opera o harness em si. Não declara "
+                   "ação, então não entra no catálogo público. Algumas são motores, "
+                   "invocados por outra skill; outras você chama direto.",
+               "", "| Workflow | Objetivo |", "|---|---|"]
+    for wf in maquina:
+        linhas.append(f"| `{wf['nome']}` | {wf['objetivo']} |")
+
+    linhas += ["", "---", "", "## Fichas", ""]
+    for wf in trabalho:
+        acao = wf["acao"]
+        linhas += [f"### {acao['id']}", "",
+                   f"**{acao['rotulo']}** — {wf['objetivo']}", ""]
+
+        atributos = [f"| Workflow | `{wf['nome']}` ({_origem_legivel(wf['origem'])}) |"]
+        requer = [f"`{a['id']}`" for a in wf["requer"]]
+        requer += [f"`{c['artefato']}` (se `{c['quando']}`)"
+                   for c in wf["requer_condicional"]]
+        atributos.append(f"| Exige antes | {' · '.join(requer) if requer else '—'} |")
+        atributos.append(f"| Produz na esteira | "
+                         f"{'`' + wf['produz']['id'] + '`' if wf['produz'] else '—'} |")
+        if wf["provider"]:
+            prov = wf["provider"]
+            detalhe = f"`{prov['dominio']}`"
+            if prov["selecao"]:
+                detalhe += f", escolhido por `{prov['selecao']}`"
+            if prov["capacidade"]:
+                detalhe += f", exige a capacidade `{prov['capacidade']}`"
+            atributos.append(f"| Ferramenta externa | {detalhe} |")
+        else:
+            atributos.append("| Ferramenta externa | nenhuma |")
+        linhas += ["| | |", "|---|---|"] + atributos + [""]
+
+        gatilho = " ".join(str(wf["campos"].get("description", "")).split())
+        linhas += ["**Dispara quando**", "", f"> {gatilho}", ""]
+        linhas += _itens("Entrega", wf["entrega"])
+        linhas += _itens("Portões", wf["portoes"])
+
+        onde = ["**Onde se edita**", "", "| O quê | Arquivo | Estado |", "|---|---|---|"]
+        moldura = pack if wf["origem"].startswith("pack") else org
+        rel = "system/pack/workflows" if wf["origem"].startswith("pack") \
+            else "org/workflows"
+        onde.append(f"| Moldura (do sistema) | `{rel}/{wf['nome']}/SKILL.md` | "
+                    f"{'existe' if (moldura / wf['nome'] / 'SKILL.md').exists() else '—'} |")
+        for e in wf["encaixes"]:
+            estado = "preenchido por esta organização" if e.get("preenchido") \
+                else ("padrão do pack" if e.get("padrao") == "pack" else "vazio")
+            onde.append(f"| Encaixe `{e['id']}` — {e['rotulo']} | "
+                        f"`org/workflows/{wf['nome']}/{e['caminho']}` | {estado} |")
+        linhas += onde + [""]
+
+        # Duas coberturas diferentes: o que a ação prova de si, e quem prova que NÃO a
+        # aciona. A contraprova é declarada no workflow vizinho — contar só as próprias
+        # subestima a cobertura real do gatilho (ARCHITECTURE §9).
+        proprios = [f"`{c['id']}`" for c in wf["evals"]]
+        # Inclui o próprio workflow: a contraprova de uma ação manual (o pedido óbvio que
+        # NÃO pode acioná-la) é declarada ao lado dela, não na vizinha.
+        vizinhos = sorted({f"`{o['nome']}`" for o in workflows for c in o["evals"]
+                           if acao["id"] in c["confunde_com"]})
+        linhas.append("**Provas de comportamento**")
+        linhas.append("")
+        linhas.append(f"- declaradas aqui ({len(proprios)}): "
+                      f"{' · '.join(proprios) if proprios else 'nenhuma'}")
+        linhas.append(f"- contraprova em ({len(vizinhos)}): "
+                      f"{' · '.join(vizinhos) if vizinhos else 'nenhuma — nada garante que '
+                                                              'o pedido do vizinho não caia aqui'}")
+        linhas += ["", f"`./runtime/eval.sh --skill {wf['nome']}`", ""]
+        linhas.append("---")
+        linhas.append("")
+
+    return "\n".join(linhas).rstrip() + "\n"
+
+
+def sincronizar_doc(caminho, conteudo, corrigir):
+    """Mesmo contrato do bloco gerado do ACOES.md: verifica por padrão, `--fix` reescreve."""
+    arquivo = pathlib.Path(caminho)
+    if not arquivo.exists():
+        return [(AVISO, f"{arquivo.name} não encontrado — fichas não verificadas.")]
+    texto = arquivo.read_text(encoding="utf-8")
+    if MARCA_DOC_INICIO not in texto or MARCA_DOC_FIM not in texto:
+        return [(AVISO, f"{arquivo.name} sem os marcadores do bloco gerado — as fichas "
+                        f"seguem mantidas à mão e podem divergir do frontmatter.")]
+    antes, resto = texto.split(MARCA_DOC_INICIO, 1)
+    atual, depois = resto.split(MARCA_DOC_FIM, 1)
+    novo = f"\n\n{conteudo}\n"
+    if atual == novo:
+        return []
+    if not corrigir:
+        return [(ERRO, f"{arquivo.name} divergiu do frontmatter das skills — "
+                       f"rode ./runtime/build.sh --fix.")]
+    arquivo.write_text(antes + MARCA_DOC_INICIO + novo + MARCA_DOC_FIM + depois,
+                       encoding="utf-8")
+    return []
+
+
 # ── CLI (chamado por build.sh) ────────────────────────────────────────────────
 
 def main():
@@ -881,6 +1051,11 @@ def main():
     man = manifesto(workflows, personas, providers,
                     os.environ.get("HARNESS_RELEASE", ""))
     problemas += sincronizar_acoes(os.environ.get("ACOES", ""), man, corrigir)
+    if os.environ.get("DOC_WORKFLOWS"):
+        problemas += sincronizar_doc(
+            os.environ["DOC_WORKFLOWS"],
+            ficha_workflows(workflows, dir_pack, os.environ.get("ORG_DIR", "")),
+            corrigir)
 
     destino.parent.mkdir(parents=True, exist_ok=True)
     destino.write_text(json.dumps(man, indent=2, ensure_ascii=False, sort_keys=False)

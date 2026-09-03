@@ -12,6 +12,7 @@ acao:
   id: persona-produto
   rotulo: Persona de produto
   descricao: a persona de produto (PM/PO) do projeto
+objetivo: A persona de produto do projeto — ponto de entrada padrão; pensa valor, requisito e processo, e escolhe qual workflow carregar.
 ---
 
 # product-specialist — persona (pack padrão)

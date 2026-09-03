@@ -1,25 +1,41 @@
 ---
-name: skill-creator
+name: harness-change
 description: >
-  Cria e edita skills e demais artefatos do próprio harness (workflows, métodos, providers,
-  personas, regras de engajamento) seguindo a arquitetura de camadas do harness. Use SEMPRE
-  que o usuário pedir para criar uma skill nova, editar/refatorar uma skill existente,
-  adicionar um workflow, extrair um método, mudar a CONSTITUTION/ORG, mexer na estrutura do
-  harness ou "melhorar o harness" — qualquer alteração em arquivo dentro de .agents/ que não
-  seja config de instância (project-config.yaml, .env).
+  Especifica e executa qualquer mudança no próprio harness — skill, workflow, método,
+  provider, persona, constituição, adapter, regra de engajamento — seguindo a arquitetura de
+  camadas. Use SEMPRE que o usuário pedir para criar uma skill nova, editar ou refatorar uma
+  existente, adicionar workflow, extrair método, mudar a CONSTITUTION/ORG, corrigir um
+  procedimento, mexer na estrutura do harness ou "melhorar o harness" — qualquer alteração em
+  arquivo dentro de .agents/ que não seja config de instância (project-config.yaml, .env).
+  Toda mudança começa por uma spec com análise de impacto, aprovada antes de qualquer
+  edição. Para só ENTENDER o harness sem mudar nada — o que ele já faz, onde algo mora, o
+  que quebra se eu mexer — a skill é a `harness-guide`.
   Garante que toda mudança respeite: camada certa, prescrever resultado e não raciocínio,
   referência em vez de cópia, portões humanos preservados.
+objetivo: Governar como o próprio harness evolui — spec com impacto antes, e a mudança nascendo na camada certa e no estilo certo.
 ---
 
-# skill-creator — criação e edição de artefatos do harness
+# harness-change — especificar e mudar o harness
 
 Meta-skill: governa como o próprio harness evolui. Toda alteração em `.agents/` passa por
 aqui para nascer na camada certa e no estilo certo.
+
+**Especificar vem antes de editar.** Mudança que altera comportamento, contrato ou camada
+começa por uma spec com análise de impacto (§5), aprovada antes de qualquer arquivo ser
+tocado. É o que impede a edição local que conserta uma skill e apodrece três.
+
+Pergunta que termina sem edição — "o que o harness já faz?", "onde mora essa regra?", "o que
+quebra se eu mudar isso?" — é da **`harness-guide`**, que é somente leitura. Chegou aqui e
+o pedido era só entender: responda apontando a `harness-guide` e pare.
 
 **Este arquivo é autossuficiente.** Não leia `docs/ARCHITECTURE.md` (nem outro doc de
 `docs/`) para aplicar estas regras — o conhecimento operacional mora aqui. O ensaio em
 `docs/` é leitura humana; se uma regra nova de arquitetura nascer, atualize **esta skill**
 e o ensaio no mesmo movimento.
+
+Duas exceções, porque são procedimento e não ensaio: a análise de impacto
+(`system/workflows/harness-guide/references/impacto.md`, obrigatória no 5.2) e a spec
+(`docs/mudancas/`), que é artefato desta skill.
 
 Consultas pontuais, não pré-leitura:
 
@@ -29,6 +45,9 @@ Consultas pontuais, não pré-leitura:
 - `system/providers/<domínio>/INTERFACE.md` — só quando o artefato usa aquele domínio:
   operações, regime de modo degradado, capacidades. A skill criada aponta a interface, nunca
   a implementação.
+- `docs/WORKFLOWS.md` — a ficha do workflow que você vai mexer: o que ele entrega, onde
+  para, que encaixes a organização preencheu e em que arquivo. É derivada do frontmatter,
+  então não mente sobre o estado atual.
 
 L0 (`system/CONSTITUTION.md`) já está carregada: write-gate, autonomia, brevidade e prosa,
 portões, honestidade. Esta skill **nunca afrouxa** nada disso.
@@ -99,8 +118,10 @@ runtime/claude|codex|opencode|cursor/  GERADO — adapters, a partir dos PERSONA
 3. Ação sem nada da organização → o pack atende.
 4. `org/workflows/<nome>/DISABLED` → workflow do pack desligado nesta organização.
 
-Nunca crie symlink de skill à mão — rode o build. `runtime/skills/` e os adapters são
-gerados e fora do Git.
+Nunca crie symlink de skill à mão — rode o build. `runtime/skills/` é cópia gerada (arquivo
+real: o Codex descarta `SKILL.md` que é link de arquivo) e os adapters são gerados e fora
+do Git. Ponteiro de descoberta: symlink de pasta `.agents/skills` e
+`runtime/{claude,codex,cursor}/skills` → `runtime/skills`.
 
 **Fork barato.** Trocar o formato de um documento não copia a skill inteira: a organização
 preenche o encaixe (`references/<arquivo>.md`) e herda o resto. Fork de `SKILL.md` inteiro
@@ -203,6 +224,16 @@ customização silenciosa).
   Workflow do pack que aceita conteúdo da organização declara também `encaixes:`. Ambos
   aceitam forma curta (só o identificador) e forma longa; **workflow do pack usa a longa** —
   sem `rotulo`, `ajuda` e `tipo` a interface não tem como desenhar o campo, e o build avisa.
+- `objetivo` / `entrega` / `portoes` — a **ficha do workflow**, que alimenta a documentação
+  gerada (`docs/WORKFLOWS.md`) e o manifesto. `objetivo`: uma frase com o problema que o
+  workflow resolve, não o que ele faz. `entrega`: o que existe no mundo quando termina —
+  arquivo com caminho, demanda alterada, resposta na conversa. `portoes`: cada ponto em que
+  a execução para e espera decisão humana, na linguagem do usuário. Ação só de leitura
+  declara isso **como** o portão ("leitura segue direto; toda escrita espera aprovação").
+  O build reprova ação de trabalho sem os três. **Persona declara só `objetivo`** — é
+  identidade, não procedimento, e não produz artefato nem tem portão próprio.
+  Estes campos declaram o que a moldura já garante; escrever aqui não afrouxa nada, e
+  divergir do corpo da skill é defeito a corrigir no mesmo movimento.
 - `produz` / `requer` — só para workflow que participa da esteira de artefatos. Declara o
   que o trabalho entrega e o que precisa estar aprovado antes. O vocabulário de artefatos é
   o conjunto dos `produz` declarados: requisito sem produtor ou ciclo reprova o build.
@@ -230,6 +261,12 @@ acao:
   id:        documentar-requisito
   rotulo:    Documentar requisito
   descricao: gera o documento consolidado da demanda (fonte de verdade)
+objetivo: Reunir a demanda inteira num `.md` autocontido que vira a fonte de verdade do requisito.
+entrega:
+  - um `.md` por demanda em `{caminhos.entregaveis}`, com critérios de aceite verificáveis e regras como invariante
+portoes:
+  - sem solução definida em nenhuma fonte, PARA e pergunta
+  - PARA no fim e aguarda revisão humana — o formato final é ação separada
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER
@@ -580,18 +617,65 @@ provider: backlog
   vive dentro do `SKILL.md`, um padrão de pack mais fino que ele é regressão: o texto da
   moldura manda seguir o arquivo do encaixe. Separe primeiro, shippe o padrão depois.
 
-## 5. Processo (portões desta skill)
+## 5. Processo — spec, portão, edição
 
-1. **Entender e classificar** — demanda → camada(s) (§1) → arquivos-alvo.
-2. **Propor** (write-gate): antes de tocar em qualquer arquivo, apresentar
-   - o que será criado/editado (lista de arquivos),
-   - camada de cada mudança e por quê,
-   - para skill nova: frontmatter completo + esqueleto de seções,
-   - para edição: diff conceitual (o que entra, o que sai, o que é poda de script).
-   **Esperar aprovação.**
-3. **Escrever** conforme aprovado.
-4. **Propagar** (checklist §6) — propor as atualizações decorrentes, também sob aprovação.
-5. **Commit é do `@committer`**, manual — esta skill nunca commita.
+Duas fases, com portão entre elas. A primeira produz um documento; a segunda mexe em
+arquivo. Colapsar as duas é o erro que esta skill existe para evitar: edição que conserta
+uma skill e apodrece três.
+
+### Fase 1 — spec
+
+**5.1 Classificar** — demanda → camada(s) (§1) → arquivos-alvo. Errar aqui é o que erode a
+arquitetura, e sai caro depois de escrito.
+
+**5.2 Analisar o impacto** — `system/workflows/harness-guide/references/impacto.md`, os
+cinco raios: quem cita o alvo · quem depende do artefato na esteira · que eval cita a ação ·
+o que a organização escreveu ali · a camada está certa. **Os cinco, sempre.** Raio sem
+achado se declara vazio; omitir não é o mesmo que verificar.
+
+O que o build já pega sozinho está listado lá — não gaste varredura com isso. O que só a
+varredura pega: referência que vira link morto, cópia que passou a divergir, conteúdo da
+organização abandonado por mudança de caminho, e camada errada.
+
+**5.3 Escrever a spec** em `docs/mudancas/HRN-NNN_<slug>.md`, do modelo
+`docs/mudancas/TEMPLATE.md`: história, camada, regras de negócio, critérios de aceite **com
+a prova de cada um**, fora de escopo, estado. Some a tabela de impacto do 5.2 e o plano de
+arquivos do 5.4.
+
+Cada critério de aceite aponta uma prova executável, nunca prosa:
+
+| Tipo de critério | Prova |
+|---|---|
+| estrutura, contrato, declaração, esteira, cobertura | `./runtime/build.sh --strict` |
+| a frase certa aciona a ação certa, e a do vizinho não | caso em `<workflow>/evals/<caso>/caso.yaml` |
+| a organização recém-criada não fica sem padrão | `--org <vazio> --out <temporário>` |
+
+Critério sem prova é conversa: ou vira um dos três, ou sai da spec.
+
+**5.4 Propor** (write-gate) — a spec inteira, mais a lista de arquivos que serão criados ou
+editados, a camada de cada um e por quê, o frontmatter completo de skill nova, e o diff
+conceitual das edições (o que entra, o que sai, o que é poda de script cognitivo).
+**Esperar aprovação.**
+
+**Quando pular a spec.** Ajuste que não muda comportamento, contrato nem camada — corrigir
+um caminho quebrado, uma frase de gatilho, um erro de digitação. Nesses casos vá direto ao
+5.4 e diga que está pulando a spec, com o motivo. Na dúvida, não pule: spec de dez linhas é
+barata; edição que apodrece três skills, não.
+
+### Fase 2 — edição
+
+**5.5 Escrever** conforme aprovado. Nada além do aprovado — descoberta no meio do caminho
+volta à spec, não vira escopo novo em silêncio.
+
+**5.6 Propagar** (checklist §6) — propor as atualizações decorrentes, também sob aprovação.
+
+**5.7 Aceitar** — rodar as provas declaradas em 5.3, mais o aceite fixo de §6, e reportar
+o resultado como ele veio.
+Verde nos critérios → `Estado` do HRN vai a `verde`, com o que a execução mostrou e a spec
+não previa registrado ali. Vermelho → conserta antes de entregar; reprovação não se declara
+como pendência.
+
+**5.8 Commit é do `@committer`**, manual — esta skill nunca commita.
 
 ## 6. Checklist de propagação (skill criada/renomeada/removida)
 
@@ -627,6 +711,13 @@ atualização de cada um que se aplique:
 - [ ] **`provider:` no frontmatter** — workflow que depende de ferramenta declara domínio,
       variável de seleção e capacidade mínima. Sem isso o build não tem como conferir se a
       implementação ativa suporta o que a skill exige.
+- [ ] **`docs/WORKFLOWS.md`** — a ficha de cada workflow é **derivada** de `objetivo`,
+      `entrega`, `portoes`, `acao`, `produz`, `requer`, `provider` e `encaixes`. Mexeu em
+      qualquer um deles: `--fix` regenera; sem a flag o build reprova a divergência. Nunca
+      edite o bloco gerado à mão.
+- [ ] **`docs/mudancas/HRN-NNN`** — o `Estado` do documento vai a `verde` quando
+      `build.sh --strict` e o eval da skill passam. Documento aberto com a mudança já no
+      repositório é mudança sem registro de por quê.
 
 ### Aceite — o que precisa passar antes de entregar
 
@@ -650,4 +741,7 @@ motivo, nunca se omite.
 - Documentos de produto do projeto (`{caminhos.entregaveis}`, `{caminhos.historico}`, wiki) — são das skills de
   produto, não desta.
 - Commit/push — `@committer`.
-- Ensaio humano em `docs/` — não é pré-leitura nem fonte operacional desta skill.
+- Ensaio humano em `docs/` (`ARCHITECTURE.md`, `HARNESS.md`, `MODOS.md`) — não é
+  pré-leitura nem fonte operacional desta skill; acompanha só quando a arquitetura muda.
+  `docs/WORKFLOWS.md` e `docs/mudancas/` são exceção: entram no processo (§5) e no
+  checklist (§6).

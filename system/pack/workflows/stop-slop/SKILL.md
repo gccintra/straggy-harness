@@ -10,6 +10,13 @@ acao:
   id:        limpar-prosa
   rotulo:    Limpar prosa
   descricao: reescreve texto removendo padrões previsíveis de prosa de IA
+objetivo: Tirar de um texto os padrões previsíveis de prosa de IA sem mudar o que ele afirma.
+entrega:
+  - o texto reescrito, com o mesmo conteúdo factual do original
+  - score nas cinco dimensões (direteza, ritmo, confiança, autenticidade, densidade)
+portoes:
+  - reescrita entregue na conversa segue direto
+  - gravar o resultado fora do rascunho (arquivo, demanda, wiki) é write-gate
 encaixes:
   procedimento:
     caminho: references/procedimento.md

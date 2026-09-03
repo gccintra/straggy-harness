@@ -13,6 +13,15 @@ acao:
   id: gerar-documento-final
   rotulo: Gerar documento final
   descricao: transcreve o documento revisado para o formato entregável
+objetivo: Transcrever o `.md` já revisado para o formato entregável, sem reinterpretar, resumir ou completar nada.
+entrega:
+  - "arquivo no formato final, na mesma pasta e com o mesmo nome do `.md`"
+  - relato do que a implementação ativa do provider não conseguiu fazer e ficou manual
+portoes:
+  - "`.md` inexistente → aponta a ação `documentar-requisito` e PARA"
+  - "`.md` não revisado por humano → confirma antes de gerar"
+  - mostra arquivo de origem, destino e implementação ativa, e espera aprovação
+  - "regeração depois de corrigir o `.md` é um novo portão"
 provider:
   dominio: docs-output
   selecao: DOCS_OUTPUT_PROVIDER

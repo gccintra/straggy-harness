@@ -13,6 +13,14 @@ acao:
   id: auditar-backlog
   rotulo: Auditar backlog
   descricao: saúde do backlog — inconsistências, duplicatas, zumbis
+objetivo: Achar o que apodreceu no backlog — demanda sem tipo, sem prioridade, sem dono, parada há mais de 180 dias e provável duplicata.
+entrega:
+  - CSV `{caminhos.dados}health_audit_YYYY-MM-DD.csv`
+  - relatório `{caminhos.historico}analyses/YYYY-MM-DD_health_audit.md` com resumo por problema, zumbis, grupos de duplicata e 3 recomendações
+portoes:
+  - correção em lote é opt-in e só existe depois do relatório entregue
+  - cada lote (fechar zumbi, fechar duplicata, aplicar label) é um portão separado
+  - duplicata é sugestão da ação; quem valida é o usuário
 provider:
   dominio: backlog
   selecao: BACKLOG_PROVIDER

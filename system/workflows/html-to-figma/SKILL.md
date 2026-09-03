@@ -7,6 +7,7 @@ description: >
   `design-screen` (telas) e `design-setup` (guidelines opt-in) apenas no passo de export
   pro Figma, que é opt-in. Para criar uma tela use `design-screen`; para o design system,
   `design-setup`.
+objetivo: Exportar a rota renderizada do protótipo para um node no Figma.
 ---
 
 # Skill: html-to-figma

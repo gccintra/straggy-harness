@@ -54,7 +54,7 @@ atende — o build avisa quando você escreve um para ação que ele já cobre.
 ## Como alterar
 
 Peça em linguagem natural ao agente ("cria um workflow de X", "muda o formato do documento
-consolidado"): a skill `skill-creator` classifica a camada, propõe antes de escrever e
+consolidado"): a skill `harness-change` classifica a camada, propõe antes de escrever e
 propaga as referências. Editar na mão sem passar por ela funciona às vezes — e é assim que
 a arquitetura apodrece.
 
