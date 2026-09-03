@@ -8,7 +8,7 @@ Duas pilhas, e a diferença entre elas importa: **esta pasta descreve o que roda
 | Documento | Responde | Escrito ou gerado |
 |---|---|---|
 | [`HARNESS.md`](HARNESS.md) | o que é, como uma conversa vira artefato, o que o build faz | à mão |
-| [`WORKFLOWS.md`](WORKFLOWS.md) | quais workflows existem, o que cada um entrega, onde para, que arquivo editar | **gerado** por `runtime/build.sh --fix` |
+| [`WORKFLOWS.md`](WORKFLOWS.md) | quais workflows existem, o que cada um entrega, onde para, que arquivo editar | **gerado** por `./build.sh --fix` |
 | [`MANUTENCAO.md`](MANUTENCAO.md) | como mudar qualquer coisa, e o que faz uma mudança estar pronta | à mão |
 | [`ARCHITECTURE.md`](ARCHITECTURE.md) | a regra normativa — camadas, precedência, encaixes, manifesto, evals | à mão |
 | [`MODOS.md`](MODOS.md) | quem manipula o quê no modo repositório, e o contrato de portabilidade para o modo aplicativo | à mão |

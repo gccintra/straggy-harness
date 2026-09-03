@@ -43,6 +43,7 @@ Os dois rodam **as mesmas skills, sem fork**. É isso que a seção 3 protege.
 │   │   ├── workflows/              registros nos encaixes + workflows de ação nova
 │   │   ├── professions/            método/profissão próprios
 │   │   └── providers/              implementação de ferramenta interna
+│   ├── build.sh                porta — chama runtime/build.sh
 │   ├── skills →                ⚙ symlink p/ runtime/skills — descoberta de skills
 │   ├── runtime/
 │   │   ├── adapters/               ▣ fonte dos adapters (base, aliases, render)
@@ -125,12 +126,12 @@ nem por engano.
 | **Entrar** | `npx straggy-harness` (clona em `.agents/` e roda o `install.sh`: semeia `org/` do scaffold se vier vazia, cria `project-config.yaml`/`.env`, liga os runtimes, roda o build) · montar a camada da organização em `.agents/org` se ela já existir noutro repo | criar organização → scaffold vira o estado inicial editável; conectar integrações |
 | **Usar** | fala em linguagem natural; o runtime escolhe o workflow pela `description` | idem, com contexto de tela somando à intenção |
 | **Customizar** | edita `org/` via `harness-change` → `build.sh` → revisão | edita pelo produto → aprovação antes de valer para todos |
-| **Atualizar o harness** | `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`; `org/` intocada (fora do repo) | release do sistema; a camada da organização não é tocada — é de outra posse |
+| **Atualizar o harness** | `git -C .agents pull --ff-only && ./.agents/build.sh`; `org/` intocada (fora do repo) | release do sistema; a camada da organização não é tocada — é de outra posse |
 | **Reverter** | histórico do versionamento da camada | versão anterior da camada |
 | **Auditar** | histórico do versionamento da camada | trilha de aprovação por artefato |
 
 **Quando rodar o build:** criou, renomeou, sobrescreveu ou desabilitou workflow; mexeu em
-`PERSONA.md`. `./.agents/runtime/build.sh --list` imprime a origem resolvida de cada
+`PERSONA.md`. `./.agents/build.sh --list` imprime a origem resolvida de cada
 workflow — é o comando para responder "de onde veio esse comportamento?".
 
 ---

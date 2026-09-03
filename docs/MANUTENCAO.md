@@ -75,7 +75,7 @@ a divergir, e conteúdo que a organização escreveu num caminho que você mudou
 É o ponto que diferencia manutenção de harness de documentação comum. Cada critério de
 aceite tem que apontar para uma das duas provas — nunca ficar só na prosa.
 
-**Prova determinística — `runtime/build.sh --strict`.** Cobre estrutura e contrato: ação com
+**Prova determinística — `./build.sh --strict`.** Cobre estrutura e contrato: ação com
 dois donos, encaixe apontando para provider sem a capacidade, esteira sem produtor, workflow
 sem `objetivo`/`entrega`/`portoes`, bloco derivado divergindo do frontmatter. É de graça e
 roda em segundos.
@@ -101,7 +101,7 @@ Formato completo, tipos de caso e os runners disponíveis: `ARCHITECTURE.md` §9
 
 ```bash
 cd .agents
-./runtime/build.sh --strict          # contrato + blocos derivados em dia
+./build.sh --strict          # contrato + blocos derivados em dia
 ./runtime/eval.sh --skill <workflow> # o gatilho dispara onde deve, e só ali
 ```
 

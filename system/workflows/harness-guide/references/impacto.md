@@ -64,7 +64,7 @@ o build reprova por citar ação inexistente.
 O raio mais caro de errar, porque o prejuízo é conteúdo humano, não código.
 
 ```bash
-./runtime/build.sh --list                 # quantos encaixes de cada workflow estão preenchidos
+./build.sh --list                 # quantos encaixes de cada workflow estão preenchidos
 ls -R org/workflows/<nome>/               # o que ela escreveu de fato
 ```
 
@@ -93,7 +93,7 @@ Tabela por camada: `docs/MANUTENCAO.md` §1.
 
 ## O que o build já pega sozinho
 
-Não gaste varredura com o que `./runtime/build.sh --strict` denuncia de graça: ação com dois
+Não gaste varredura com o que `./build.sh --strict` denuncia de graça: ação com dois
 donos, esteira sem produtor ou com ciclo, eval citando ação inexistente, cobertura de gatilho
 sem contraprova, encaixe apontando provider sem a capacidade, arquivo da organização fora de
 encaixe declarado, workflow sem `objetivo`/`entrega`/`portoes`, bloco derivado divergindo do

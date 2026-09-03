@@ -21,7 +21,7 @@ Duas coisas moram aqui:
 Encaixe vazio → vale o padrão do pack. Arquivo fora de encaixe declarado, ou `SKILL.md` para
 ação que o pack já atende → **o build avisa**: é erro de configuração, não customização.
 
-Criou, renomeou ou preencheu → **rode `./.agents/runtime/build.sh`** (`--list` mostra origem
+Criou, renomeou ou preencheu → **rode `./.agents/build.sh`** (`--list` mostra origem
 e ação de cada workflow resolvido).
 
 Contrato e anti-padrões: `docs/ARCHITECTURE.md` §1–§3 e §7. Criar pela skill `harness-change`.

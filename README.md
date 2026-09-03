@@ -55,7 +55,7 @@ obrigatória — cada provider avisa e para se faltar: `gh` ou `glab` autenticad
 servidor MCP do Linear conectado) · `pandoc` · `rclone` · `pdftotext` · Node 20+
 (protótipo) · cliente CLI do banco.
 
-Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
+Atualizar: `git -C .agents pull --ff-only && ./.agents/build.sh`.
 
 ## Configurar
 
@@ -92,8 +92,9 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/runtime/build.sh`.
 │   ├── pack/                L2 PADRÃO — workflows genéricos + org-scaffold/
 │   └── workflows/           máquina do harness (harness-change, harness-guide, motores) — não-forkável
 ├── org/                 ✎ SUA — ORG.md, workflows/, professions/, providers/ (fora do Git)
+├── build.sh             porta de entrada — chama runtime/build.sh
 ├── skills →             symlink para runtime/skills — ponto de descoberta de skills
-├── runtime/             build.sh + adapters/ (fonte dos adapters gerados)
+├── runtime/             resolvedor + adapters/ + saída gerada
 │   ├── skills/          GERADO — visão resolvida que os runtimes leem
 │   └── claude|codex|opencode|cursor/  GERADO — a partir dos PERSONA.md resolvidos
 └── docs/             HARNESS.md (como funciona) · WORKFLOWS.md (o que existe, gerado)
@@ -104,7 +105,7 @@ Resolução: máquina vence sempre · workflow resolvido = **moldura do pack + c
 organização nos encaixes declarados** (`docs/ARCHITECTURE.md` §7, catálogo em
 `system/ACOES.md`) · `SKILL.md` em `org/` só para ação que o pack não atende ·
 `org/workflows/<nome>/DISABLED` desliga um workflow do pack. **Criou, renomeou ou preencheu
-encaixe? Rode `./.agents/runtime/build.sh`** — ele resolve as camadas, valida o contrato e
+encaixe? Rode `./.agents/build.sh`** — ele resolve as camadas, valida o contrato e
 escreve `runtime/manifest.json` (o catálogo como dado, `docs/ARCHITECTURE.md` §8).
 
 | Flag | Para quê |
@@ -231,13 +232,13 @@ Três leis de escrita (detalhe em [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)
 Validação antes do commit:
 
 ```bash
-cd .agents && ./runtime/build.sh --strict
+cd .agents && ./build.sh --strict
 for d in runtime/skills/*/; do n=$(basename "$d")
   grep -q "^name: $n$" "$d/SKILL.md" || echo "ERRO: $n"; done
 python3 -c "import json; json.load(open('runtime/opencode/opencode.json'))"
 test -f runtime/cursor/rules/harness.mdc
 python3 -m py_compile runtime/adapters/render.py
-bash -n install.sh get.sh runtime/build.sh
+bash -n install.sh get.sh build.sh runtime/build.sh
 ```
 
 Isso é a **camada de contrato**: determinística, de graça, e é o que pega duas declarações

@@ -36,7 +36,7 @@ Responda da fonte mais barata que resolve. Ler 27 `SKILL.md` para dizer o que o 
 | por que uma coisa está assim | `docs/mudancas/HRN-*.md` | história, regras e critérios de cada mudança |
 | o que a organização contrata | `system/ACOES.md` | catálogo público |
 | convenção desta empresa | `org/ORG.md` | — |
-| o que roda de verdade agora | `./runtime/build.sh --list` | origem e encaixes preenchidos por workflow |
+| o que roda de verdade agora | `./build.sh --list` | origem e encaixes preenchidos por workflow |
 
 Estado dos documentos: `docs/` descreve **o que roda hoje**. `docs/hub/` é o produto com
 interface e **nada dele está implementado** — nunca responda a partir de lá sem dizer que

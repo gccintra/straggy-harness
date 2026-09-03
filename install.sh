@@ -143,12 +143,12 @@ if [[ -f "$PROJECT_DIR/project-config.md" ]]; then
 fi
 
 # Workflows resolvidos (system ∪ pack ∪ org) — pasta gerada, fora do Git.
-"$HARNESS_DIR/runtime/build.sh" --org "$ORG_ROOT"
+"$HARNESS_DIR/build.sh" --org "$ORG_ROOT"
 
 # Depois do build: os .mdc de Cursor só existem a partir daqui.
 plant_cursor
 
 echo "Camadas: system/ (imutável: CONSTITUTION + professions + providers + pack padrão) e org/ (sua: ORG.md + workflows/professions/providers, fora do Git do harness). Ver .agents/README.md."
-echo "Criou/renomeou/desabilitou workflow? Rode .agents/runtime/build.sh de novo."
+echo "Criou/renomeou/desabilitou workflow? Rode .agents/build.sh de novo."
 echo "AGENTS.md/CLAUDE.md na raiz são override LOCAL opcional do projeto — complementam, não substituem a CONSTITUTION."
 echo "Harness instalado em $PROJECT_DIR"

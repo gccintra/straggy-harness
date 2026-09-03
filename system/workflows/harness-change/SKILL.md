@@ -646,7 +646,7 @@ Cada critério de aceite aponta uma prova executável, nunca prosa:
 
 | Tipo de critério | Prova |
 |---|---|
-| estrutura, contrato, declaração, esteira, cobertura | `./runtime/build.sh --strict` |
+| estrutura, contrato, declaração, esteira, cobertura | `./build.sh --strict` |
 | a frase certa aciona a ação certa, e a do vizinho não | caso em `<workflow>/evals/<caso>/caso.yaml` |
 | a organização recém-criada não fica sem padrão | `--org <vazio> --out <temporário>` |
 
@@ -682,7 +682,7 @@ como pendência.
 A skill não existe isolada — o harness a referencia em 4 lugares. Verificar e propor
 atualização de cada um que se aplique:
 
-- [ ] **Build** — `./.agents/runtime/build.sh` da raiz do projeto (regenera
+- [ ] **Build** — `./.agents/build.sh` da raiz do projeto (regenera
       `runtime/skills/`). Sem isso a skill nova não existe para nenhum runtime.
 - [ ] **Persona** — só se a mudança cria **ambiguidade de escolha**: o desempate entra em
       `.../workflows/product-specialist|tech-lead|product-designer`. Gatilho normal vive na
@@ -723,7 +723,7 @@ atualização de cada um que se aplique:
 
 | Checagem | Critério |
 |---|---|
-| `./.agents/runtime/build.sh --strict` | sai **0**; aviso é reprovação neste modo |
+| `./.agents/build.sh --strict` | sai **0**; aviso é reprovação neste modo |
 | `--org <diretório vazio> --out <temporário>` | nenhum aviso de "sem padrão no pack" — é o teste da organização recém-criada |
 | `--fix` | não muda `system/ACOES.md` quando nenhuma ação ou encaixe mudou |
 | `org/` | nenhum arquivo novo, salvo quando a demanda era escrever registro da organização |

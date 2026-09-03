@@ -87,10 +87,10 @@ converge, e documentar antes gera retrabalho.
 ## 7. O build — de fonte a runtime
 
 ```bash
-./runtime/build.sh          # resolve camadas, valida contrato, gera skills e adapters
-./runtime/build.sh --list   # origem, ação e encaixes preenchidos por workflow
-./runtime/build.sh --fix    # regenera os blocos derivados (ACOES.md, WORKFLOWS.md)
-./runtime/build.sh --strict # aviso vira reprovação — modo de CI
+./build.sh          # resolve camadas, valida contrato, gera skills e adapters
+./build.sh --list   # origem, ação e encaixes preenchidos por workflow
+./build.sh --fix    # regenera os blocos derivados (ACOES.md, WORKFLOWS.md)
+./build.sh --strict # aviso vira reprovação — modo de CI
 ```
 
 Entra `system/` + `org/`; sai `runtime/skills/` (a visão resolvida que os runtimes leem),

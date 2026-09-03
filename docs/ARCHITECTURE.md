@@ -99,7 +99,8 @@ onde quiser. Overlay pré-existente é preservado na atualização do harness.
 O **que** a organização pode reivindicar, e por onde, é a superfície pública de
 customização: **§7**.
 
-**Build.** A visão mesclada é gerada, nunca mantida à mão: `runtime/build.sh` produz
+**Build.** A visão mesclada é gerada, nunca mantida à mão: `./build.sh` (máquina em
+`runtime/build.sh`) produz
 `runtime/skills/` como **cópia** (arquivo real, fora do Git) — é o que todos os runtimes
 leem (`--list` imprime a origem de cada workflow). Overlay é por caminho, não symlink:
 o Codex descarta `SKILL.md` que é link de arquivo, e o eval grava artefato no gerado
@@ -577,7 +578,7 @@ neutra direto; só ela consome o artefato que `render.py` gera.
 ### Como rodar
 
 ```bash
-./runtime/build.sh --strict                    # contrato — determinístico, de graça
+./build.sh --strict                    # contrato — determinístico, de graça
 ./runtime/eval.sh                              # comportamento — implementação do .env
 ./runtime/eval.sh --runner codex-exec --tipo modo-degradado
 ```

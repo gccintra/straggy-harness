@@ -15,7 +15,7 @@ git clone <url-deste-repo>  .agents/org      # esta camada, aqui dentro
 ./.agents/install.sh                         # semeia o que faltar e resolve tudo
 ```
 
-Depois de qualquer mudança aqui: **`./.agents/runtime/build.sh`** — é ele que mescla pack +
+Depois de qualquer mudança aqui: **`./.agents/build.sh`** — é ele que mescla pack +
 organização e gera a visão que os agentes leem. `--list` mostra a origem resolvida de cada
 workflow (`pack`, `pack+encaixes`, `org`, `sistema`).
 
