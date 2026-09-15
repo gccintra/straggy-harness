@@ -50,24 +50,69 @@ GDRIVE_HUS_REMOTE="gdrive,root_folder_id=$GDRIVE_HUS:"
 convert_tree(){
   local src="$1" dest="$2"
   [ -d "$src" ] || { log "skip convert: $src nao existe"; return 0; }
-  find "$src" -type f ! -name '~$*' -print0 |
+
+  # Converte primeiro em staging. So troca a arvore publicada quando tudo
+  # termina bem; assim o destino espelha movimentos/exclusoes sem perder o
+  # ultimo cache valido por uma falha parcial de conversao.
+  case "$dest" in
+    "$MD/HUs"|"$MD/Regras"|"$MD/Outros") ;;
+    *) log "destino de conversao fora de $MD: $dest"; return 1 ;;
+  esac
+  local parent name stage source_list failed=0
+  parent="$(dirname "$dest")"
+  name="$(basename "$dest")"
+  mkdir -p "$parent"
+  stage="$(mktemp -d "$parent/.${name}.sync.XXXXXX")"
+  source_list="$stage/.source-files"
+
+  if ! find "$src" -type f ! -name '~$*' -print0 > "$source_list"; then
+    rm -rf "$stage"
+    log "falha ao listar $src; cache anterior preservado"
+    return 1
+  fi
+
   while IFS= read -r -d '' f; do
     local rel="${f#"$src"/}"
     case "$(printf '%s' "$f" | tr '[:upper:]' '[:lower:]')" in
       *.docx)
-        local out="$dest/${rel%.*}.md"
+        local out="$stage/${rel%.*}.md"
         mkdir -p "$(dirname "$out")"
-        pandoc "$f" -f docx -t gfm -o "$out" 2>/dev/null && log "docx  -> $rel" ;;
+        if pandoc "$f" -f docx -t gfm -o "$out" 2>/dev/null; then
+          log "docx  -> $rel"
+        else
+          failed=1
+          break
+        fi ;;
       *.pdf)
-        local out="$dest/${rel%.*}.md"
+        local out="$stage/${rel%.*}.md"
         mkdir -p "$(dirname "$out")"
-        pdftotext -layout "$f" "$out" && log "pdf   -> $rel" ;;
+        if pdftotext -layout "$f" "$out"; then
+          log "pdf   -> $rel"
+        else
+          failed=1
+          break
+        fi ;;
       *)
-        local out="$dest/$rel"
+        local out="$stage/$rel"
         mkdir -p "$(dirname "$out")"
-        cp "$f" "$out" && log "copia -> $rel" ;;
+        if cp "$f" "$out"; then
+          log "copia -> $rel"
+        else
+          failed=1
+          break
+        fi ;;
     esac
-  done
+  done < "$source_list"
+  rm -f "$source_list"
+
+  if [ "$failed" -ne 0 ]; then
+    rm -rf "$stage"
+    log "falha na conversao de $src; cache anterior preservado"
+    return 1
+  fi
+
+  rm -rf "$dest"
+  mv "$stage" "$dest"
 }
 
 # Converte 1 arquivo (docx/pdf) de um dir p/ um destino de nome FIXO — usado

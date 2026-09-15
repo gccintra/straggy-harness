@@ -22,10 +22,12 @@ SKIP_RCLONE=1 ./sync-context.sh   # só re-converte o _raw existente
 ```
 
 Pipeline: `rclone` exporta do Drive para `docs/context_docs/_raw/` (incremental, compara
-tamanho+hash) → conversão para `docs/context_docs/md/` espelhando subpastas — `.docx` via
-`pandoc`, `.pdf` via `pdftotext`; `.xlsx`/`.pptx`/imagem são copiados como estão (converter
-destruiria estrutura). Google Doc exporta como `.docx`, Slide como `.pptx`, Sheet como
-`.xlsx`; PDF só como último recurso.
+tamanho+hash) → conversão em staging → substituição da árvore correspondente em
+`docs/context_docs/md/`. O cache convertido espelha subpastas, movimentações, renomes e
+exclusões; uma falha de conversão preserva a última árvore publicada com sucesso. `.docx`
+usa `pandoc`, `.pdf` usa `pdftotext`; `.xlsx`/`.pptx`/imagem são copiados como estão
+(converter destruiria estrutura). Google Doc exporta como `.docx`, Slide como `.pptx`,
+Sheet como `.xlsx`; PDF só como último recurso.
 
 Origens declaradas no `.env`:
 
@@ -77,3 +79,4 @@ chat/ticket; `.gitignore` com `sa-key.json` e `docs/context_docs/_raw/`. Escopo 
 | Cron não roda | caminho relativo no crontab | use caminho absoluto |
 | `.md` com `<table>` HTML | tabela docx com células mescladas | normal do pandoc; segue legível e greppável |
 | Documento mudou e não atualizou | cron ainda não rodou | rode `./sync-context.sh` |
+| Arquivo aparece na pasta nova e na anterior | cache gerado por uma versão antiga do script | rode `./sync-context.sh` novamente |
