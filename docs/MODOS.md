@@ -123,7 +123,7 @@ nem por engano.
 
 | Etapa | Modo repositório | Modo aplicativo |
 |---|---|---|
-| **Entrar** | `npx straggy-harness` (clona em `.agents/` e roda o `install.sh`: semeia `org/` do scaffold se vier vazia, cria `project-config.yaml`/`.env`, liga os runtimes, roda o build) · montar a camada da organização em `.agents/org` se ela já existir noutro repo | criar organização → scaffold vira o estado inicial editável; conectar integrações |
+| **Entrar** | `npx straggy-harness` (clona em `.agents/` e roda o `install.sh`: semeia `org/` do scaffold se vier vazia, cria `project-config.yaml`/`.env`, semeia `codigo-fonte/` — README no Git do projeto, `repos/` local —, liga os runtimes, roda o build) · montar a camada da organização em `.agents/org` se ela já existir noutro repo | criar organização → scaffold vira o estado inicial editável; conectar integrações |
 | **Usar** | fala em linguagem natural; o runtime escolhe o workflow pela `description` | idem, com contexto de tela somando à intenção |
 | **Customizar** | edita `org/` via `harness-change` → `build.sh` → revisão | edita pelo produto → aprovação antes de valer para todos |
 | **Atualizar o harness** | `git -C .agents pull --ff-only && ./.agents/build.sh`; `org/` intocada (fora do repo) | release do sistema; a camada da organização não é tocada — é de outra posse |

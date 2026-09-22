@@ -142,6 +142,9 @@ if [[ -f "$PROJECT_DIR/project-config.md" ]]; then
   echo "AVISO: project-config.md (formato antigo) ainda existe. A config agora é project-config.yaml — migre os valores e remova o .md."
 fi
 
+# Ambiente local de código. Não clona e não grava credencial.
+"$HARNESS_DIR/seed-codigo-fonte.sh" "$PROJECT_DIR"
+
 # Workflows resolvidos (system ∪ pack ∪ org) — pasta gerada, fora do Git.
 "$HARNESS_DIR/build.sh" --org "$ORG_ROOT"
 
