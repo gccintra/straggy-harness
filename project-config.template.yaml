@@ -35,6 +35,15 @@ caminhos:
                                                    # (org/workflows/backlog-prioritization/references/funil.yaml),
                                                    # que declara este caminho em `fonte:`. Vazio → só o funil.
 
+# Código do produto, noutro remoto Git — qualquer host. Clones ficam fora do Git
+# deste repositório. No modo aplicativo o formulário do projeto grava este bloco;
+# a skill lê o arquivo. Lista vazia → não inventa remoto. Segredo não entra aqui.
+codigo_fonte:
+  caminho: "codigo-fonte/repos/"
+  repositorios: []
+  # - nome: ""    # pasta dentro de caminho
+  #   url: ""     # remoto Git
+
 prototipo_deploy:                # lido por prototype-deploy; vazio → a skill pergunta
   dominio: ""                    # ex.: projeto.suaempresa.tech (registro A apontando pra VPS antes do certbot)
   host_ssh: ""                   # ex.: root@suaempresa.tech

@@ -68,7 +68,8 @@ if ! command -v "$binario" >/dev/null 2>&1; then
   exit 3
 fi
 
-# ── Projeto descartável: o mesmo layout que o install.sh produz ───────────────
+# ── Projeto descartável: subconjunto do layout que o install.sh produz ────────
+# Não semeia codigo-fonte/: eval não usa código de produto nem credencial.
 # Rodar na raiz do harness não testa nada — lá as skills não estão instaladas.
 WS="$(mktemp -d)"
 cleanup() { [ "$KEEP" = 1 ] && echo "workspace preservado: $WS" >&2 || rm -rf "$WS"; }

@@ -49,6 +49,7 @@ O instalador cria só estes caminhos, nunca sobrescreve arquivo existente, e rod
 | `project-config.yaml` | cópia do template — versionado no projeto |
 | `.env` | cópia do `.env.example` — fora do Git (tem segredo) |
 | `.agents/org/` | cópia de `system/pack/org-scaffold/` — **sua camada**, fora do Git do harness |
+| `codigo-fonte/README.md` | semeado se faltar; `repos/` é local e fica fora do Git. Remotes em `codigo_fonte` no `project-config.yaml` |
 
 Requisito: `bash` e `python3` (o build gera os adapters). Ferramentas externas, nenhuma
 obrigatória — cada provider avisa e para se faltar: `gh` ou `glab` autenticado (ou o
@@ -60,8 +61,8 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/build.sh`.
 ## Configurar
 
 - **`project-config.yaml`** — cliente, projeto, token de arquivo, responsável, URL de
-  demandas, caminhos, deploy do protótipo. Só dado, em blocos (`identidade`, `recursos`,
-  `caminhos`, `prototipo_deploy`, `documentacao`). Campo em branco vira placeholder no
+  demandas, caminhos, deploy do protótipo, repositórios de código. Só dado, em blocos
+  (`identidade`, `recursos`, `caminhos`, `codigo_fonte`, `prototipo_deploy`, `documentacao`). Campo em branco vira placeholder no
   documento gerado; a skill não inventa valor. YAML enquanto a edição é na mão; migra para
   JSON + schema quando existir interface.
 - **`org/ORG.md`** — convenções da **sua** organização: língua, nomenclatura, papéis,
