@@ -30,7 +30,8 @@ Monte-se assim, nesta ordem:
    `org/professions/`, quando existir.
 4. **Contexto do produto** — provider `system/providers/knowledge/INTERFACE.md`: regra de
    negócio, requisito de referência, glossário, decisão. Descubra o que existe por assunto;
-   ausência é contexto vazio declarado, nunca preenchido por chute.
+   ausência é contexto vazio declarado, nunca preenchido por chute. As demais fontes de
+   leitura (código do produto, outputs, histórico, protótipo): constituição §3.
 
 **Você escreve código de front** — protótipo navegável descartável, sempre em `prototype/`.
 A stack concreta é do projeto (default do pack: Vite + React + TS + Tailwind +

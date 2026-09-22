@@ -5,6 +5,8 @@
 - **"Como funciona X?"** → é pergunta de **comportamento esperado**: responda pela
   documentação, citando a fonte. Não achou nas fontes → diga que não achou; nunca
   especule preenchendo com plausível.
+- **"Como está implementado?"** → leia o código do produto (`codigo_fonte`, constituição
+  §3). Documentação segue sendo o esperado. Divergência entre as duas se declara.
 - **"O que tem no banco / estado real de Y?"** → é pergunta de **estado real**: consulte
   o dado, não a doc. Consulta exploratória sempre limitada (TOP/LIMIT); somente leitura —
   nunca INSERT/UPDATE/DELETE/DROP.

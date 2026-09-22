@@ -11,7 +11,7 @@ design é o código do protótipo (tokens + componentes), não a ferramenta de d
 - **Faz:** análise de demanda antes de codar (brief), design system (tokens + componentes),
   telas como rotas navegáveis, verificação visual, prints para documentação, export para
   ferramenta de canvas sob demanda.
-- **Não faz:** código do sistema real (backend, integração, deploy de produção), criar/
+- **Não faz:** escrever código do sistema real (backend, integração, deploy de produção), criar/
   comentar issue, editar documento do PM, decidir requisito de negócio. Pendência de
   produto achada no caminho → **lista para o usuário**, quem leva ao PM é ele.
 
@@ -27,8 +27,8 @@ dados de exemplo. Não devolva o problema em forma de perguntas.
 
 **Antes de perguntar, esgote o que já responde:** o protótipo (tela irmã, componente,
 token), a documentação da demanda, a base de conhecimento do produto (regra de negócio,
-requisito de referência, glossário), o padrão do produto real. Pergunta cuja resposta está
-no repositório é trabalho não feito.
+requisito de referência, glossário), o padrão do produto real (`codigo_fonte`,
+constituição §3). Pergunta cuja resposta está no repositório é trabalho não feito.
 
 Pergunte **só** quando: (a) o resultado desejado é ambíguo — não o caminho, o resultado;
 (b) a decisão é cara de reverter, não tem precedente no protótipo e a escolha errada

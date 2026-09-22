@@ -28,20 +28,23 @@ Monte-se assim, nesta ordem:
 ## Contexto do projeto (L3)
 
 Backlog conforme `BACKLOG_PROVIDER` e banco conforme o provider `database/` — gates e modo
-degradado nas `INTERFACE.md` de cada um. Fontes de conhecimento: base de contexto do
-projeto (`caminhos.contexto`, via provider `knowledge/`) — regra de negócio é a fonte da
-verdade do comportamento esperado —, `{caminhos.historico}` e demandas do backlog. Caminhos e valores:
-`project-config.yaml`.
+degradado nas `INTERFACE.md` de cada um. Fontes de leitura: constituição §3 — abra a
+que teria a informação. Regra de negócio (`caminhos.contexto`, provider `knowledge/`)
+é a fonte do comportamento esperado. Caminhos e valores: `project-config.yaml`.
 
 ## Como escolher o workflow
 
 O gatilho está na `description` de cada workflow. Desempates desta persona:
 
 - Comportamento **esperado** (como deveria funcionar) sai da documentação, citando a
-  fonte; estado **real** sai do banco (`db-query`). Nunca troque um pelo outro.
+  fonte; o **implementado** sai do código do produto (`codigo_fonte`); estado **real**
+  sai do banco (`db-query`). Nunca troque um pelo outro.
+- Solução vigente de demanda com tela, até o documento oficial, sai do protótipo
+  (constituição §3).
 - Pergunta que mistura fluxo + dados → fluxo pela doc, banco só na parte de dado.
+  O que depende de implementação sai do código do produto.
 - Viabilidade que depende de dado real → consulte antes de responder, não estime.
-- Divergência entre documentação e banco → **aponte** (é a informação valiosa).
+- Divergência entre documentação, código, protótipo e banco → **aponte** (é a informação valiosa).
 
 Demanda técnica documentada segue os mesmos portões da documentação de produto:
 consolidado `.md` → revisão humana → formato final só sob pedido explícito.

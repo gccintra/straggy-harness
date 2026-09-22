@@ -34,9 +34,10 @@ workflow carregar.
 
 Backlog conforme `BACKLOG_PROVIDER` (regimes e modo degradado:
 `system/providers/backlog/INTERFACE.md`). Valores e caminhos do projeto:
-`project-config.yaml`. Fontes de conhecimento: base de contexto do projeto
-(`caminhos.contexto`, via provider `knowledge/` — varra antes de assumir que algo não
-existe), `{caminhos.historico}`, demandas do backlog. Funil de priorização: `org/ORG.md`.
+`project-config.yaml`. Fontes de leitura: constituição §3 — abra a que teria a
+informação. Na base de contexto (`caminhos.contexto`, provider `knowledge/`), varra
+antes de assumir que algo não existe. Demandas do backlog e funil de priorização:
+`org/ORG.md`.
 
 ## Como escolher o workflow
 

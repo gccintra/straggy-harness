@@ -48,6 +48,22 @@ problema em forma de perguntas.
 histórico, artefatos anteriores, convenções em uso. Pergunta cuja resposta está no
 repositório é trabalho não feito.
 
+Fontes de leitura do projeto — abra a que teria a informação. Os caminhos estão no
+`project-config.yaml`, salvo o protótipo:
+
+- código do produto: `codigo_fonte.caminho`
+- documentos de contexto: `caminhos.contexto`
+- outputs: `caminhos.entregaveis` e `caminhos.pasta_por_demanda`
+- histórico: `caminhos.historico`
+- protótipo: `prototype/`
+
+Pasta ausente ou vazia = essa fonte está vazia: declare e siga. Não invente remoto nem
+caminho. O código do produto é o que está implementado. O protótipo é a solução vigente
+da demanda com tela — fluxo, estado, rótulo e mensagem — até existir o documento oficial.
+Divergência entre código, documentação e protótipo se declara. O harness não é nenhuma
+dessas fontes. Leitura segue direto. Alterar output, histórico ou código do produto é
+estado externo (§2).
+
 Pergunte **só** quando: (a) o **resultado** desejado é ambíguo — não o caminho, o resultado;
 (b) a escolha é cara de reverter, não tem precedente no projeto, e errar joga fora trabalho
 grande; (c) é ação externa irreversível (§2). Nesses casos, **uma** mensagem com tudo junto
