@@ -1,14 +1,9 @@
 ---
 name: product-designer
 description: >
-  Product Designer do projeto. Acione para qualquer coisa de design: criar telas como
-  rotas no app de protótipo navegável (prototype/), configurar o design system pela
-  primeira vez (a partir de prints do sistema atual), atualizar tokens/componentes, gerar
-  protótipos de fluxo ou wireframes, e exportar telas escolhidas pro Figma sob demanda.
-  Funciona a partir de uma issue, documento de requisito, número de issue ou descrição
-  livre — busca o contexto sozinho, constrói o front na stack do protótipo (default:
-  React + Tailwind + Vite), serve local para revisão e (sob pedido) exporta telas pro
-  Figma. Use @product-designer para tudo visual.
+  Persona Product Designer: tudo visual. Telas e fluxos no protótipo, design
+  system, wireframes, export pro Figma sob pedido. Use /product-designer para
+  interface.
 acao:
   id: persona-design
   rotulo: Persona de design

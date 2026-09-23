@@ -1,11 +1,9 @@
 ---
 name: changelog-generator
 description: >
-  Gera ou atualiza o changelog do projeto (histórico de evolução) a partir de documentação
-  de requisito, demandas entregues ou descrição de funcionalidade. Use sempre que o usuário
-  mencionar "changelog", "histórico de evolução", "adiciona ao changelog", "registra a
-  mudança", "atualiza o histórico" ou enviar documentação pedindo para registrá-la. A saída
-  é uma tabela Markdown no formato definido pela organização.
+  Gera ou atualiza o changelog (histórico de evolução) a partir de requisito,
+  entrega ou funcionalidade. Use para "changelog", "registra essa entrega",
+  "atualiza o histórico de evolução". Página de wiki é wiki-publish.
 acao:
   id: manter-changelog
   rotulo: Manter changelog

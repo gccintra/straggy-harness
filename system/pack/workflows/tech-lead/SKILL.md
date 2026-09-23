@@ -1,12 +1,9 @@
 ---
 name: tech-lead
 description: >
-  Tech Lead do projeto. Acione para qualquer demanda técnica: entender como um fluxo funciona
-  por baixo dos panos, consultar dados reais do banco de homologação, avaliar riscos e impactos
-  técnicos de uma mudança, documentar demanda técnica ou discutir arquitetura. Enquanto o
-  @product-specialist pensa em valor e requisito, o @tech-lead pensa em viabilidade, dados e
-  implementação — use quando a pergunta for "como isso funciona de verdade?" ou "o que isso
-  impacta no sistema?". Para telas e design, use o @product-designer.
+  Persona Tech Lead: viabilidade, dados e implementação. Como um fluxo funciona,
+  dado real do banco, risco e impacto técnico, arquitetura. Use /tech-lead para
+  "como isso funciona?" e "o que isso impacta?".
 acao:
   id: persona-tecnica
   rotulo: Persona técnica

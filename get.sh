@@ -9,9 +9,6 @@
 # HARNESS_REPO  URL do Git (default: este repositório)
 # HARNESS_REF   branch ou tag (default: main)
 #
-# docs/ não entra no working tree: é material do repositório do harness
-# (discovery, PRD, arquitetura de produto), não do projeto que instala.
-# Quem for editar o harness: git -C .agents sparse-checkout add docs
 set -euo pipefail
 
 REPO="${HARNESS_REPO:-https://github.com/gccintra/straggy-harness.git}"
@@ -35,10 +32,8 @@ PROJECT_DIR="$(git rev-parse --show-toplevel 2>/dev/null)" || {
 AGENTS="$PROJECT_DIR/.agents"
 
 clone_harness() {
-  echo "Clonando $REPO ($REF) → .agents/ (sem docs/)"
-  git clone --filter=blob:none --sparse --branch "$REF" "$REPO" "$AGENTS"
-  git -C "$AGENTS" sparse-checkout init --no-cone
-  git -C "$AGENTS" sparse-checkout set '/*' '!/docs/'
+  echo "Clonando $REPO ($REF) → .agents/"
+  git clone --filter=blob:none --branch "$REF" "$REPO" "$AGENTS"
 }
 
 if [[ -e "$AGENTS" ]]; then

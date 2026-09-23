@@ -1,13 +1,9 @@
 ---
 name: design-setup
 description: >
-  Configura o design system do projeto E faz o scaffold do app de protótipo navegável
-  (prototype/) na primeira vez que o designer é acionado. Extrai tokens de cor, tipografia,
-  espaçamento e padrões de componentes de prints/screenshots do sistema atual; grava os
-  tokens na configuração de estilo e cria os componentes base transcritos das evidências.
-  Push dos guidelines para a ferramenta de canvas é opt-in. Use na primeira vez que o
-  designer for acionado — antes de criar qualquer tela — e para atualizar o design system
-  quando ele evoluir.
+  Primeira configuração do design system e scaffold do protótipo a partir de
+  prints do sistema atual: tokens e componentes base. Use na primeira vez do
+  designer ou para atualizar o design system. Tela específica é design-screen.
 acao:
   id: configurar-design-system
   rotulo: Configurar design system

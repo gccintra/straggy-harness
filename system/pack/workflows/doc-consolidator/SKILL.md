@@ -1,13 +1,9 @@
 ---
 name: doc-consolidator
 description: >
-  Gera o documento .md consolidado de uma demanda — fonte de verdade única que reúne a
-  descrição da funcionalidade, os critérios de aceite, as regras de negócio, as mensagens
-  ao usuário e a trilha do discovery. Use para pedidos genéricos como "documenta a #NNN",
-  "gera a documentação", "consolida", "gera o md", "monta o documento base" ou "cria as
-  regras da #NNN". Gera somente o `.md` e PARA para revisão humana — formato final
-  (`.docx` ou outro) é passo separado, só após revisão e pedido explícito. IMPORTANTE: leia
-  .agents/system/providers/backlog/INTERFACE.md antes de qualquer operação no backlog.
+  Gera o .md consolidado da demanda (critérios de aceite, regras de negócio,
+  mensagens) e para para revisão. Use para "documenta a #NNN", "consolida",
+  "gera o md", "monta o documento base". O docx/PDF final é doc-final-generator.
 acao:
   id: documentar-requisito
   rotulo: Documentar requisito
@@ -52,7 +48,7 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (**portão humano**: entrega o `.md` e para; um artefato por turno) |
 | Métodos | `system/professions/product-specialist/methods/user-story.md` (história e critérios verificáveis) · `sbvr-rules.md` (regra como invariante) |
-| Provider | `backlog/` — **com fallback local** (modo local da INTERFACE) · `knowledge/` |
+| Provider | `backlog/` — **com fallback local** (modo local da INTERFACE) · `knowledge/`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Formatos | encaixes `estrutura-documento` e `regras-classificacao` — quando a organização os preenche, valem à risca |
 | L3 | metadados de `project-config.yaml` (campo vazio → placeholder `[ASSIM]`) |
 

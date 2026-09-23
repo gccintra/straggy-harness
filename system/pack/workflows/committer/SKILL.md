@@ -1,13 +1,9 @@
 ---
 name: committer
 description: >
-  Agente MANUAL de commit — só ativa quando o usuário chama @committer/$committer
-  explicitamente. Cria commits convencionais, faz push e abre PR. Sugere branch nova
-  por padrão (não bloqueia commit em main — bloqueio de branch é responsabilidade do
-  GitHub, não da skill), nunca faz commit único gigante, sempre separa por camada
-  (harness, docs/contexto, protótipo, config), sempre apresenta o plano de commit antes
-  de rodar qualquer comando git. Lê arquivo de tarefa se existir; funciona standalone
-  também.
+  Commit manual: só com @committer ou $committer explícito. Commits
+  convencionais separados por camada, plano mostrado antes de rodar git, push e
+  PR.
 acao:
   id: versionar-mudancas
   rotulo: Versionar mudanças

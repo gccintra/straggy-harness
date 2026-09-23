@@ -1,12 +1,9 @@
 ---
 name: sprint-goal-generator
 description: >
-  Gera a Meta da Sprint (Sprint Goal) no padrao do Guia do Scrum 2020, com foco em OUTCOME
-  (ganho de valor para o usuario/negocio) e nao em output (funcionalidades entregues). Use
-  sempre que o usuario pedir para criar, escrever, montar ou sugerir uma Meta da Sprint,
-  Sprint Goal, objetivo da sprint, ou enviar HUs/backlog pedindo para definir a meta.
-  Tambem quando perguntar qual seria a meta mesmo sem usar o termo exato. Trigger
-  agressivo: qualquer combinacao de meta + sprint + contexto de desenvolvimento de software.
+  Escreve a Meta da Sprint (Guia do Scrum 2020) com foco em outcome. Use para
+  "meta da sprint", "sprint goal", "objetivo da sprint". Criar, fechar ou mover
+  sprint é sprint-ops.
 acao:
   id: definir-meta-de-sprint
   rotulo: Definir meta da sprint

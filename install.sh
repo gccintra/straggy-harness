@@ -56,6 +56,11 @@ plant_cursor() {
   fi
 
   mkdir -p "$dest/rules"
+  for f in "$dest/rules"/*.mdc; do
+    if [[ -L "$f" && ! -e "$f" && "$(readlink "$f")" == .agents/runtime/cursor/rules/* ]]; then
+      rm -f "$f"
+    fi
+  done
   local src="$HARNESS_DIR/runtime/cursor/rules"
   [ -d "$src" ] || return 0
   for f in "$src"/*.mdc; do
@@ -109,9 +114,36 @@ backfill_env() {
   echo ".env: ${#novas[@]} chave(s) nova(s) anexada(s) com o default do template (${novas[*]}) — CONFIRA."
 }
 
+# Constituição sempre carregada: Claude (2.1.277+), Codex, OpenCode e Cursor leem
+# AGENTS.md da raiz. Sem ele, no Claude e no Codex a L0 só entrava quando uma skill era
+# acionada. O arquivo é do projeto: semeado só se não existir, nunca editado depois.
+seed_agents_md() {
+  local dest="$PROJECT_DIR/AGENTS.md" f
+  if [[ ! -e "$dest" ]]; then
+    cp "$HARNESS_DIR/AGENTS.template.md" "$dest"
+    echo "AGENTS.md criado — aponta a constituição e o ORG.md para todos os runtimes."
+  elif ! grep -q "system/CONSTITUTION.md" "$dest"; then
+    echo "AVISO: AGENTS.md já existe e não aponta a constituição. Adicione a linha: @.agents/system/CONSTITUTION.md"
+  fi
+  for f in CLAUDE.md CLAUDE.local.md; do
+    if [[ -f "$PROJECT_DIR/$f" ]] && ! grep -qE "@AGENTS\.md|system/CONSTITUTION\.md" "$PROJECT_DIR/$f"; then
+      echo "AVISO: $f existe — o Claude Code lê ele no lugar do AGENTS.md. Adicione a linha @AGENTS.md em $f."
+    fi
+  done
+}
+
+# Clone antigo do get.sh excluía docs/ (sparse-checkout). As specs de mudança moram lá e
+# precisam chegar no pull — desliga a exclusão, sem tocar em outro sparse que não o nosso.
+if [[ -d "$HARNESS_DIR/.git" ]] \
+  && git -C "$HARNESS_DIR" sparse-checkout list 2>/dev/null | grep -qx '!/docs/'; then
+  git -C "$HARNESS_DIR" sparse-checkout disable
+  echo ".agents: docs/ passa a vir no pull (sparse-checkout antigo desligado)."
+fi
+
 seed_file "$HARNESS_DIR/project-config.template.yaml" "$PROJECT_DIR/project-config.yaml" "project-config.yaml"
 seed_file "$HARNESS_DIR/.env.example" "$PROJECT_DIR/.env" ".env"
 backfill_env "$HARNESS_DIR/.env.example" "$PROJECT_DIR/.env"
+seed_agents_md
 
 # Camada da organização: POSSE do cliente, fora do Git do harness (.gitignore). O harness
 # ships só o scaffold; aqui ele é semeado arquivo a arquivo, nunca sobrescrevendo.
@@ -148,10 +180,9 @@ fi
 # Workflows resolvidos (system ∪ pack ∪ org) — pasta gerada, fora do Git.
 "$HARNESS_DIR/build.sh" --org "$ORG_ROOT"
 
-# Depois do build: os .mdc de Cursor só existem a partir daqui.
+# Depois do build: harness.mdc só existe a partir daqui.
 plant_cursor
 
 echo "Camadas: system/ (imutável: CONSTITUTION + professions + providers + pack padrão) e org/ (sua: ORG.md + workflows/professions/providers, fora do Git do harness). Ver .agents/README.md."
 echo "Criou/renomeou/desabilitou workflow? Rode .agents/build.sh de novo."
-echo "AGENTS.md/CLAUDE.md na raiz são override LOCAL opcional do projeto — complementam, não substituem a CONSTITUTION."
 echo "Harness instalado em $PROJECT_DIR"

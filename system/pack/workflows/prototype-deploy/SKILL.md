@@ -1,14 +1,9 @@
 ---
 name: prototype-deploy
 description: >
-  Publica o app de protótipo (prototype/) num servidor como site estático, atrás de
-  autenticação e HTTPS. Descobre o "porteiro" HTTP do servidor (nginx no host, Traefik,
-  Caddy, nginx-proxy) antes de assumir qualquer coisa, gera o script de publicação e o
-  bloco de configuração a partir dos valores em project-config.yaml, e produz o passo a
-  passo a ser executado no servidor. Use quando o usuário pedir para hospedar, publicar,
-  subir, colocar no ar ou dar deploy do protótipo — ou pedir uma URL compartilhável dele.
-  Não use para deploy do sistema de produção (backend/banco), que não é escopo deste
-  harness.
+  Publica o protótipo num servidor como site estático, com autenticação e HTTPS.
+  Use para "publica o protótipo", "coloca no ar", "URL compartilhável". Deploy
+  de produção fora do escopo.
 acao:
   id: publicar-prototipo
   rotulo: Publicar protótipo

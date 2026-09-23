@@ -1,17 +1,10 @@
 ---
 name: harness-change
 description: >
-  Especifica e executa qualquer mudança no próprio harness — skill, workflow, método,
-  provider, persona, constituição, adapter, regra de engajamento — seguindo a arquitetura de
-  camadas. Use SEMPRE que o usuário pedir para criar uma skill nova, editar ou refatorar uma
-  existente, adicionar workflow, extrair método, mudar a CONSTITUTION/ORG, corrigir um
-  procedimento, mexer na estrutura do harness ou "melhorar o harness" — qualquer alteração em
-  arquivo dentro de .agents/ que não seja config de instância (project-config.yaml, .env).
-  Toda mudança começa por uma spec com análise de impacto, aprovada antes de qualquer
-  edição. Para só ENTENDER o harness sem mudar nada — o que ele já faz, onde algo mora, o
-  que quebra se eu mexer — a skill é a `harness-guide`.
-  Garante que toda mudança respeite: camada certa, prescrever resultado e não raciocínio,
-  referência em vez de cópia, portões humanos preservados.
+  Especifica e executa mudança no harness (skill, workflow, método, provider,
+  persona, constituição, adapter) com spec e impacto antes. Use para "cria uma
+  skill", "edita a skill X", "melhora o harness", edição em .agents/. Só
+  entender é harness-guide.
 objetivo: Governar como o próprio harness evolui — spec com impacto antes, e a mudança nascendo na camada certa e no estilo certo.
 ---
 
@@ -49,8 +42,9 @@ Consultas pontuais, não pré-leitura:
   para, que encaixes a organização preencheu e em que arquivo. É derivada do frontmatter,
   então não mente sobre o estado atual.
 
-L0 (`system/CONSTITUTION.md`) já está carregada: write-gate, autonomia, brevidade e prosa,
-portões, honestidade. Esta skill **nunca afrouxa** nada disso.
+L0 (`system/CONSTITUTION.md`) chega em toda sessão pelo `AGENTS.md` do projeto. Não chegou
+(sem `AGENTS.md`, ou com `CLAUDE.md` que não o importa)? Leia antes de seguir. Ela traz:
+write-gate, autonomia, brevidade e prosa, portões, honestidade. Esta skill **nunca afrouxa** nada disso.
 
 ---
 
@@ -215,9 +209,11 @@ customização silenciosa).
 
 **Frontmatter:**
 
-- `name` em kebab-case; `description` com **gatilhos agressivos** — frases literais que o
-  usuário diria, sinônimos, variações PT/EN. É a description que faz o runtime acionar a
-  skill; description vaga = skill morta.
+- `name` em kebab-case; `description` é **só gatilho**, no máximo 350 caracteres, e a
+  soma das descrições do harness fica abaixo de 6.000 — o build avisa e o `--strict`
+  reprova. Frases literais que o usuário diria e o desempate com a vizinha; nada de
+  instrução de execução. Description vaga = skill morta. Workflow que só outra skill
+  aciona leva uma linha dizendo isso.
 - `acao` — obrigatória, do catálogo vigente (`system/ACOES.md`). Ação nova do sistema =
   entrada nova no catálogo, aprovada junto (`--fix` regenera a tabela; editar a tabela à
   mão não muda comportamento). Ação da organização **não** entra no catálogo do sistema.
@@ -249,10 +245,10 @@ customização silenciosa).
   exceção — sem padrão possível (marca da empresa, gerador proprietário), a ação nasce
   indisponível e isso é estado, não defeito. `padrao` **não se declara**: o build deriva se
   o arquivo existe no pack (`pack` ou `nenhum`).
-- Se usa provider: a description termina apontando a `INTERFACE.md` do domínio (ex.:
-  `system/providers/backlog/INTERFACE.md`) — nunca a implementação nem o nome da
-  ferramenta. Nome de workflow também não carrega fornecedor (`wiki-publish`, não
-  `gitlab-wiki`).
+- Se usa provider: a linha `Provider` da tabela de camadas manda ler a `INTERFACE.md`
+  do domínio antes de qualquer operação — nunca a implementação nem o nome da
+  ferramenta. A `description` não carrega esse aviso. Nome de workflow também não
+  carrega fornecedor (`wiki-publish`, não `gitlab-wiki`).
 
 Forma longa (pack — copie a estrutura, não o exemplo):
 
@@ -331,7 +327,7 @@ acao: gerar-narrativa-de-requisito
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (o que nesta skill é escrita → write-gate) |
 | Métodos | `system/professions/<profissão>/methods/<arquivo>.md` |
-| Provider | `system/providers/<domínio>/` — **sem fallback local**. Capacidade exigida: `<cap>` |
+| Provider | `system/providers/<domínio>/` — **sem fallback local**. Capacidade exigida: `<cap>`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Formatos | encaixe `<id>` |
 
 Portões, nesta ordem: … Nenhum é pulável pelo procedimento.
@@ -530,8 +526,8 @@ aparecem aqui (saem do `SKILL.md`):
 
 ```markdown
 ---
-mode: primary | subagent        # primary também vira slash-command
-summary: <uma linha — slash-command e o agente no Codex/OpenCode>
+mode: primary | subagent        # primary: pode ser o agente padrão do OpenCode
+summary: <uma linha — o agente no Codex/OpenCode>
 tools: Read, Write, Bash        # opcional; restringe ferramentas (Claude Code)
 model: <id>                     # opcional
 ---

@@ -1,14 +1,9 @@
 ---
 name: sprint-ops
 description: >
-  Gerencia sprints (milestones/ciclos) no backlog do projeto — GitLab, Linear, Jira ou o que estiver
-  configurado: criar nova sprint com datas e objetivo, fechar sprint atual e gerar sumário
-  de conclusão, mover issues entre sprints em lote, listar issues de uma sprint com status
-  resumido, e documentar a sprint preenchendo a descrição com Meta da Sprint, Prazos e
-  Escopo. Use para qualquer operação de gestão de sprint — criar, fechar, mover issues, ver
-  o que está numa sprint, ou "documentar a sprint", "preencher a milestone", "atualizar a
-  descrição da sprint". IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes
-  de qualquer operação no backlog.
+  Gestão de sprint no backlog: criar, fechar com sumário, mover issues em lote,
+  listar, documentar a milestone. Use para "fecha a sprint", "cria a sprint",
+  "move pra próxima", "documenta a sprint". Só a meta é sprint-goal-generator.
 acao:
   id: gerenciar-sprint
   rotulo: Gerenciar sprint
@@ -45,7 +40,7 @@ encaixes:
 | Camada | Referência |
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (fechar sprint, mover lote, atualizar descrição = escrita → preview + aprovação, cada operação) |
-| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `sprints` |
+| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `sprints`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Métodos | `system/professions/product-specialist/methods/sprint-goal.md` (meta é outcome) |
 | Formatos | `references/milestone-doc.md` — template da descrição de sprint (a organização sobrescreve este arquivo para impor o formato dela) |
 

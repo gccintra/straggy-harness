@@ -56,20 +56,26 @@ def limpar(diretorio):
 
 
 def plant_skills_links():
-    """Ponteiro de descoberta: <runtime>/skills → runtime/skills (pasta, não arquivo).
+    """Ponteiro de descoberta: um por árvore, só onde o runtime não acha sozinho.
 
-    Codex segue symlink de pasta e descarta SKILL.md que é link de arquivo. Claude e
-    Cursor leem o mesmo ponteiro. OpenCode referencia SKILLS_REF no json, não pasta.
+    `.agents/skills` (plantado pelo build.sh) já serve Codex, Cursor e OpenCode. O Claude
+    só lê `.claude/skills`, então é o único que ganha ponteiro próprio. Os de Codex e
+    Cursor eram duplicata (o Cursor lia a mesma skill por quatro pastas) e são removidos
+    de instalação antiga.
     """
-    for nome in ("claude", "codex", "cursor"):
-        dest = RUNTIME / nome / "skills"
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        if dest.is_symlink() or dest.exists():
-            if dest.is_dir() and not dest.is_symlink():
-                shutil.rmtree(dest)
-            else:
-                dest.unlink()
-        dest.symlink_to("../skills")
+    dest = RUNTIME / "claude" / "skills"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    if dest.is_symlink() or dest.exists():
+        if dest.is_dir() and not dest.is_symlink():
+            shutil.rmtree(dest)
+        else:
+            dest.unlink()
+    dest.symlink_to("../skills")
+
+    for nome in ("codex", "cursor"):
+        antigo = RUNTIME / nome / "skills"
+        if antigo.is_symlink():
+            antigo.unlink()
 
 
 def render_claude(personas, aliases):
@@ -84,16 +90,8 @@ def render_claude(personas, aliases):
             "---\n" + "\n".join(cabecalho) + "\n---\n\n" + p["body"] + "\n",
             encoding="utf-8")
 
-        if p["mode"] != "primary":
-            continue
-        (CLAUDE_COMMANDS / f"{p['name']}.md").write_text(
-            "---\n"
-            f"description: {p['summary']}\n"
-            "argument-hint: [pedido em linguagem natural]\n"
-            "---\n\n"
-            + p["body"]
-            + "\n\nDemanda: $ARGUMENTS\n",
-            encoding="utf-8")
+        # Sem slash-command por persona: a skill de mesmo nome já é o `/<persona>` e o
+        # Claude a prioriza sobre o comando — gerar os dois só duplicava o menu.
 
     for alias, alvo, texto in aliases:
         (CLAUDE_COMMANDS / f"{alias}.md").write_text(
@@ -249,17 +247,17 @@ def _persona_padrao(personas):
     return primarias[0]["name"] if primarias else ""
 
 
-def render_cursor(personas, aliases):
-    """Rules `.mdc`. Fonte: o mesmo PERSONA.md / SKILL.md dos outros.
+def render_cursor(personas):
+    """Só `harness.mdc` (constituição + persona padrão). Persona é skill: `/<persona>`.
 
     Cursor: `runtime/cursor/` vira `.cursor` por symlink, como os outros runtimes — salvo
     quando o IDE já criou `.cursor/` (MCP, settings); aí o install planta só as rules.
-    O ponteiro `skills → ../skills` é o mesmo dos outros adapters (`plant_skills_links`).
+    Skills: o Cursor lê `.agents/skills` sozinho — sem ponteiro próprio.
     """
     limpar(CURSOR_RULES)
 
     padrao = _persona_padrao(personas)
-    troca = ", ".join(f"`@{p['name']}`" for p in personas if p["mode"] == "primary")
+    troca = ", ".join(f"`/{p['name']}`" for p in personas if p["mode"] == "primary")
     (CURSOR_RULES / "harness.mdc").write_text(
         "---\n"
         "description: Constituição e persona padrão do harness de product management\n"
@@ -270,25 +268,10 @@ def render_cursor(personas, aliases):
         "`.agents/system/CONSTITUTION.md`). Em conflito, ela vence.\n"
         "2. Convenções — `org/ORG.md` (ou `.agents/org/ORG.md`).\n"
         f"3. Persona padrão: **{padrao}**. Troca explícita: {troca or '—'}.\n"
-        "4. Workflows — skills do projeto (`.agents/skills/` ou `.cursor/skills/`). "
+        "4. Workflows — skills do projeto (`.agents/skills/`). "
         "Carregue pelo gatilho da `description`; não invente procedimento.\n\n"
         "`AGENTS.md` local complementa, nunca substitui a constituição.\n",
         encoding="utf-8")
-
-    for p in personas:
-        cabecalho = ["description: >", bloco_yaml(p["description"]), "alwaysApply: false"]
-        (CURSOR_RULES / f"{p['name']}.mdc").write_text(
-            "---\n" + "\n".join(cabecalho) + "\n---\n\n" + p["body"] + "\n",
-            encoding="utf-8")
-
-    for alias, alvo, texto in aliases:
-        (CURSOR_RULES / f"{alias}.mdc").write_text(
-            "---\n"
-            f"description: {texto}\n"
-            "alwaysApply: false\n"
-            "---\n\n"
-            f"`{alias}` é alias de **`{alvo}`**. Siga `@{alvo}` com a mesma demanda.\n",
-            encoding="utf-8")
 
 
 def render_opencode(personas):
@@ -347,7 +330,7 @@ def main():
     render_claude(personas, aliases)
     render_codex(personas, modelo)
     render_opencode(personas)
-    render_cursor(personas, aliases)
+    render_cursor(personas)
     plant_skills_links()
 
     # Só `claude-plugin-eval` consome artefato em disco; as implementações headless leem

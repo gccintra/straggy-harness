@@ -1,15 +1,9 @@
 ---
 name: prototype-prints
 description: >
-  Captura as prints do protótipo (prototype/) que entram na seção Protótipo do documento
-  de uma demanda — o .md consolidado da demanda e o .docx gerado a partir dele.
-  Define o recorte a partir da documentação da demanda (não do git diff), organiza as prints
-  por fluxo, e captura com Playwright em dimensões adequadas para página A4: telas longas em
-  partes contínuas, componentes no próprio limite e todas as imagens com borda fina. Use
-  quando o usuário pedir prints, screenshots ou imagens do protótipo para
-  documentação — "tira as prints da #NNN", "preciso das telas pra colocar no docx",
-  "salva as imagens do protótipo". Não use para export pro Figma (é html-to-figma) nem
-  para criar/ajustar tela (é design-screen).
+  Captura prints do protótipo, por fluxo e em A4, para o documento da demanda.
+  Use para "tira as prints da #NNN", "telas pra colocar no docx". Export pro
+  Figma é html-to-figma; publicar é prototype-deploy.
 acao:
   id: capturar-prints
   rotulo: Capturar prints

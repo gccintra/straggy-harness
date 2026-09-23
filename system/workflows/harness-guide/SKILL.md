@@ -1,14 +1,9 @@
 ---
 name: harness-guide
 description: >
-  Responde perguntas sobre o próprio harness sem editar nada: o que ele já sabe fazer, onde
-  cada coisa mora, como um workflow funciona, o que ele entrega, onde ele para, e o que
-  quebra se você mudar alguma coisa. Use SEMPRE que o usuário perguntar "o que o harness
-  faz", "isso já existe?", "já tem skill pra X?", "como funciona a discovery/o build/os
-  encaixes", "onde eu edito X", "onde mora essa regra", "quem usa esse arquivo", "o que
-  quebra se eu mudar/renomear/apagar X", "qual o raio de impacto", "que skills existem",
-  "por que isso está assim" — e antes de qualquer edição, para levantar o impacto. É
-  SOMENTE LEITURA: não cria, não edita, não roda build. Quem escreve é a `harness-change`.
+  Responde sobre o harness sem editar: o que já faz, onde mora cada coisa, o que
+  quebra se mudar X. Use para "isso já existe?", "já tem skill pra X?", "onde eu
+  edito X", "qual o raio de impacto". Mudar é harness-change.
 objetivo: Responder o que o harness já faz, onde cada coisa mora e o que quebra ao mudá-la — sem tocar em arquivo nenhum.
 ---
 

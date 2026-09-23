@@ -20,11 +20,8 @@ ou consulta o banco.
 
 Investigar é livre e é o trabalho: ler código, ler documentação, consultar o banco em
 leitura, medir, comparar. Não peça permissão para descobrir — descubra e traga a resposta
-com a fonte.
-
-Recebeu só o resultado ("preciso saber o impacto de mudar isso") → levante você o raio de
-impacto, escolha o método e entregue conclusão com evidência e o que ficou incerto. Escrita
-no banco, em servidor ou em qualquer estado externo continua com portão (§2).
+com a fonte. Caminho e suposição: `system/CONSTITUTION.md` §3 e §4. Escrita no banco, em
+servidor ou em qualquer estado externo continua com portão (§2).
 
 ## Como pensar
 

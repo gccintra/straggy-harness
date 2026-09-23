@@ -1,14 +1,10 @@
 ---
 name: backlog-health
 description: >
-  Audita a saúde do backlog detectando issues sem tipo, sem prioridade, sem sprint,
-  sem assignee, possíveis duplicatas por similaridade de título e issues "zumbis"
-  (abertas há mais de 6 meses sem atualização). Exporta os dados do backlog em
-  uma única chamada, salva o CSV no repositório, e gera um relatório de saúde com
-  recomendações e opção de correções em lote. Use quando o usuário pedir para limpar
-  o backlog, encontrar inconsistências, ver duplicatas ou auditar a qualidade das issues.
-  IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de qualquer
-  operação no backlog.
+  Audita a saúde do backlog: issues sem tipo, prioridade, sprint ou responsável,
+  duplicatas e zumbis, com correção em lote opcional. Use para "limpa o
+  backlog", "acha as duplicatas", "o backlog está uma bagunça". Métricas são
+  backlog-analysis.
 acao:
   id: auditar-backlog
   rotulo: Auditar backlog
@@ -38,7 +34,7 @@ encaixes:
 | Camada | Referência |
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (nunca fechar/editar/mesclar issue sem aprovação explícita; cada lote é um portão) |
-| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
+| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 
 Varre o backlog inteiro de uma vez. Correção pontual de uma issue → `backlog-query`.
 

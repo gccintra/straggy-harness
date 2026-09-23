@@ -177,16 +177,22 @@ montagem = L0 (sempre, primeiro, imutável)
 
 | Runtime | Como monta |
 |---|---|
-| **Claude Code** | L0 + persona via `runtime/claude/agents\|commands`; workflows em `runtime/skills/` (`.claude/skills` → a mesma árvore) |
+| **Todos** | L0 + ORG via `AGENTS.md` da raiz do projeto (semeado pelo install, só se não existir), carregado em toda sessão |
+| **Claude Code** | L0 + persona como skill (`/<persona>`) e subagente em `runtime/claude/agents`; workflows em `runtime/skills/` (`.claude/skills` → a mesma árvore — único ponteiro que o Claude lê) |
 | **Codex** | L0 + persona via `runtime/codex/agents/*.toml`; workflows em `.agents/skills` (pasta-link para `runtime/skills/`, arquivos reais) |
 | **OpenCode** | idem via `runtime/opencode/opencode.json` |
-| **Cursor CLI** (`agent`) | L0 + persona via `runtime/cursor/rules/*.mdc`; pasta `.cursor` é symlink de `runtime/cursor/` como os outros runtimes, ou (se o IDE já criou `.cursor/`) só as rules são plantadas. Workflows em `.cursor/skills` → a mesma árvore. Headless: o mesmo adapter, `agent -p` — runner de eval quando o restante estiver no ar |
+| **Cursor CLI** (`agent`) | L0 via `runtime/cursor/rules/harness.mdc`; persona como skill (`/<persona>`); pasta `.cursor` é symlink de `runtime/cursor/` como os outros runtimes, ou (se o IDE já criou `.cursor/`) só `harness.mdc` é plantada. Workflows lidos de `.agents/skills`. Headless: o mesmo adapter, `agent -p` — runner de eval quando o restante estiver no ar |
 | **Produto (Hub)** | L0+L1 no system prompt (usuário não vê nem edita); pack servido como base e overlay da organização editável na UI; providers = integrações conectadas; L3 = formulário do projeto |
 
 **Adapter é gerado, nunca mantido à mão.** A fonte única de uma persona é
 `<workflow>/PERSONA.md` (modo, resumo, ferramentas, corpo agnóstico de runtime) mais a
 `description` do `SKILL.md` do mesmo workflow — que continua sendo o único lugar do
-gatilho de roteamento. `runtime/build.sh` renderiza **todos** os runtimes a partir disso
+gatilho de roteamento. Ela é só gatilho: frases literais e o desempate com a vizinha,
+no máximo 350 caracteres, e a soma das descrições do harness fica abaixo de 6.000
+(folga dentro do orçamento de ~8.000 do Codex, que encurta a lista quando estoura e o
+gatilho some). Instrução de execução e o aviso de ler a `INTERFACE.md` moram no corpo,
+na linha `Provider`. O build avisa acima do teto ou da soma, e o `--strict` reprova.
+`runtime/build.sh` renderiza **todos** os runtimes a partir disso
 (contrato do `PERSONA.md`: `runtime/adapters/README.md`). Persona nova = um arquivo, não
 um por runtime; e o `PERSONA.md` é sobrescrevível pela organização como qualquer outro
 arquivo do overlay.

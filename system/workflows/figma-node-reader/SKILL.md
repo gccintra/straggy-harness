@@ -1,11 +1,8 @@
 ---
 name: figma-node-reader
 description: >
-  Transcritor de nodes do Figma para HTML. Lê um ou mais nodes, fatia os que estouram o limite
-  de token, transcreve a árvore elemento por elemento (verbatim, Lucide inline, limpa) e grava
-  FRAGMENTOS HTML em disco. Devolve o caminho de cada fragmento, o índice de seções e os chutes.
-  Existe SÓ para o caso em que o node estoura — mantém o dump (80k+) fora do contexto principal.
-  É invocada como SUBAGENTE pela `design-screen` (caminho B) — não é gatilho direto do usuário.
+  Uso interno da design-screen: transcreve node grande do Figma para HTML em
+  disco. Não é gatilho do usuário.
 objetivo: Transcrever node grande do Figma para HTML em disco, queimando o contexto num subagente em vez da thread principal.
 ---
 

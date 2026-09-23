@@ -1,14 +1,10 @@
 ---
 name: backlog-issue-creator
 description: >
-  Cria e refina demandas do backlog com template estruturado, triagem de criticidade
-  (MoSCoW ou o que o funil declarar) e labels
-  corretas. Acione quando o usuário mencionar criar issue, item de backlog, demanda,
-  feature, bug, melhoria ou qualquer coisa que precise ser rastreada — em português ou
-  inglês (criar issue, demanda, backlog, bug, melhoria, feature, nova funcionalidade, erro,
-  tarefa). Acione também para refinar/enriquecer demanda existente com pouca informação
-  ("refina a #NNN", "completa", "a issue só tem título"). IMPORTANTE: leia
-  .agents/system/providers/backlog/INTERFACE.md antes de qualquer operação no backlog.
+  Cria ou refina demanda no backlog com template, criticidade e labels. Use para
+  "cria uma issue", "abre um bug", "registra essa melhoria", "refina a #NNN", "a
+  issue só tem título". Ver, comentar ou fechar demanda existente é
+  backlog-query.
 acao:
   id: registrar-demanda
   rotulo: Registrar demanda
@@ -48,7 +44,7 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (criar/atualizar demanda = escrita → preview completo + aprovação) |
 | Métodos | `system/professions/product-specialist/methods/moscow.md` (criticidade na entrada) · `user-story.md` · gatilho "pedido chega como solução" em `reasoning.md` |
-| Provider | `backlog/` — **sem fallback local**. Capacidade exigida: `core` |
+| Provider | `backlog/` — **sem fallback local**. Capacidade exigida: `core`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Formatos | encaixe `template-demanda` — template da descrição |
 
 Portões, nesta ordem: apresentar a demanda documentada e iterar → pedir aprovação explícita

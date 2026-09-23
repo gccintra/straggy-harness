@@ -1,17 +1,10 @@
 ---
 name: backlog-prioritization
 description: >
-  Prioriza as demandas do backlog pelo funil declarado da organização — triagem,
-  dimensões, score e faixas. Exporta os dados em lote, extrai as dimensões da demanda,
-  ranqueia pela ordenação declarada, detecta anomalias (rótulo errado, score inconsistente,
-  tipo errado na fila) e gera o markdown da análise no histórico.
-  Acione SEMPRE que o usuário mencionar: priorização, priorizar, ranking, lista ranqueada,
-  ordem de prioridade, backlog priorizado, funil, MoSCoW, ICE score, RICE, WSJF, quadrante,
-  matriz esforço × valor, quais issues entram primeiro, anomalia de prioridade,
-  inconsistência de label, ou qualquer pedido que combine backlog + priorizar + ordenar +
-  analisar.
-  IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de qualquer
-  operação no backlog.
+  Prioriza o backlog pelo funil da organização: score, faixas, lista ranqueada e
+  anomalias de rótulo ou score. Use para "prioriza", "ranking", "o que entra
+  primeiro", MoSCoW, RICE, ICE, WSJF, esforço × valor. Métricas sem ordenar são
+  backlog-analysis.
 acao:
   id: priorizar-backlog
   rotulo: Priorizar backlog
@@ -47,7 +40,7 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (a skill **só identifica** — corrigir rótulo/descrição é passo separado, aprovado pelo usuário) |
 | Métodos | `system/professions/product-specialist/methods/prioritization-selection.md` · `moscow.md` · `ice.md` |
-| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
+| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Código | receita de export da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-analysis.md`, `linear-mcp-analysis.md`) + `recipes/analise-funil.md` (cálculo do funil, agnóstico de ferramenta) |
 | Schema do funil | `system/schemas/funil-priorizacao.yaml` |
 

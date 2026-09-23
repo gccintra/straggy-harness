@@ -1,11 +1,9 @@
 ---
 name: db-query
 description: >
-  Executa consultas SQL no banco de dados de homologação do projeto usando o cliente CLI
-  configurado no .env (sqlcmd, psql, mysql, sqlite3 ou qualquer outro). Suporta qualquer
-  autenticação — senha, Windows/NTLM, Kerberos, .pgpass — sem depender de MCP. Use sempre
-  que precisar consultar dados reais do banco: estrutura de tabelas, valores de registros,
-  contagens, inconsistências entre o comportamento esperado e o estado atual dos dados.
+  Consulta SQL no banco de homologação pelo cliente do .env: tabelas, registros,
+  contagens, "quantos X estão com status Y", dado real que diverge do esperado.
+  Estado de issue é backlog-query.
 acao:
   id: consultar-dados
   rotulo: Consultar dados

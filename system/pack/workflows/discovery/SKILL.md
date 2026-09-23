@@ -1,13 +1,9 @@
 ---
 name: discovery
 description: >
-  Conduz o discovery de uma demanda seguindo o Double Diamond: explora e define o problema
-  (D1), depois explora e define a solução (D2). Cada fase vira um registro aprovado — no
-  backlog e no histórico local. Detecta em que fase a demanda está e propõe a próxima
-  pendente. Use quando o usuário pedir para explorar soluções, fazer discovery, discutir
-  alternativas ou aprofundar o entendimento de um problema — referenciando ou não uma
-  demanda. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de qualquer
-  operação no backlog.
+  Discovery no Double Diamond: problema (D1), depois solução (D2), cada fase
+  aprovada. Use para "explorar alternativas", "fazer discovery", "não sei qual é
+  o problema de verdade". Escrever o requisito é doc-consolidator.
 acao:
   id: explorar-solucao
   rotulo: Explorar solução
@@ -43,7 +39,7 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (write-gate por fase; suposição declarada; pendência não some) |
 | Método | `system/professions/product-specialist/methods/double-diamond.md` — barra de qualidade e contrato de cada fase. **Leia antes de conduzir.** `moscow.md` + `ice.md` para a priorização negociada |
-| Provider | `backlog/` — **com fallback local** (modo local da INTERFACE) · `knowledge/` (contexto) · `database/` (incógnita de dado, só a pedido do usuário) |
+| Provider | `backlog/` — **com fallback local** (modo local da INTERFACE) · `knowledge/` (contexto) · `database/` (incógnita de dado, só a pedido do usuário). Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 
 
 **Procedimento (encaixe).** Existindo `references/procedimento.md`, ele é o passo a passo a

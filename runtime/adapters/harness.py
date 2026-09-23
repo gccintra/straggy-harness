@@ -43,6 +43,12 @@ ACAO_NENHUMA = "nenhuma"
 
 ERRO, AVISO = "erro", "aviso"
 
+# Codex encurta a lista de skills quando a soma das descrições passa de ~8.000
+# caracteres, e o gatilho some com o corte. O teto deixa folga para as skills do
+# usuário (HRN-010 RN-05). Descrição da organização não entra: é dela, não do harness.
+TETO_DESCRICAO = 350
+ORCAMENTO_DESCRICOES = 6000
+
 
 # ── Frontmatter ───────────────────────────────────────────────────────────────
 # Subconjunto de YAML deliberadamente pequeno: escalar, bloco '>' e '|', mapa
@@ -458,6 +464,7 @@ def validar(workflows, dir_pack, dir_schemas="", providers=(), env=None):
         problemas.append((AVISO, msg))
 
     vistas = {}
+    soma_descricoes = 0
     for wf in workflows:
         nome, origem = wf["nome"], wf["origem"]
         do_pack = origem in ("pack", "pack+encaixes")
@@ -466,8 +473,17 @@ def validar(workflows, dir_pack, dir_schemas="", providers=(), env=None):
             erro(f"'{nome}' não tem SKILL.md.")
             continue
 
-        if not str(wf["campos"].get("description", "")).strip():
+        descricao = " ".join(str(wf["campos"].get("description", "")).split())
+        if not descricao:
             erro(f"'{nome}' não tem 'description' — sem gatilho, a ação é inalcançável.")
+        elif origem in ("sistema", "pack", "pack+encaixes"):
+            # A lista de skills divide orçamento de contexto com as do usuário (Codex: ~8.000
+            # caracteres no total). Estourou → o runtime corta descrição e o gatilho some.
+            soma_descricoes += len(descricao)
+            if len(descricao) > TETO_DESCRICAO:
+                aviso(f"'{nome}': description com {len(descricao)} caracteres "
+                      f"(teto {TETO_DESCRICAO}) — gatilho e desempate; o resto vai no corpo.")
+
 
         acao = wf["acao"]
         if origem == "sistema":
@@ -558,6 +574,12 @@ def validar(workflows, dir_pack, dir_schemas="", providers=(), env=None):
                 elif rel not in declarados:
                     aviso(f"'{nome}/{rel}' não corresponde a nenhum encaixe declarado "
                           f"pelo pack (ARCHITECTURE §7).")
+
+
+    if soma_descricoes >= ORCAMENTO_DESCRICOES:
+        aviso(f"descrições do harness somam {soma_descricoes} caracteres "
+              f"(orçamento {ORCAMENTO_DESCRICOES}) — acima disso o runtime corta "
+              f"a lista e o gatilho some.")
 
     problemas += _validar_esteira(workflows)
     problemas += _validar_providers(workflows, providers, env)

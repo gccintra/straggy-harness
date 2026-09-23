@@ -1,11 +1,9 @@
 ---
 name: stop-slop
 description: >
-  Reescreve prosa para tirar cara de IA. Use sempre que o usuário disser "humaniza",
-  "humaniza esse texto", "cheiro de IA", "cara de IA", "cara de ChatGPT", "parece GPT",
-  "parece LLM", "padrões de LLM", "tira o GPT", "sem parecer máquina", "AI tells",
-  "stop-slop", "stop slop", "slop", ou pedir para revisar um rascunho contra prosa
-  formulaica. Não documenta demanda, não gera entregável, não reescreve código.
+  Reescreve prosa para tirar cara de IA. Use para "humaniza", "cheiro de IA",
+  "cara de ChatGPT", "parece LLM", "stop-slop", ou rascunho formulaico. Não
+  documenta demanda nem reescreve código.
 acao:
   id:        limpar-prosa
   rotulo:    Limpar prosa

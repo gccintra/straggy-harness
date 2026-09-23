@@ -1,13 +1,10 @@
 ---
 name: backlog-analysis
 description: >
-  Analisa o backlog do projeto a partir de um único export em lote do backlog,
-  salvando o CSV bruto no repositório e gerando relatórios em Markdown com métricas,
-  scores e gráficos texto. Use esta skill sempre que o usuário pedir análise de sprint,
-  métricas do backlog, status de issues, velocidade do time, distribuição por tipo ou
-  prioridade, burndown, ou qualquer visão quantitativa do backlog — com ou sem filtro
-  de sprint. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de
-  qualquer operação no backlog.
+  Métricas do backlog por export em lote: status, distribuição por tipo ou
+  prioridade, velocidade do time, burndown, análise de sprint. Use para
+  "métricas do backlog", "velocidade", "burndown". Ranquear é
+  backlog-prioritization; auditar é backlog-health.
 acao:
   id: analisar-backlog
   rotulo: Analisar backlog
@@ -40,7 +37,7 @@ encaixes:
 | Restrições | `system/CONSTITUTION.md` |
 | Métodos | `system/professions/product-specialist/methods/ice.md` (leitura de score e funil) |
 | Funil | encaixe `funil` da ação `priorizar-backlog` — schema `system/schemas/funil-priorizacao.yaml` |
-| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export` |
+| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `bulk-export`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Código | receita de export da implementação ativa (ex.: `system/providers/backlog/recipes/gitlab-glab-burndown.md`, `linear-mcp-burndown.md`) + `recipes/burndown-local.md` (métricas e HTML, agnóstico de ferramenta) |
 
 Análise quantitativa de 10+ issues de uma vez. Consulta pontual (ver uma issue, buscar

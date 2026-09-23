@@ -1,14 +1,9 @@
 ---
 name: design-screen
 description: >
-  Cria E ajusta telas como rotas React no app de protótipo do projeto (prototype/) a partir
-  de uma demanda do backlog, documento de requisito, descrição livre ou número da demanda. Dois modos: AJUSTE (tela já
-  existe → referência é o próprio protótipo, tokens e telas irmãs; NÃO pede print) e NOVO
-  (tela inexistente → pede node do Figma, imagem ou wireframe). Reusa src/components/ui/,
-  liga a rota ao menu real do produto e verifica por diff visual. Export de telas escolhidas
-  pro Figma é opt-in. Use sempre que o usuário pedir criar OU ajustar uma tela, protótipo,
-  componente ou fluxo. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de
-  qualquer operação no backlog.
+  Cria ou ajusta telas como rotas no protótipo (prototype/) a partir de demanda,
+  requisito ou descrição. Use para "cria a tela", "ajusta a tela", protótipo,
+  componente, fluxo. Analisar antes de construir é design-brief.
 acao:
   id: construir-tela
   rotulo: Construir tela
@@ -39,7 +34,7 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` §3 (caminho é seu; suposição declarada) + autonomia local da profissão |
 | Métodos | `system/professions/product-designer/methods/` — **`reference-authority.md`** (quem manda no visual; valor design vs medido; imagem se mede, wireframe nunca) · **`design-system-first.md`** (inventário + precedência de reúso) · **`visual-verification.md`** (diff obrigatório antes de entregar) · **`accessibility.md`** (checklist AA antes de entregar) |
-| Providers | `canvas/` (ler node Figma, conversão pro padrão do app; node que estoura → subagente `figma-node-reader`) · `backlog/` — **com fallback local** (contexto de issue) · `knowledge/` (contexto do produto: regra de negócio, requisito de referência, glossário — de onde saem rótulo, campo, estado e regra exibidos na tela) |
+| Providers | `canvas/` (ler node Figma, conversão pro padrão do app; node que estoura → subagente `figma-node-reader`) · `backlog/` — **com fallback local** (contexto de issue) · `knowledge/` (contexto do produto: regra de negócio, requisito de referência, glossário — de onde saem rótulo, campo, estado e regra exibidos na tela). Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 
 Pré-requisito: `prototype/` existe (senão rode `design-setup`). Tela nova **sem** referência
 externa não trava o trabalho: derive de tela irmã, design system e doc da demanda, construa

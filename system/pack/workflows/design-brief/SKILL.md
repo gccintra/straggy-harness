@@ -1,15 +1,10 @@
 ---
 name: design-brief
 description: >
-  Analisa uma demanda ANTES de construir a tela: lê a documentação do PM (`.md` consolidado,
-  documento de requisito, issue), varre o protótipo existente (rotas, componentes de ui/,
-  tokens, telas irmãs) e devolve em conversa o que a demanda vira na interface — navegação, reuso, gaps do design
-  system, estados não previstos, impacto nas telas existentes, pendências de produto. Escala
-  com a entrada: ajuste em tela existente não passa por aqui; texto simples vira análise
-  leve; imagem vira média; documentação/issue vira completa. Gerar o {ID}_design.md é
-  OPT-IN, no fim. Use quando o usuário pedir para analisar, avaliar, sugerir ou entender uma
-  demanda de tela antes de codar. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md
-  antes de qualquer operação no backlog.
+  Analisa o que uma demanda vira na interface antes de construir: navegação,
+  reuso, lacunas do design system, estados, impacto em telas. Use para "analisa
+  a tela da #NNN antes de eu construir", "o que reusa e o que falta". Construir
+  é design-screen.
 acao:
   id: analisar-demanda-de-tela
   rotulo: Analisar demanda de tela
@@ -35,7 +30,7 @@ encaixes:
 |---|---|
 | Restrições | `system/CONSTITUTION.md` — read-only por padrão: nada é escrito até o usuário pedir o documento |
 | Métodos | `system/professions/product-designer/` — `reasoning.md` (navegação é a decisão mais cara; estados chatos; gap falso; pendência se lista, não se resolve) · `design-system-first.md` |
-| Providers | `backlog/` — **com fallback local** · `knowledge/` |
+| Providers | `backlog/` — **com fallback local** · `knowledge/`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Formatos | template do `{ID}_design.md` abaixo |
 
 Pensar a interface antes do JSX. `design-screen` responde "como transcrevo esta

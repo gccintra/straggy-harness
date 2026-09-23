@@ -154,6 +154,13 @@ plant_cursor_rules() {
   local dest_dir="$1" target_prefix="$2" src="$RUNTIME_DIR/cursor/rules"
   local f base dest
   mkdir -p "$dest_dir"
+  # Rule que o build plantou e deixou de gerar (persona virou só skill): link órfão sai.
+  # Só link nosso e quebrado — arquivo do usuário nunca é tocado.
+  for f in "$dest_dir"/*.mdc; do
+    if [ -L "$f" ] && [ ! -e "$f" ]; then
+      case "$(readlink "$f")" in "$target_prefix"/*) rm -f "$f" ;; esac
+    fi
+  done
   [ -d "$src" ] || return 0
   for f in "$src"/*.mdc; do
     [ -f "$f" ] || continue

@@ -1,13 +1,10 @@
 ---
 name: backlog-query
 description: >
-  Consulta e operação pontual no backlog do projeto — ver uma demanda, buscar por texto,
-  listar por sprint/label/responsável, criar/atualizar/comentar/fechar uma demanda
-  específica, listar labels e sprints. Use para qualquer pedido pontual de backlog: "vê a
-  #NNN", "busca issues sobre X", "quais issues da sprint atual", "comenta na #NNN",
-  "fecha a #NNN", "quais labels existem", e também quando o usuário citar a ferramenta
-  direto (glab, GitLab, Linear, Jira). Para varredura do backlog inteiro use backlog-analysis,
-  backlog-health ou backlog-prioritization.
+  Operação pontual no backlog: ver, buscar, listar por sprint/label/responsável,
+  comentar, atualizar, fechar. Use para "vê a #NNN", "busca issues sobre X",
+  "comenta na #NNN", "fecha a #NNN", ou ao citar glab, GitLab, Linear, Jira.
+  Demanda nova é backlog-issue-creator.
 acao:
   id: consultar-backlog
   rotulo: Consultar backlog

@@ -33,18 +33,18 @@ npx github:gccintra/straggy-harness
 
 Sem Node: `curl -fsSL https://raw.githubusercontent.com/gccintra/straggy-harness/main/get.sh | bash`.
 
-O bootstrap clona o harness em `.agents/` **sem a pasta `docs/`** (discovery, PRD e
-arquitetura de produto ficam no repositório do harness, não no projeto) e roda o
+O bootstrap clona o harness em `.agents/`, com `docs/`, e roda o
 `install.sh` — que liga os runtimes (Claude, Codex, OpenCode, Cursor CLI), semeia o que
-faltar e gera os adapters. Pin de versão: `HARNESS_REF=<tag> npx straggy-harness`. Para
-materializar `docs/` depois: `git -C .agents sparse-checkout add docs`.
+faltar e gera os adapters. Pin de versão: `HARNESS_REF=<tag> npx straggy-harness`.
+Instalação antiga sem `docs/`: rodar o `install.sh` de novo desliga a exclusão.
 
 O instalador cria só estes caminhos, nunca sobrescreve arquivo existente, e roda o build:
 
 | Caminho | O que é |
 |---|---|
 | `.claude` / `.codex` / `.opencode` / `.cursor` | symlinks → `.agents/runtime/<runtime>` |
-| `.cursor/` já existia (IDE) | o install **não** substitui: planta só `.cursor/rules/*.mdc` |
+| `.cursor/` já existia (IDE) | o install **não** substitui: planta só `.cursor/rules/harness.mdc` |
+| `AGENTS.md` | cópia de `AGENTS.template.md`, só se não existir — carrega a constituição e o `ORG.md` em toda sessão, em todos os runtimes |
 | `sync-context.sh` | symlink → `.agents/sync-context.sh` |
 | `project-config.yaml` | cópia do template — versionado no projeto |
 | `.env` | cópia do `.env.example` — fora do Git (tem segredo) |
@@ -76,8 +76,10 @@ Atualizar: `git -C .agents pull --ff-only && ./.agents/build.sh`.
   Sem backlog configurado o harness continua funcionando: workflows que dependem do estado
   real param e avisam; os que usam a demanda só como contexto caem para o repo local.
   Regimes: `system/providers/*/INTERFACE.md`.
-- **`AGENTS.md` / `CLAUDE.md`** na raiz do projeto — override local opcional; complementa,
-  nunca substitui a `CONSTITUTION.md`.
+- **`AGENTS.md`** na raiz do projeto — é por ele que Claude, Codex, OpenCode e Cursor
+  carregam a constituição em toda sessão. Regras do projeto entram abaixo dos ponteiros;
+  complementam, nunca substituem a `CONSTITUTION.md`. Tem `CLAUDE.md`? O Claude lê ele no
+  lugar do `AGENTS.md`: importe com `@AGENTS.md`.
 
 ---
 

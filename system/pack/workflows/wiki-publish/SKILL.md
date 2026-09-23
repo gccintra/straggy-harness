@@ -1,14 +1,9 @@
 ---
 name: wiki-publish
 description: >
-  Publica e atualiza páginas na wiki do projeto (GitLab, documents do Linear, Jira ou o
-  backlog configurado).
-  Use sempre que precisar publicar, criar ou atualizar documentação de produto na wiki —
-  fluxo novo, módulo documentado, decisão técnica, ou entrada de changelog. Gatilhos:
-  "publica na wiki", "cria a página", "atualiza a wiki", "documenta o módulo na wiki".
-  Verifica se a página já existe antes de criar, e oferece append ou replace quando existe
-  conteúdo anterior. IMPORTANTE: leia .agents/system/providers/backlog/INTERFACE.md antes de
-  qualquer operação no backlog.
+  Publica ou atualiza páginas na wiki do projeto, conferindo antes se existem.
+  Use para "publica na wiki", "cria a página", "atualiza a wiki". Entrada de
+  changelog é changelog-generator.
 acao:
   id: publicar-na-wiki
   rotulo: Publicar na wiki
@@ -43,7 +38,7 @@ encaixes:
 | Camada | Referência |
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (publicar/sobrescrever = escrita → preview + aprovação; wiki normalmente não tem lixeira) |
-| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `wiki` |
+| Provider | `system/providers/backlog/` — **sem fallback local**. Capacidade exigida: `wiki`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Formatos | `references/nomenclatura.md` — convenção de título das páginas (a organização sobrescreve) |
 
 

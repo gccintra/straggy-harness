@@ -1,14 +1,9 @@
 ---
 name: doc-final-generator
 description: >
-  Passo FINAL da documentação: transcreve um `.md` consolidado JÁ REVISADO (gerado pela
-  skill doc-consolidator) para o formato final entregável — `.docx`, `.pdf` ou o que o
-  projeto usar. Acione quando o usuário pedir EXPLICITAMENTE o documento formal: "gera o
-  docx", "agora o documento final", "transforma o md em docx", "exporta o documento",
-  "gera o PDF da demanda", "cria o documento formal". NÃO acione para pedido genérico
-  ("documenta a #NNN") — isso gera o `.md` primeiro, via doc-consolidator, com parada para
-  revisão humana. Só transcreve o `.md`; não relê discovery nem cria conteúdo. IMPORTANTE:
-  leia .agents/system/providers/docs-output/INTERFACE.md antes de gerar.
+  Transcreve um .md consolidado já revisado para .docx ou .pdf. Só com pedido
+  explícito: "gera o docx", "documento final", "gera o PDF da demanda". Pedido
+  genérico ("documenta a #NNN") é doc-consolidator.
 acao:
   id: gerar-documento-final
   rotulo: Gerar documento final
@@ -68,7 +63,7 @@ encaixes:
 | Camada | Referência |
 |---|---|
 | Restrições | `system/CONSTITUTION.md` (arquivo entregável = escrita → write-gate; **um pedido = um passo**: nunca gerar junto com o `.md`) |
-| Provider | `docs-output/` — **sem fallback local**. Capacidade exigida: `render` |
+| Provider | `docs-output/` — **sem fallback local**. Capacidade exigida: `render`. Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 | Formatos | nome e destino do arquivo: `org/ORG.md` §2 · identidade: `project-config.yaml`, bloco `documentacao` |
 
 Último passo do pipeline. O `.md` consolidado é a **fonte de verdade**; este workflow só o
