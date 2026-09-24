@@ -26,7 +26,7 @@ prototype/
 │   ├── components/ui/      ← componentes base sobre libs prontas, verbatim das evidências
 │   ├── components/layout/  ← AppLayout + AppHeader (menu de navegação REAL do produto)
 │   ├── lib/ExportFrame.tsx ← wrapper 1280 sem chrome, ativado por ?export=1 (export canvas)
-│   ├── lib/scenarios.tsx   ← ScenarioPanel + useScenarios + dimensões globais (painel de cenários)
+│   ├── lib/scenarios.tsx   ← painel de cenários — cópia VERBATIM de `assets/scenarios.tsx`
 │   └── mock/
 ```
 
@@ -42,11 +42,26 @@ prototype/
 
 ## Painel de cenários (`lib/scenarios.tsx`)
 
-- `<ScenarioPanel/>` montado uma vez, no `AppLayout`. Botão flutuante no canto inferior
-  direito; tecla `P` mostra/oculta (`e.code === 'KeyP'`, sem modificador, ignorada com foco
-  em `input`/`textarea`/`select`/`[contenteditable]`). Visibilidade em `sessionStorage`.
-- Cabeçalho do painel e `title` do botão: "`P` mostra/oculta".
-- A tela declara seus cenários no próprio arquivo:
+- **Não se escreve: copia-se** `assets/scenarios.tsx` (desta skill) para
+  `prototype/src/lib/scenarios.tsx`, sem editar. Comportamento e visual já estão nele —
+  paleta `neutral` padrão do Tailwind, fora dos tokens do produto por desenho (é moldura de
+  apresentação, não tela; a regra "nenhum valor solto" continua valendo para as telas).
+  Versão nova do asset → recopiar por cima.
+- Montagem uma vez, num `RootLayout` que envolve todas as rotas no `router.tsx`:
+
+  ```tsx
+  function RootLayout() {
+    return (
+      <ScenarioProvider dimensoes={dimensoes /* opcional */}>
+        <Outlet />
+        <ScenarioPanel />
+      </ScenarioProvider>
+    )
+  }
+  ```
+
+- Painel visível por padrão; `P` oculta/mostra (lembrado em `sessionStorage`).
+- A tela declara seus cenários no próprio arquivo (pode chamar mais de uma vez):
 
   ```tsx
   useScenarios([
@@ -55,17 +70,19 @@ prototype/
       { rotulo: 'Vazio', query: { state: 'empty' } },
     ]},
     { grupo: 'Contrato', opcoes: [
-      { rotulo: 'Exclusivo SEST', para: '/contratos/contrato-sest-001' },
+      { rotulo: 'Exclusivo', para: '/contratos/contrato-002' },
     ]},
   ])
   ```
 
-  `query` mescla na URL (`null` remove o parâmetro); `para` navega. Opção ativa = a que
-  casa com a URL atual. Rota sem `useScenarios` → "sem cenários".
-- Dimensões globais (ex.: perfil) em `mock/dimensoes.ts`, gravadas em query (`?perfil=`) e
-  preservadas pelo painel ao navegar. Arquivo ausente → seção oculta.
-- Oculto com `?export=1` e quando `navigator.webdriver` é verdadeiro — nunca entra em
-  captura.
+  `query` mescla na URL (`null` remove o parâmetro); `para` navega. Opção ativa = a mais
+  específica que casa com a URL atual. Nenhuma declaração → "sem cenários".
+- Grupo repetido em várias telas (ex.: troca de contrato) vira helper do projeto, fora de
+  `lib/scenarios.tsx`.
+- Dimensões globais (ex.: perfil): `DimensaoGlobal[]` em `mock/dimensoes.ts`, passado ao
+  `ScenarioProvider` pela prop `dimensoes`; gravadas em query (`?perfil=`) e preservadas ao
+  trocar de cenário. A tela lê o valor com `useSearchParams`. Sem dimensões → prop omitida.
+- `prototype/README.md` recebe o texto de `assets/README-apresentacao.md`.
 
 ## Servir e verificar
 

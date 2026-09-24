@@ -64,8 +64,9 @@ tem que cumprir:
   foco em campo editável), que lista os cenários **declarados pela rota atual** e as
   dimensões globais (ex.: perfil) e os aplica gravando na query. A URL segue sendo a fonte
   da verdade; o painel nunca aparece com o parâmetro de export nem sob automação.
-- **`prototype/README.md`** com a seção "Apresentando ao cliente": como abrir o painel
-  (tecla `P`) e o que ele troca.
+  **Componente pronto em `assets/`, copiado sem edição** — visual igual em todo protótipo,
+  na paleta `neutral` padrão, sem tokens do produto (é moldura, não tela).
+- **`prototype/README.md`** com a seção "Apresentando ao cliente" (texto em `assets/`).
 - Projeto real usa outra stack de front → **alinhe antes** e sobrescreva a referência.
 
 Verifique no browser: a raiz abre a tela default, o menu navega, `P` abre o painel.
