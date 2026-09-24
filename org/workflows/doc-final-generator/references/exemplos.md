@@ -71,7 +71,7 @@ Wizard de **2 etapas** no Hub de Aditivos. A Etapa 1 coleta as naturezas da alte
 
 ## 7. Referências Globais
 
-- **GL_01 — Numeração Sequencial por Contrato** — usado em CA05. (ver Referencias-Globais.md — Drive)
+- **GL_01 — Numeração Sequencial por Contrato**
 
 ## 8. Protótipo
 

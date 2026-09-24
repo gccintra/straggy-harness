@@ -1,7 +1,8 @@
 # Template — História de Usuário
 
 Estrutura de conteúdo da HU (9 seções + apêndices). O `.md` é a fonte de verdade e é
-**autocontido** — RN, MSG e GL levam o texto completo. Substitua os campos entre `[colchetes]`.
+**autocontido** — RN e MSG levam o texto completo; a seção 7 lista cada GL pelo código e
+título. Substitua os campos entre `[colchetes]`.
 Rigor de autoria (CA coeso, RN em SBVR, MSG, GL) em `doc-consolidator/references/regras.md`.
 
 ---
@@ -104,9 +105,10 @@ Numeração local à issue. Tipo + texto literal.
 
 ## 7. Referências Globais
 
-Só o que a issue referencia. O conteúdo do GL vive no doc do Drive (read-only). Nenhuma → `- N/A`.
+Só o que a issue referencia. Cada bullet contém somente o código e o título da GL. O conteúdo
+do GL vive no doc do Drive (read-only). Nenhuma → `- N/A`.
 
-- **GL_01 — [Título]** — usado em CA03. (ver Referencias-Globais.md — Drive)
+- **GL_01 — [Título]**
 
 ---
 

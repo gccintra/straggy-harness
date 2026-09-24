@@ -18,7 +18,7 @@ O `generate_doc.py` faz parsing **por padrão de linha**. Se a autoria fugir des
 | **Critério de aceite** | `- **CANN:** **Dado que** … **Quando** … **Então** … [RN_0X] [MSG_0X]` | `- **CA 01 -**` / `- CA01:` → perde o estilo de CA |
 | **Regra de Negócio** | `- **RN_0X** — <frase SBVR>` (sem título; texto completo) | escrever título repetindo a frase |
 | **Mensagem** | `- **MSG_0X** (Tipo) — "texto"` | — |
-| **Ref. Global** | `- **GL_0X — Título** — usado em CA_NN.` | — |
+| **Ref. Global** | `- **GL_0X — Título**` | Texto após o título (CA, arquivo ou Drive) |
 | **Bullet comum** | `- texto` | — |
 | **Parágrafo** | linha normal (não começa com `#`, `\|`, `-`) | — |
 
@@ -124,9 +124,9 @@ verbatim os CAs/regras. **Apenas o que está DENTRO do escopo.** **bold** em 1�
 
 ## 7. Referências Globais
 <!-- GLs reusados/promovidos, um por bullet. NENHUMA → um único bullet `- N/A` (sem prosa
-     explicando catálogo ausente). -->
+     explicando catálogo ausente). Cada bullet contém somente o código e o título da GL. -->
 
-- **GL_01 — [Título]** — usado em CA03. (ver Referencias-Globais.md — Drive)
+- **GL_01 — [Título]**
 
 ## 8. Protótipo
 <!-- SEMPRE `N/A` na geração inicial. Títulos e links das rotas por fluxo são preenchidos depois
