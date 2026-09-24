@@ -14,6 +14,27 @@ valores para cá).
 
 Módulo novo dentro de aplicação existente é **Melhoria**, não Desenvolvimento.
 
+## Como olhar a demanda
+
+A contagem mede o que o negócio passa a guardar e a fazer, não o que a tela mostra. Tela é
+arranjo de apresentação: um painel reúne dados de vários grupos lógicos e dispara vários
+processos, e uma coluna nova pode esconder um dado que vive por conta própria.
+
+- **Dados primeiro.** Antes das transações, reconstrua o modelo lógico que o requisito
+  implica: o que passa a ser guardado, com que identidade, quantas ocorrências por
+  registro-pai, por quanto tempo, e quem cria, invalida ou remove. As transações se leem
+  melhor depois disso.
+- **Grupo novo × atributo novo.** O que tem identidade, ciclo de vida ou multiplicidade
+  próprios é candidato a grupo lógico próprio. O que só qualifica um registro existente,
+  com um valor por registro que muda junto com ele, é atributo. Decida pelo comportamento
+  do dado descrito nas regras, não por onde ele aparece.
+- **Uma função por intenção do usuário.** O efeito que uma transação produz como parte do
+  próprio trabalho pertence a ela. Função separada é o que o usuário pede como capacidade
+  distinta.
+- **Conte como o contador que vai auditar.** Entre duas classificações defensáveis,
+  escolha a que um contador independente defenderia pelo manual e registre a outra leitura
+  na justificativa. Se a escolha muda o total, vale o portão de pergunta.
+
 ## Funções
 
 - **Processo elementar:** menor unidade de atividade com sentido para o usuário, completa e
