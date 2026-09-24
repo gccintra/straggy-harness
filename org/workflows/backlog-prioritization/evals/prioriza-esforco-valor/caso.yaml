@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  prioriza o backlog cruzando esforço e valor e me diz o que entra primeiro
+
+atende: priorizar-backlog
+confunde_com:
+  - estimar-pontos-de-funcao
+
+motivo: >
+  Esforço aqui é insumo do ranking, não pedido de contagem de PF; cair na contagem gera
+  planilha em vez da lista ranqueada.

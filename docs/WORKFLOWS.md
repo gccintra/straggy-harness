@@ -42,6 +42,7 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 | [`consultar-dados`](#consultar-dados) | Responder o que os dados realmente dizem, quando a documentação só diz o comportamento esperado. | `db-query` | pack padrão |
 | [`definir-meta-de-sprint`](#definir-meta-de-sprint) | Escrever a meta da sprint como ganho para o usuário ou o negócio, não como lista de entregas. | `sprint-goal-generator` | pack padrão |
 | [`documentar-requisito`](#documentar-requisito) | Reunir a demanda inteira num `.md` autocontido que passa a ser a fonte de verdade do requisito. | `doc-consolidator` | pack padrão + encaixes desta organização |
+| [`estimar-pontos-de-funcao`](#estimar-pontos-de-funcao) | Dimensionar a demanda em pontos de função antes de codificar, para a empresa validar se tem caixa para ela. | `contagem-pf-estimada` | própria desta organização |
 | [`explorar-solucao`](#explorar-solucao) | Levar a demanda do problema à solução definida, uma fase por vez, com a origem declarada em cada regra capturada. | `discovery` | pack padrão + encaixes desta organização |
 | [`gerar-documento-final`](#gerar-documento-final) | Transcrever o `.md` já revisado para o formato entregável, sem reinterpretar, resumir ou completar nada. | `doc-final-generator` | pack padrão + encaixes desta organização |
 | [`gerar-narrativa-de-requisito`](#gerar-narrativa-de-requisito) | Transformar uma HU já documentada em narrativa funcional corrida, legível por produto, design, desenvolvimento, QA e negócio. | `hu-narrative-generator` | própria desta organização |
@@ -496,6 +497,45 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 
 ---
 
+### estimar-pontos-de-funcao
+
+**Estimar pontos de funcao** — Dimensionar a demanda em pontos de função antes de codificar, para a empresa validar se tem caixa para ela.
+
+| | |
+|---|---|
+| Workflow | `contagem-pf-estimada` (própria desta organização) |
+| Exige antes | — |
+| Produz na esteira | — |
+| Ferramenta externa | nenhuma |
+
+**Dispara quando**
+
+> Contagem de pontos de função (IFPUG; estimada NESMA ou detalhada) de uma demanda ou HU antes do desenvolvimento, na planilha padrão do contador. Use para "conta os pontos de função", "contagem estimada", "quantos PF dá a #NNN", "faz a APF da HU". Esforço × valor para ranquear o backlog é backlog-prioritization.
+
+**Entrega**
+
+- `{caminhos.pasta_por_demanda}SENAT - {OS} - Estimada-HU{ID}.xlsx` no template do contador, com resumo (funções, PF IFPUG, PF Local da FS) na conversa
+
+**Portões**
+
+- tipo de contagem, fronteira, função nova × existente ou deflator ambíguo depois de consultar as fontes → PARA e faz uma pergunta
+- mostra a tabela de funções e os totais antes de gerar a planilha; só gera com aprovação
+
+**Onde se edita**
+
+| O quê | Arquivo | Estado |
+|---|---|---|
+| Moldura (do sistema) | `org/workflows/contagem-pf-estimada/SKILL.md` | existe |
+
+**Provas de comportamento**
+
+- declaradas aqui (1): `estima-pf`
+- contraprova em (1): `backlog-prioritization`
+
+`./runtime/eval.sh --skill contagem-pf-estimada`
+
+---
+
 ### explorar-solucao
 
 **Explorar solução** — Levar a demanda do problema à solução definida, uma fase por vez, com a origem declarada em cada regra capturada.
@@ -788,8 +828,8 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 
 **Provas de comportamento**
 
-- declaradas aqui (2): `roda-priorizacao` · `sem-provider`
-- contraprova em (1): `backlog-analysis`
+- declaradas aqui (3): `prioriza-esforco-valor` · `roda-priorizacao` · `sem-provider`
+- contraprova em (2): `backlog-analysis` · `contagem-pf-estimada`
 
 `./runtime/eval.sh --skill backlog-prioritization`
 

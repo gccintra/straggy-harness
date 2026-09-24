@@ -1,0 +1,13 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  faz a contagem estimada de pontos de função da #1022 pra eu mandar pra validar o caixa
+
+atende: estimar-pontos-de-funcao
+confunde_com:
+  - priorizar-backlog
+
+motivo: >
+  Tamanho em PF de uma demanda não é ranking do backlog; cair na priorização gera score em vez
+  da planilha de contagem.
