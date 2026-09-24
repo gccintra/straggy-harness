@@ -52,14 +52,20 @@ prototype/
   ```tsx
   function RootLayout() {
     return (
-      <ScenarioProvider dimensoes={dimensoes /* opcional */}>
-        <Outlet />
+      <ScenarioProvider dimensoes={dimensoes /* opcional */} telas={telas}>
+        <ScenarioOutlet />
         <ScenarioPanel />
       </ScenarioProvider>
     )
   }
   ```
 
+- `ScenarioOutlet` no lugar do `<Outlet />`: trocar de cenário pelo painel remonta a tela,
+  então estado lido só no `useState` inicial também responde.
+- `telas`: `TelaPrototipo[]` em `mock/telas.ts` — `{ grupo, titulo, rota, para? }`, uma por
+  rota registrada. Dá o nome da tela no cabeçalho e a seção "Ir para outra tela" (agrupada
+  por `grupo`, ex.: perfil de quem usa). `rota` é o padrão do roteador; rota com parâmetro
+  precisa de `para` (instância de exemplo) para virar atalho. Rota nova → linha nova aqui.
 - Painel visível por padrão; `P` oculta/mostra (lembrado em `sessionStorage`).
 - A tela declara seus cenários no próprio arquivo (pode chamar mais de uma vez):
 
@@ -67,7 +73,7 @@ prototype/
   useScenarios([
     { grupo: 'Estado', opcoes: [
       { rotulo: 'Padrão', query: { state: null } },
-      { rotulo: 'Vazio', query: { state: 'empty' } },
+      { rotulo: 'Vazio', dica: 'Nenhum registro no filtro', query: { state: 'empty' } },
     ]},
     { grupo: 'Contrato', opcoes: [
       { rotulo: 'Exclusivo', para: '/contratos/contrato-002' },
@@ -75,8 +81,10 @@ prototype/
   ])
   ```
 
-  `query` mescla na URL (`null` remove o parâmetro); `para` navega. Opção ativa = a mais
-  específica que casa com a URL atual. Nenhuma declaração → "sem cenários".
+  `query` mescla na URL (`null` remove o parâmetro); `para` navega; `dica` é uma linha do
+  que o cenário mostra. Opção ativa = a mais específica que casa com a URL atual; o botão
+  flutuante exibe a do primeiro grupo que casa com a URL. "Voltar ao padrão" limpa os parâmetros declarados.
+  Nenhuma declaração → "sem cenários".
 - Grupo repetido em várias telas (ex.: troca de contrato) vira helper do projeto, fora de
   `lib/scenarios.tsx`.
 - Dimensões globais (ex.: perfil): `DimensaoGlobal[]` em `mock/dimensoes.ts`, passado ao

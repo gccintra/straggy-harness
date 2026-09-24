@@ -3,7 +3,8 @@ name: design-setup
 description: >
   Primeira configuração do design system e scaffold do protótipo a partir de
   prints do sistema atual: tokens e componentes base. Use na primeira vez do
-  designer ou para atualizar o design system. Tela específica é design-screen.
+  designer, para atualizar o design system ou para instalar/atualizar o painel de
+  cenários (seletor de estados no canto). Tela específica é design-screen.
 acao:
   id: configurar-design-system
   rotulo: Configurar design system
@@ -62,7 +63,8 @@ tem que cumprir:
   URL, para o export opt-in ao canvas.
 - **Painel de cenários** — botão flutuante, mostrado/ocultado pela tecla `P` (ignorada com
   foco em campo editável), que lista os cenários **declarados pela rota atual** e as
-  dimensões globais (ex.: perfil) e os aplica gravando na query. A URL segue sendo a fonte
+  dimensões globais (ex.: perfil), os aplica gravando na query e leva a qualquer tela
+  registrada em `mock/telas.ts`. A URL segue sendo a fonte
   da verdade; o painel nunca aparece com o parâmetro de export nem sob automação.
   **Componente pronto em `assets/`, copiado sem edição** — visual igual em todo protótipo,
   na paleta `neutral` padrão, sem tokens do produto (é moldura, não tela).
