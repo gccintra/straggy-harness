@@ -26,6 +26,7 @@ prototype/
 │   ├── components/ui/      ← componentes base sobre libs prontas, verbatim das evidências
 │   ├── components/layout/  ← AppLayout + AppHeader (menu de navegação REAL do produto)
 │   ├── lib/ExportFrame.tsx ← wrapper 1280 sem chrome, ativado por ?export=1 (export canvas)
+│   ├── lib/scenarios.tsx   ← ScenarioPanel + useScenarios + dimensões globais (painel de cenários)
 │   └── mock/
 ```
 
@@ -36,7 +37,35 @@ prototype/
   importam de `ui/`, **nunca da lib direto**. Instale no setup as libs que o design system
   precisa.
 - Ícones: `lucide-react`. Rotas: `react-router-dom` (`createBrowserRouter`).
-- Estados de tela via `?state=` (`useSearchParams`), no mesmo arquivo da tela.
+- Estados de tela via query (`?state=` e afins, `useSearchParams`), no mesmo arquivo da
+  tela, **declarados ao painel** com `useScenarios`.
+
+## Painel de cenários (`lib/scenarios.tsx`)
+
+- `<ScenarioPanel/>` montado uma vez, no `AppLayout`. Botão flutuante no canto inferior
+  direito; tecla `P` mostra/oculta (`e.code === 'KeyP'`, sem modificador, ignorada com foco
+  em `input`/`textarea`/`select`/`[contenteditable]`). Visibilidade em `sessionStorage`.
+- Cabeçalho do painel e `title` do botão: "`P` mostra/oculta".
+- A tela declara seus cenários no próprio arquivo:
+
+  ```tsx
+  useScenarios([
+    { grupo: 'Estado', opcoes: [
+      { rotulo: 'Padrão', query: { state: null } },
+      { rotulo: 'Vazio', query: { state: 'empty' } },
+    ]},
+    { grupo: 'Contrato', opcoes: [
+      { rotulo: 'Exclusivo SEST', para: '/contratos/contrato-sest-001' },
+    ]},
+  ])
+  ```
+
+  `query` mescla na URL (`null` remove o parâmetro); `para` navega. Opção ativa = a que
+  casa com a URL atual. Rota sem `useScenarios` → "sem cenários".
+- Dimensões globais (ex.: perfil) em `mock/dimensoes.ts`, gravadas em query (`?perfil=`) e
+  preservadas pelo painel ao navegar. Arquivo ausente → seção oculta.
+- Oculto com `?export=1` e quando `navigator.webdriver` é verdadeiro — nunca entra em
+  captura.
 
 ## Servir e verificar
 

@@ -261,7 +261,7 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 
 **Entrega**
 
-- `prototype/` scaffoldado — tokens em arquivo único, componentes base próprios, uma tela por rota, menu real e wrapper de export
+- `prototype/` scaffoldado — tokens em arquivo único, componentes base próprios, uma tela por rota, menu real, wrapper de export e painel de cenários
 - registro em `{caminhos.historico}YYYY-MM-DD_design-setup.md`
 
 **Portões**
@@ -304,7 +304,7 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 
 **Entrega**
 
-- rota em `prototype/src/routes/`, registrada no roteador e alcançável pelo menu real, com estados via `?state=`
+- rota em `prototype/src/routes/`, registrada no roteador e alcançável pelo menu real, com estados na query declarados ao painel de cenários
 - `{caminhos.pasta_por_demanda}{ID}_design.md` atualizado com o que a tela faz de fato
 - registro em `{caminhos.historico}YYYY-MM-DD_design_<nome>.md`
 

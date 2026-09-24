@@ -45,6 +45,7 @@ A captura precisa da tela **sem o chrome** (sidebar/topbar) e em largura fixa 12
 - Container `w-[1280px]`, fundo neutro.
 - `id="export-frame"` no wrapper de topo → é o `figmaselector` da captura.
 - Aplica `aria-label` de topo (nome do frame no Figma) e um `<title>` curto via `document.title`.
+- O painel de cenários não renderiza com `?export=1`.
 
 Se a rota ainda não respeita `?export=1`, ajuste a rota/`ExportFrame` antes de capturar.
 

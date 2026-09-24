@@ -10,7 +10,7 @@ acao:
   descricao: extrai tokens e faz o scaffold do protótipo
 objetivo: Dar ao projeto um protótipo com design system próprio, medido das evidências reais em vez de estimado.
 entrega:
-  - "`prototype/` scaffoldado — tokens em arquivo único, componentes base próprios, uma tela por rota, menu real e wrapper de export"
+  - "`prototype/` scaffoldado — tokens em arquivo único, componentes base próprios, uma tela por rota, menu real, wrapper de export e painel de cenários"
   - "registro em `{caminhos.historico}YYYY-MM-DD_design-setup.md`"
 portoes:
   - faltou evidência do visual → pergunta, não estima
@@ -60,9 +60,15 @@ tem que cumprir:
 - **Rota raiz redireciona à tela default** do produto.
 - **Wrapper de export** (largura desktop fixa, sem chrome do app) ativado por parâmetro na
   URL, para o export opt-in ao canvas.
+- **Painel de cenários** — botão flutuante, mostrado/ocultado pela tecla `P` (ignorada com
+  foco em campo editável), que lista os cenários **declarados pela rota atual** e as
+  dimensões globais (ex.: perfil) e os aplica gravando na query. A URL segue sendo a fonte
+  da verdade; o painel nunca aparece com o parâmetro de export nem sob automação.
+- **`prototype/README.md`** com a seção "Apresentando ao cliente": como abrir o painel
+  (tecla `P`) e o que ele troca.
 - Projeto real usa outra stack de front → **alinhe antes** e sobrescreva a referência.
 
-Verifique no browser: a raiz abre a tela default, o menu navega.
+Verifique no browser: a raiz abre a tela default, o menu navega, `P` abre o painel.
 
 ## 2. Guidelines no canvas — OPT-IN
 

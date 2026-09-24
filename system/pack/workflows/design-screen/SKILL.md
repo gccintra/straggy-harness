@@ -10,7 +10,7 @@ acao:
   descricao: cria e ajusta telas no app de protótipo
 objetivo: Construir a tela da demanda como rota real do protótipo, transcrevendo a referência em vez de re-autorar.
 entrega:
-  - "rota em `prototype/src/routes/`, registrada no roteador e alcançável pelo menu real, com estados via `?state=`"
+  - "rota em `prototype/src/routes/`, registrada no roteador e alcançável pelo menu real, com estados na query declarados ao painel de cenários"
   - "`{caminhos.pasta_por_demanda}{ID}_design.md` atualizado com o que a tela faz de fato"
   - "registro em `{caminhos.historico}YYYY-MM-DD_design_<nome>.md`"
 portoes:
@@ -61,8 +61,9 @@ mock/<dominio>.ts                          ← dados de exemplo
 
 1. **Arquivo por tela — critério de coexistência**: coisas que nunca aparecem juntas são
    rotas/arquivos diferentes.
-2. **Estados via `?state=`** (`useSearchParams`): default/empty/loading/error no mesmo
-   arquivo.
+2. **Estados via query** (`?state=` e afins): default/empty/loading/error no mesmo
+   arquivo, **declarados ao painel de cenários** (`useScenarios`) com rótulo legível —
+   estado que só existe na URL não é apresentável.
 3. **Rota registrada + menu ligado** — tela que nenhum menu alcança não existe; sem
    hub/galeria; `/` redireciona pra tela default.
 4. **Modal é rota-filha ou estado**, nunca "página de modal".
@@ -75,7 +76,7 @@ antes de entregar.
 ## 2. Verificar e entregar (PARE aqui por padrão)
 
 `cd prototype && npm run dev` → dê a URL direta da tela + estados, confirme alcançável
-pelo menu. **Rode a verificação visual** (`visual-verification.md`): diff contra a
+pelo menu e diga que os cenários abrem com a tecla `P`. **Rode a verificação visual** (`visual-verification.md`): diff contra a
 referência com visual; wireframe → estrutura contra o rabisco + visual contra a irmã.
 Reporte o que restou divergente.
 
