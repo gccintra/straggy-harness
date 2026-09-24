@@ -257,7 +257,7 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 
 **Dispara quando**
 
-> Primeira configuração do design system e scaffold do protótipo a partir de prints do sistema atual: tokens e componentes base. Use na primeira vez do designer ou para atualizar o design system. Tela específica é design-screen.
+> Primeira configuração do design system e scaffold do protótipo a partir de prints do sistema atual: tokens e componentes base. Use na primeira vez do designer, para atualizar o design system ou para instalar/atualizar o painel de cenários (seletor de estados no canto). Tela específica é design-screen.
 
 **Entrega**
 
@@ -280,7 +280,7 @@ Toda ação aceita o encaixe `procedimento`. As fichas listam os encaixes de cad
 
 **Provas de comportamento**
 
-- declaradas aqui (1): `configura-design-system`
+- declaradas aqui (2): `configura-design-system` · `instala-painel`
 - contraprova em (1): `design-screen`
 
 `./runtime/eval.sh --skill design-setup`

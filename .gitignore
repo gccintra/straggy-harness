@@ -34,6 +34,10 @@ runtime/codex/agents/
 runtime/opencode/opencode.json
 runtime/cursor/rules/
 
+# Estado local do frescor do runtime — impressão digital das fontes e log do build (HRN-015/017)
+runtime/.impressao
+runtime/.build.log
+
 # Ponteiro de descoberta por runtime — symlink de pasta para runtime/skills.
 # Sem barra final: pattern com barra só casa diretório real, não symlink.
 runtime/claude/skills

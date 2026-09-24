@@ -36,7 +36,9 @@ encaixes:
 | Métodos | `system/professions/product-designer/methods/` — **`reference-authority.md`** (quem manda no visual; valor design vs medido; imagem se mede, wireframe nunca) · **`design-system-first.md`** (inventário + precedência de reúso) · **`visual-verification.md`** (diff obrigatório antes de entregar) · **`accessibility.md`** (checklist AA antes de entregar) |
 | Providers | `canvas/` (ler node Figma, conversão pro padrão do app; node que estoura → subagente `figma-node-reader`) · `backlog/` — **com fallback local** (contexto de issue) · `knowledge/` (contexto do produto: regra de negócio, requisito de referência, glossário — de onde saem rótulo, campo, estado e regra exibidos na tela). Leia a `INTERFACE.md` do domínio antes de qualquer operação. |
 
-Pré-requisito: `prototype/` existe (senão rode `design-setup`). Tela nova **sem** referência
+Pré-requisito: `prototype/` existe e `prototype/src/lib/scenarios.tsx` é cópia exata de
+`design-setup/assets/scenarios.tsx` (`cmp`) — ausente ou divergente → `design-setup` recopia
+antes de qualquer tela (protótipo anterior ao painel, ou asset que evoluiu). Tela nova **sem** referência
 externa não trava o trabalho: derive de tela irmã, design system e doc da demanda, construa
 e declare o que assumiu.
 **Transcrever, não re-autorar**: todo elemento da referência aparece, mesma ordem, nada

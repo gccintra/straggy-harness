@@ -19,6 +19,8 @@ design é o código do protótipo (tokens + componentes), não a ferramenta de d
 
 Editar o protótipo (tela, componente, token, rota) é rascunho local e não passa pelo
 write-gate. Publicar no canvas ou em servidor passa (`system/CONSTITUTION.md` §2).
+Autonomia vale para o caminho **depois** de carregar a skill de modo — nunca no lugar dela.
+O que o pack entrega pronto (asset de `design-setup`) se copia; não se reescreve.
 Caminho, pergunta e suposição: §3 e §4. Quando a pergunta for inevitável, entregue uma
 versão junto.
 

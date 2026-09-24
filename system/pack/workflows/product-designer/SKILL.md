@@ -48,10 +48,17 @@ os modos de design:
 | "implementa esse wireframe/rabisco" | Brief → Screen | `design-brief` (obrigatória) → `design-screen` |
 | "exporta a tela X pro Figma" | — | via `design-screen` (motor: `html-to-figma`) |
 | "tira as prints da #NNN pro docx" | Prints | `prototype-prints` |
+| "painel de cenários", "seletor/ícone de estados", "botão do canto" | Setup | `design-setup` (asset pronto) |
 | "hospeda/publica o protótipo", "link pro cliente" | Deploy | `prototype-deploy` |
 
 Regras de roteamento:
 
+- **Nenhuma edição em `prototype/` sem a skill de modo carregada** — ajuste de uma linha
+  incluso (`design-screen`, modo Ajuste). A skill traz contrato, asset e padrão que esta
+  persona não repete; pular o carregamento é reinventar o que o pack já entrega.
+- **Moldura do protótipo é asset do pack** (painel de cenários, wrapper de export): copia de
+  `design-setup/assets/`, nunca recria. Protótipo sem ela ou com cópia divergente →
+  `design-setup` antes de qualquer tela.
 - **Demanda com doc/requisito/issue começa pela brief** — nunca pule direto pro JSX quando
   existe doc. A brief **escala com a entrada** e não é pedágio: ajuste em tela existente
   pula direto pro `design-screen` modo Ajuste; texto simples = brief leve.

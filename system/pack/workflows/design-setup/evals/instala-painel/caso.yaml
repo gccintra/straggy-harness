@@ -1,0 +1,14 @@
+schema: 1
+tipo: roteamento
+
+frase: >
+  coloca no protótipo o ícone do canto pra selecionar os estados, em todas as telas
+
+atende: configurar-design-system
+confunde_com:
+  - construir-tela
+
+motivo: >
+  O painel de cenários é moldura do protótipo, entregue pronta como asset da
+  design-setup — não é uma tela a construir. Recriá-lo na design-screen foi o incidente
+  da HRN-015.
