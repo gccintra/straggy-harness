@@ -177,6 +177,12 @@ fi
 # Ambiente local de código. Não clona e não grava credencial.
 "$HARNESS_DIR/seed-codigo-fonte.sh" "$PROJECT_DIR"
 
+# Hooks do Git do harness (HRN-017): pull, troca de branch, rebase e commit regeneram o
+# runtime sozinhos — sem depender de abrir um agente.
+if [[ -d "$HARNESS_DIR/.git" ]]; then
+  git -C "$HARNESS_DIR" config core.hooksPath .githooks
+fi
+
 # Workflows resolvidos (system ∪ pack ∪ org) — pasta gerada, fora do Git.
 "$HARNESS_DIR/build.sh" --org "$ORG_ROOT"
 

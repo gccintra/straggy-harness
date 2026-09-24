@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# Fonte do harness pode ter mudado de versão: regenera o runtime. Nunca falha o Git.
+"$(dirname "$0")/_runtime.sh" post-rewrite || true
+exit 0

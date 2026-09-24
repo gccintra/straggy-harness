@@ -31,6 +31,12 @@ model: <id>                     # opcional; default em codex.model deste README
 | `aliases.tsv` | `alias<TAB>persona<TAB>descrição` — gera um slash-command por linha (Claude). Nos outros runtimes a persona é invocada pelo nome da skill |
 | `codex.defaults` | `model=<id>` usado quando o `PERSONA.md` não declara |
 
+**Runtime em dia (HRN-015/017).** O build grava a impressão digital das fontes em
+`runtime/.impressao`; `build.sh --check` sai 4 quando a fonte mudou depois. `.githooks/`
+(ligado pelo `install.sh` via `core.hooksPath`): `post-merge`, `post-checkout` e
+`post-rewrite` regeneram quando a fonte mudou; `pre-commit` regenera e bloqueia só com erro de
+contrato. Edição ainda não commitada: rode `./build.sh`.
+
 **Um ponteiro de skills por runtime, e só onde ele não acha sozinho.** `.agents/skills`
 (plantado pelo `build.sh`) é lido por Codex, Cursor e OpenCode. O Claude só lê
 `.claude/skills`, então é o único com `runtime/claude/skills → ../skills`. O Codex segue

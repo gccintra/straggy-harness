@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+# Regenera o runtime antes do commit. Bloqueia só se o contrato reprovar com erro
+# (aviso não bloqueia — o build sem --strict sai 0 com aviso). Pular: git commit --no-verify.
+"$(dirname "$0")/_runtime.sh" pre-commit --sempre
+codigo=$?
+if [ "$codigo" = 3 ]; then
+  echo "commit bloqueado: contrato do harness reprovado. Rode ./build.sh e corrija o erro." >&2
+  exit 1
+fi
+exit 0

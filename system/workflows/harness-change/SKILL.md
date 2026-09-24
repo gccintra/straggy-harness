@@ -720,6 +720,7 @@ atualização de cada um que se aplique:
 | Checagem | Critério |
 |---|---|
 | `./.agents/build.sh --strict` | sai **0**; aviso é reprovação neste modo |
+| `./.agents/build.sh --check` | sai **0** depois da edição — runtime gerado igual à fonte. Os hooks do Git regeneram no commit e no pull; até lá, entregar com a saída velha deixa a sessão atual lendo instrução antiga |
 | `--org <diretório vazio> --out <temporário>` | nenhum aviso de "sem padrão no pack" — é o teste da organização recém-criada |
 | `--fix` | não muda `system/ACOES.md` quando nenhuma ação ou encaixe mudou |
 | `org/` | nenhum arquivo novo, salvo quando a demanda era escrever registro da organização |
