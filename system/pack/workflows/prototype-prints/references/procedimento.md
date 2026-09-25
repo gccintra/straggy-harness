@@ -17,6 +17,10 @@ Critério, um por print:
 
 O segundo caso sai. Sempre.
 
+Onde a captura começa e termina também é recorte. Ela começa no topo da tela, para o leitor
+saber onde está, e termina no último trecho que a demanda declara. O que vem depois (linhas
+repetidas, blocos zerados, rodapé) fica fora, em vez de virar uma parte a mais.
+
 Três armadilhas recorrentes:
 
 - **Formulário de cadastro.** Costuma ter mudado bastante no código e nada na demanda. Se a regra nova é sobre *vínculo, autoria ou visibilidade* do registro, ela não aparece no formulário — aparece no card, na listagem, no badge de origem. Capture onde a regra é visível.

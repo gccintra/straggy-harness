@@ -90,15 +90,15 @@ Se a demanda tem número de issue diferente do número no nome da pasta (issue g
 
 Nomeie `NN_kebab-descricao.png`. O número é a ordem de leitura, não a ordem de captura.
 
-**Mecânica em `references/captura.md`** — configuração do browser, divisão de tela longa em
-partes para a página A4, borda obrigatória, recorte de modal/card/tabela, dropdown e estado
-que o mock não alcança. As medidas de lá são contrato da imagem entregue, não sugestão.
+**Mecânica em `references/captura.md`** — configuração do browser, tela em contexto (padrão),
+modal aberto sobre a tela, divisão em partes para a página A4, borda obrigatória, dropdown e
+estado que o mock não alcança. As medidas de lá são contrato da imagem entregue, não sugestão.
 
 ## 3. Verificar
 
 Abra as prints de estado condicional — bloqueio, contagem, status calculado. É onde a captura silenciosamente pega o estado errado: um seletor que casou com a linha errada da tabela, um modal que abriu na variante oposta.
 
-Confira também que nenhum print de modal saiu com o fundo da página junto.
+Confira também que toda print mostra onde está — cabeçalho do sistema e título da tela visíveis, modal sobre a tela de origem — salvo recorte isolado pedido pelo usuário. E que nenhuma parte de tela dividida é só sobra (linhas zeradas, rodapé, botões soltos).
 
 Para telas divididas, verifique ainda:
 

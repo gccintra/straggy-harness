@@ -60,7 +60,8 @@ async function screenshotClipWithBorder(clip, path) {
   }, { id: overlayId, box: clip, border: BORDER_CSS_PX })
 
   try {
-    await page.screenshot({ path, clip })
+    // fullPage: sem ele, clip abaixo do viewport falha ("Clipped area is either empty…")
+    await page.screenshot({ path, clip, fullPage: true })
   } finally {
     await page.evaluate((id) => document.getElementById(id)?.remove(), overlayId)
   }
@@ -83,37 +84,106 @@ async function screenshotElementWithBorder(target, path) {
   }
 }
 
-/**
- * Tela inteira pronta para DOCX: divide por tamanho, sem lacuna ou sobreposição.
- * Cada parte completa tem altura = largura × 1,10; a última usa o restante.
- */
-async function full(name) {
-  const dimensions = await page.evaluate(() => ({
-    width: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
-    height: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
-  }))
-  const sliceHeight = Math.floor(dimensions.width * DOCX_HEIGHT_RATIO)
-  const total = Math.ceil(dimensions.height / sliceHeight)
+/** Corta [0, altura) da página em partes de largura × 1,10, sem lacuna nem sobreposição. */
+async function fatiar(name, altura) {
+  const width = await page.evaluate(() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth))
+  const sliceHeight = Math.floor(width * DOCX_HEIGHT_RATIO)
+  const total = Math.ceil(altura / sliceHeight)
 
   for (let index = 0; index < total; index += 1) {
     const y = index * sliceHeight
-    const height = Math.min(sliceHeight, dimensions.height - y)
+    const height = Math.min(sliceHeight, altura - y)
     const outputName = total === 1 ? name : partName(name, index)
-    await screenshotClipWithBorder(
-      { x: 0, y, width: dimensions.width, height },
-      file(outputName),
-    )
+    await screenshotClipWithBorder({ x: 0, y, width, height }, file(outputName))
   }
 }
 
-/** Modal recortado no limite do elemento — nunca o viewport com o fundo atrás. */
+/** Tela inteira pronta para DOCX. */
+async function full(name) {
+  const altura = await page.evaluate(() => Math.max(document.documentElement.scrollHeight, document.body.scrollHeight))
+  await fatiar(name, altura)
+}
+
+/**
+ * PADRÃO — tela em contexto, sempre numa imagem só quando o alvo cabe nela.
+ * Cabe do topo (cabeçalho, título) até o fim do alvo → corta ali.
+ * Não cabe → janela de largura × 1,10 que termina no alvo e começa na borda de um bloco,
+ * mostrando as seções vizinhas acima. Alvo maior que a janela → partes a partir do alvo.
+ * `alvo` é seletor CSS ou Locator do último trecho que a demanda declara.
+ */
+async function contexto(alvo, name, folga = 24) {
+  const target = typeof alvo === 'string' ? page.locator(alvo).first() : alvo
+  await target.waitFor()
+  const { topo, fim, largura, altura } = await target.evaluate((el, f) => {
+    const b = el.getBoundingClientRect()
+    return {
+      topo: Math.floor(b.top + window.scrollY),
+      fim: Math.ceil(b.bottom + window.scrollY + f),
+      largura: Math.max(document.documentElement.scrollWidth, document.body.scrollWidth),
+      altura: Math.max(document.documentElement.scrollHeight, document.body.scrollHeight),
+    }
+  }, folga)
+  const limite = Math.floor(largura * DOCX_HEIGHT_RATIO)
+  const final = Math.min(fim, altura)
+  if (final <= limite) return fatiar(name, final)
+
+  if (final - topo + folga > limite) {
+    // alvo sozinho já passa da janela: partes contíguas a partir do alvo
+    const inicio = Math.max(0, topo - folga)
+    const sliceHeight = limite
+    const total = Math.ceil((final - inicio) / sliceHeight)
+    for (let index = 0; index < total; index += 1) {
+      const y = inicio + index * sliceHeight
+      const height = Math.min(sliceHeight, final - y)
+      await screenshotClipWithBorder({ x: 0, y, width: largura, height }, file(total === 1 ? name : partName(name, index)))
+    }
+    return
+  }
+
+  const minimo = final - limite
+  // janela única: começa no topo de um bloco irmão do alvo (ou de um ancestral dele),
+  // nunca no meio de um card
+  const inicio = await target.evaluate((el, { minimo, largura }) => {
+    const tops = []
+    for (let node = el; node && node !== document.body; node = node.parentElement) {
+      for (let irmao = node; irmao; irmao = irmao.previousElementSibling) {
+        const r = irmao.getBoundingClientRect()
+        if (r.width > largura * 0.5) tops.push(Math.floor(r.top + window.scrollY))
+      }
+    }
+    const cabem = tops.filter((t) => t >= minimo)
+    return cabem.length ? Math.min(...cabem) : Math.floor(el.getBoundingClientRect().top + window.scrollY)
+  }, { minimo, largura })
+  await screenshotClipWithBorder({ x: 0, y: Math.max(0, inicio - 16), width: largura, height: final - Math.max(0, inicio - 16) }, file(name))
+}
+
+/**
+ * PADRÃO para modal — aberto sobre a tela, fundo escurecido visível.
+ * O viewport cresce até caber o modal inteiro e volta ao tamanho original depois.
+ */
+async function modalEmContexto(name) {
+  await page.waitForSelector(MODAL)
+  await page.waitForTimeout(350)
+  const original = page.viewportSize()
+  const alturaModal = await page.locator(MODAL).first().evaluate((el) => Math.ceil(el.scrollHeight))
+  const altura = Math.max(original.height, alturaModal + 120)
+  await page.setViewportSize({ width: original.width, height: altura })
+  await page.waitForTimeout(250)
+  try {
+    await screenshotClipWithBorder({ x: 0, y: 0, width: original.width, height: altura }, file(name))
+  } finally {
+    await page.setViewportSize(original)
+  }
+}
+
+/** EXCEÇÃO (só com pedido explícito) — modal recortado no limite do card, sem a tela. */
 async function modal(name) {
   await page.waitForSelector(MODAL)
   await page.waitForTimeout(350)
   await screenshotElementWithBorder(page.locator(MODAL).first(), file(name))
 }
 
-/** Componente isolado (tabela, card, painel) pelo aria-label ou seletor. */
+/** EXCEÇÃO (só com pedido explícito) — componente isolado, sem a tela em volta. */
 async function element(selector, name) {
   const target = page.locator(selector).first()
   await target.scrollIntoViewIfNeeded()
@@ -158,10 +228,11 @@ async function closeModal() {
 // ---------------------------------------------------------------------------
 
 await goto('/rota')
-await full('01_nome-da-tela')
+await contexto('[aria-label="<último trecho que a demanda declara>"]', '01_nome-do-trecho')
+await full('02_nome-da-tela')
 
 await page.getByRole('button', { name: 'Abrir Modal' }).click()
-await modal('02_nome-do-modal')
+await modalEmContexto('03_nome-do-modal')
 await closeModal()
 
 // Prefira aria-label a texto quando houver várias linhas com a mesma ação:

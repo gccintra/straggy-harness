@@ -35,7 +35,7 @@ ocupem bem a área útil da página A4 sem disputar espaço com cabeçalho, tít
 - As partes continuam sendo **uma única print lógica** e são coladas em sequência sob o mesmo
   heading do documento.
 
-Use a função `full()` de `capture.template.mjs`: ela mede a página e gera as partes já no padrão.
+Use `contexto()` ou `full()` de `capture.template.mjs`: elas medem a página e geram as partes já no padrão.
 `fullPage: true` pode existir como arquivo temporário de trabalho, mas nunca deve ser entregue
 quando exceder a proporção acima.
 
@@ -45,40 +45,53 @@ Toda imagem entregue recebe uma borda preta interna de **1 pixel no arquivo fina
 
 - A borda é interna: não aumenta largura ou altura.
 - Em captura 2x, use `0.5px` CSS para produzir 1 pixel físico.
-- Aplique também em modal, card, tabela e última parte de tela longa.
+- Aplique também em modal, recorte de exceção e última parte de tela longa.
 - Não use sombra, margem, arredondamento ou moldura grossa como substituto.
 
-## Tela inteira longa
+## Tela em contexto — o padrão
+
+Toda print mostra **onde o trecho está**: largura total da página, do topo (cabeçalho do
+sistema, breadcrumb, título da tela) até o fim do trecho que a demanda declara. O leitor do
+documento não conhece o protótipo; componente solto, sem a tela em volta, não diz onde ele vive.
 
 ```js
-await page.goto(url, { waitUntil: 'networkidle' })
-await page.waitForTimeout(400)          // fontes e ícones assentam
-await full('10_painel-geral-ocorrencias-projeto')
+await goto('/rota')
+await contexto('[aria-label="Resumo financeiro"]', '10_resumo-financeiro')  // topo → fim do alvo
+await full('11_painel-geral')                                               // tela inteira
 ```
 
-Não capture apenas o viewport: a função percorre toda a altura e entrega partes contíguas no
-tamanho apropriado para o DOCX.
+- `contexto(alvo, nome)` corta no fim do alvo, com uma folga pequena. Conteúdo abaixo dele
+  que a demanda não declara (linhas repetidas, blocos zerados, rodapé) fica fora.
+- Quando o alvo termina longe do topo e a imagem passaria de `largura × 1,10`, a função não
+  divide: entrega **uma janela** desse tamanho que termina no alvo e começa na borda de um
+  bloco, com as seções vizinhas acima dando a posição na tela. Só um alvo maior que a janela
+  vira partes contíguas, a partir do próprio alvo.
+- `full(nome)` é a tela inteira; use quando a tela toda é o assunto.
+- Não entregue só o viewport quando o trecho continua abaixo dele.
 
-## Modal, card, tabela — recorte no limite do elemento
+## Modal — aberto sobre a tela
 
-Print de modal **nunca** é o viewport com o fundo escurecido atrás. Recorte no elemento:
+Print de modal mostra o modal **sobre a tela de origem**, com o fundo escurecido visível. O
+viewport cresce até caber o modal inteiro; a imagem é o viewport, nunca o card recortado.
 
 ```js
-const MODAL = 'div.fixed.inset-0.z-50 > div'   // o card branco, não o overlay
-await page.waitForSelector(MODAL)
-await page.waitForTimeout(350)
-await page.locator(MODAL).first().screenshot({ path })
+await page.getByRole('button', { name: 'Visualizar' }).click()
+await modalEmContexto('21_detalhe-medicao')
 ```
 
-Vale igual para tabela, card e qualquer componente que o documento cita isoladamente: `locator(seletor).screenshot()`.
+Confira o seletor no componente `Modal` do projeto antes de assumir — a classe do overlay
+muda entre design systems.
 
-Confira o seletor no componente `Modal` do projeto antes de assumir — a classe do overlay muda entre design systems.
+## Componente recortado — só com pedido explícito
+
+Recortar só o elemento (`element(seletor, nome)`, `modal(nome)`) é exceção: use quando o
+usuário pedir o componente isolado. Sem pedido, o padrão é a tela em contexto.
 
 ## Dropdown aberto — depende do componente
 
 Duas situações, e a diferença não é escolha sua:
 
-- **Componente que renderiza em portal DOM** (MUI `Autocomplete`, Radix, Headless UI): as opções são DOM real e entram no screenshot. O popper fica **fora** do modal na árvore, então recorte pela união dos dois retângulos:
+- **Componente que renderiza em portal DOM** (MUI `Autocomplete`, Radix, Headless UI): as opções são DOM real e entram no screenshot. Na captura em contexto elas já aparecem no viewport. Só no recorte de exceção o popper, que fica **fora** do modal na árvore, exige a união dos dois retângulos:
 
 ```js
 const boxes = await page.evaluate(() => {
